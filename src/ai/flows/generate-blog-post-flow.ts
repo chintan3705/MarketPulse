@@ -93,16 +93,19 @@ const generateBlogPostFlow = ai.defineFlow(
       });
 
       textOutput = output;
-      console.log("[generateBlogPostFlow] Successfully received textOutput:", textOutput ? "Data received" : "No data");
+      console.log(
+        "[generateBlogPostFlow] Successfully received textOutput:",
+        textOutput ? "Data received" : "No data",
+      );
     } catch (flowError: unknown) {
+      const errorMessage =
+        flowError instanceof Error ? flowError.message : String(flowError);
       console.error(
         "[generateBlogPostFlow] Error calling generateBlogPostTextPrompt:",
         flowError,
       );
       throw new Error(
-        `Failed to generate blog post text content: ${
-          flowError instanceof Error ? flowError.message : String(flowError)
-        }`,
+        `Failed to generate blog post text content: ${errorMessage}`,
       );
     }
 
@@ -119,31 +122,38 @@ const generateBlogPostFlow = ai.defineFlow(
       (cat) => cat.slug === textOutput.categorySlug,
     );
     if (!isValidCategory && categories.length > 0) {
-      console.warn(`[generateBlogPostFlow] AI generated an invalid category slug: ${textOutput.categorySlug}. Defaulting to ${categories[0].slug}.`);
+      console.warn(
+        `[generateBlogPostFlow] AI generated an invalid category slug: ${textOutput.categorySlug}. Defaulting to ${categories[0].slug}.`,
+      );
       textOutput.categorySlug = categories[0].slug;
     } else if (categories.length === 0) {
-      console.warn(`[generateBlogPostFlow] No categories defined. Defaulting categorySlug to "general".`);
+      console.warn(
+        `[generateBlogPostFlow] No categories defined. Defaulting categorySlug to "general".`,
+      );
       textOutput.categorySlug = "general";
     }
 
     // --- Image Generation and Upload Section ---
-    let imageUrl: string = `https://placehold.co/800x450.png`; // Default placeholder
+    let imageUrl: string | undefined = undefined; // Initialize imageUrl as undefined
     const imageAiHint =
       textOutput.tags && textOutput.tags.length > 0
         ? textOutput.tags.slice(0, 2).join(" ")
-        : input.topic || "financial news";
+        : input.topic || "financial news article";
 
     try {
       const categoryForImage =
         categories.find((c) => c.slug === textOutput.categorySlug) ||
-        categories.find((c) => c.slug === "general") || { name: "Financial", slug: "general" };
-      
+        categories.find((c) => c.slug === "general") || {
+          name: "Financial",
+          slug: "general",
+        };
+
       const imagePromptText = `A visually appealing blog post illustration for an article in the "${categoryForImage.name}" category, titled "${textOutput.title}". The article is about: ${textOutput.summary.substring(0, 150)}... Focus on themes like: ${imageAiHint}. Style: Modern, professional, financial, potentially conceptual or abstract. Avoid text in the image.`;
 
       console.log(
         `[generateBlogPostFlow] Attempting to generate image with prompt (first 150 chars): ${imagePromptText.substring(0, 150)}...`,
       );
-      
+
       const { media } = await ai.generate({
         model: "googleai/gemini-2.0-flash-exp",
         prompt: imagePromptText,
@@ -155,59 +165,98 @@ const generateBlogPostFlow = ai.defineFlow(
       if (media && media.url) {
         const imageDataUri = media.url; // This is the base64 data URI from Genkit
         console.log(
-          "[generateBlogPostFlow] Image data URI generated successfully by Genkit.",
+          "[generateBlogPostFlow] Image data URI generated successfully by Genkit. Length:",
+          imageDataUri.length,
         );
 
         // --- START: USER INTEGRATION POINT for Third-Party Upload ---
         // TODO: Implement your image upload logic here.
         // 1. Choose a third-party image hosting service (e.g., Cloudinary free tier, Firebase Storage, ImgBB).
-        // 2. Create an async helper function (e.g., `async function uploadImageToThirdParty(dataUri: string): Promise<string>`)
-        //    that takes `imageDataUri`, uploads it to your chosen service, and returns the public URL.
+        // 2. Create an async helper function (e.g., `async function uploadImageToThirdParty(dataUri: string): Promise<string | undefined>`)
+        //    that takes `imageDataUri`, uploads it to your chosen service, and returns the public URL or undefined if upload fails.
         //    Remember to handle API keys and potential errors within that function.
         // 3. Uncomment and use the lines below to call your function and set the `imageUrl`.
 
         /*
         try {
-          // Example: const uploadedPublicUrl = await uploadImageToThirdParty(imageDataUri);
-          // imageUrl = uploadedPublicUrl; 
-          console.log(`[generateBlogPostFlow] Image successfully uploaded. URL: ${imageUrl}`);
+          const uploadedPublicUrl = await uploadImageToThirdParty(imageDataUri);
+          if (uploadedPublicUrl) {
+            imageUrl = uploadedPublicUrl;
+            console.log(`[generateBlogPostFlow] Image successfully uploaded to third-party. URL: ${imageUrl}`);
+          } else {
+            console.warn("[generateBlogPostFlow] Image upload to third-party service failed or was skipped. No image URL will be saved for this post.");
+            // imageUrl remains undefined
+          }
         } catch (uploadError) {
           console.error("[generateBlogPostFlow] Error uploading image to third-party service:", uploadError);
-          // If upload fails, imageUrl will remain the default placeholder set above.
+          // imageUrl remains undefined
         }
         */
         // --- END: USER INTEGRATION POINT ---
-        
-        // For now, if the above TODO section is not implemented, imageUrl remains the default placeholder.
-        // The console log below will show which URL is being used.
-        console.log(
-          `[generateBlogPostFlow] Using image URL: ${imageUrl}. AI hint for placeholder: "${imageAiHint}"`,
-        );
+
+        // If the TODO section above is not implemented, or if an implemented upload fails and
+        // does not set `imageUrl`, then `imageUrl` will remain `undefined`.
+
+        // FOR DEVELOPMENT/TESTING WITHOUT ACTUAL UPLOAD:
+        // If you want to use a placeholder when your upload logic isn't ready,
+        // you can uncomment and use the block below.
+        /*
+        if (!imageUrl) { // Only set placeholder if no actual URL was obtained
+          imageUrl = `https://placehold.co/800x450.png`;
+          console.log(
+            `[generateBlogPostFlow] DEVELOPMENT: Using placeholder image URL as actual upload is not implemented/failed. URL: ${imageUrl}. AI hint: "${imageAiHint}"`,
+          );
+        }
+        */
+        if (imageUrl) {
+          console.log(
+            `[generateBlogPostFlow] Using image URL: ${imageUrl}. AI hint for placeholder: "${imageAiHint}"`,
+          );
+        } else {
+           console.log(
+            `[generateBlogPostFlow] No image URL set. This means either the //TODO: upload section was not implemented, or it failed to return a URL. Image URL will be undefined for this post.`,
+          );
+        }
+
 
       } else {
         console.warn(
-          "[generateBlogPostFlow] Image generation by Genkit did not return a media URL. Using default placeholder.",
+          "[generateBlogPostFlow] Image generation by Genkit did not return a media URL. No image will be used.",
         );
-        // imageUrl is already the default placeholder from its initialization.
+        // imageUrl remains undefined
       }
     } catch (imageGenError: unknown) {
+      const errorMessage =
+        imageGenError instanceof Error
+          ? imageGenError.message
+          : String(imageGenError);
       console.error(
-        "[generateBlogPostFlow] Error during image generation phase:",
-        imageGenError,
+        "[generateBlogPostFlow] Error during image generation or upload phase:",
+        errorMessage,
+        imageGenError, // log the full error object
       );
-      if (imageGenError instanceof Error && (imageGenError.message.toLowerCase().includes("api key not valid") || imageGenError.message.toLowerCase().includes("permission denied") || imageGenError.message.toLowerCase().includes("api_key"))) {
-          console.error("[generateBlogPostFlow] Potentially an API key issue or Gemini API not enabled for project. Please check GOOGLE_API_KEY and API enablement in Google Cloud Console.");
+      if (
+        errorMessage.toLowerCase().includes("api key not valid") ||
+        errorMessage.toLowerCase().includes("permission denied") ||
+        errorMessage.toLowerCase().includes("api_key")
+      ) {
+        console.error(
+          "[generateBlogPostFlow] Potentially an API key issue or Gemini API not enabled for project. Please check GOOGLE_API_KEY and API enablement in Google Cloud Console.",
+        );
       }
       console.warn(
-        "[generateBlogPostFlow] Falling back to default placeholder image due to an error during generation.",
+        "[generateBlogPostFlow] Falling back to no image due to an error during generation/upload phase.",
       );
-      // imageUrl is already the default placeholder.
+      // imageUrl remains undefined
     }
 
-    console.log("[generateBlogPostFlow] Preparing final output with image URL and AI hint.");
+    console.log(
+      "[generateBlogPostFlow] Preparing final output. Image URL (if any):",
+      imageUrl,
+    );
     return {
       ...textOutput,
-      imageUrl: imageUrl,
+      imageUrl: imageUrl, // This will be undefined if no image was generated or uploaded
       imageAiHint: imageAiHint,
     };
   },
@@ -215,35 +264,46 @@ const generateBlogPostFlow = ai.defineFlow(
 
 // Example of what your upload function might look like (conceptual):
 /*
-async function uploadImageToThirdParty(dataUri: string): Promise<string> {
+async function uploadImageToThirdParty(dataUri: string): Promise<string | undefined> {
   // 1. Parse the dataUri to get the base64 data and mime type
   //    const matches = dataUri.match(/^data:(.+);base64,(.+)$/);
   //    if (!matches || matches.length !== 3) {
-  //      throw new Error('Invalid data URI');
+  //      console.error('Invalid data URI format');
+  //      return undefined;
   //    }
   //    const mimeType = matches[1];
   //    const base64Data = matches[2];
-  //    const buffer = Buffer.from(base64Data, 'base64');
+  //    // const buffer = Buffer.from(base64Data, 'base64'); // If you need a buffer
 
-  // 2. Use the SDK of your chosen service (e.g., Cloudinary, Firebase Storage)
-  //    Example with a hypothetical fetch to a service like ImgBB (you'd need its actual API)
+  // 2. Use the SDK of your chosen service (e.g., Cloudinary, Firebase Storage, ImgBB)
+  //    Example with a hypothetical fetch to a service like ImgBB (you'd need its actual API & key)
   //    const formData = new FormData();
   //    formData.append('image', base64Data); // ImgBB expects base64 string
-  //    formData.append('key', 'YOUR_IMGBB_API_KEY'); // From your .env.local
+  //    formData.append('key', process.env.IMGBB_API_KEY); // Store your key in .env.local
   //
-  //    const response = await fetch('https://api.imgbb.com/1/upload', {
-  //      method: 'POST',
-  //      body: formData,
-  //    });
-  //    if (!response.ok) {
-  //      const errorData = await response.json();
-  //      throw new Error(`Upload failed: ${errorData.error?.message || response.statusText}`);
+  //    try {
+  //      const response = await fetch('https://api.imgbb.com/1/upload', {
+  //        method: 'POST',
+  //        body: formData,
+  //      });
+  //      if (!response.ok) {
+  //        const errorData = await response.json();
+  //        console.error(`ImgBB Upload failed: ${errorData.error?.message || response.statusText}`);
+  //        return undefined;
+  //      }
+  //      const result = await response.json();
+  //      return result.data.url; // This is the public URL of the uploaded image
+  //    } catch (uploadApiError) {
+  //      console.error("Error calling third-party upload API:", uploadApiError);
+  //      return undefined;
   //    }
-  //    const result = await response.json();
-  //    return result.data.url;
 
-  // For testing without actual upload, you can return the placeholder or the data URI itself (though data URIs are not ideal for DB storage)
-  console.warn("uploadImageToThirdParty is not implemented yet. Returning placeholder or data URI for testing.");
-  return dataUri; // Or return a fixed placeholder if data URI is too long for testing
+  // For testing without actual upload, you can return the data URI itself (though data URIs are not ideal for DB storage and can be very long)
+  // console.warn("uploadImageToThirdParty is a stub. Returning undefined.");
+  // return undefined;
+  // Or, to test with the data URI directly (not recommended for production):
+  // return dataUri;
 }
 */
+
+
