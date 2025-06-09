@@ -10,7 +10,8 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { generateBlogPost, type GenerateBlogPostOutput, categories } from './generate-blog-post-flow';
+import { generateBlogPost, type GenerateBlogPostOutput } from './generate-blog-post-flow';
+import { categories } from '@/lib/data'; // Import categories directly
 import type { BlogPost, Category } from '@/types';
 
 const GenerateMultipleBlogPostsInputSchema = z.object({
@@ -41,7 +42,7 @@ export async function generateMultipleBlogPosts(
   
   // Map to BlogPost structure
   return results.map((item, index) => {
-    const chosenCategory = categories.find(c => c.slug === item.categorySlug) || categories[0];
+    const chosenCategory = categories.find(c => c.slug === item.categorySlug) || (categories.length > 0 ? categories[0] : { id: 'general', name: 'General', slug: 'general' });
     return {
       id: `ai-generated-${Date.now()}-${index}`, // Create a unique ID
       slug: item.slug,
