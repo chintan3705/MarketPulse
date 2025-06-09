@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import type { IMongoBlogPost } from "@/models/BlogPost";
+import { DialogTrigger } from "@radix-ui/react-dialog";
 
 // Using IMongoBlogPost fields that are relevant for the dialog after save.
 // This type matches the 'post' object structure returned by the API on success.
