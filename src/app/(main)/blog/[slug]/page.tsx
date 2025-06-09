@@ -9,6 +9,8 @@ import { notFound } from 'next/navigation';
 import type { Metadata, ResolvingMetadata } from 'next';
 import { generateBlogPost } from '@/ai/flows/generate-blog-post-flow';
 import type { BlogPost } from '@/types';
+import { getPost as getCachedPost, setPost as cacheSetPost } from '@/lib/aiPostCache';
+
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.marketpulse.example.com';
 
@@ -19,44 +21,57 @@ interface BlogPostPageProps {
 }
 
 async function getPostData(slug: string): Promise<BlogPost | null> {
+  // 1. Check static posts
   let post = latestBlogPosts.find((p) => p.slug === slug);
-
-  if (!post) {
-    try {
-      console.log(`Static post for slug "${slug}" not found, attempting AI generation.`);
-      // generateBlogPost now returns imageUrl and imageAiHint
-      const generatedPostData = await generateBlogPost({ topic: slug.replace(/-/g, ' ') }); 
-      
-      const chosenCategory = categories.find(c => c.slug === generatedPostData.categorySlug) || 
-                             (categories.length > 0 ? categories[0] : { id: 'unknown', name: 'General', slug: 'general' });
-      
-      if (!chosenCategory && categories.length > 0) {
-        console.warn(`Category not found for slug: ${generatedPostData.categorySlug}. Defaulting to first category.`);
-      } else if (categories.length === 0 && !chosenCategory) {
-         console.warn(`No categories defined. Defaulting AI post category to general.`);
-      }
-
-
-      post = {
-        id: `ai-generated-${slug}`,
-        slug: slug,
-        title: generatedPostData.title,
-        summary: generatedPostData.summary,
-        content: generatedPostData.content,
-        category: chosenCategory,
-        author: 'MarketPulse AI',
-        publishedAt: new Date().toISOString(),
-        tags: generatedPostData.tags,
-        isAiGenerated: true,
-        imageUrl: generatedPostData.imageUrl, // Use AI generated image
-        imageAiHint: generatedPostData.imageAiHint || generatedPostData.tags.slice(0,2).join(' ') || "financial news",
-      };
-    } catch (error) {
-      console.error(`Error generating blog post for slug "${slug}" on detail page:`, error);
-      return null;
-    }
+  if (post) {
+    return post;
   }
-  return post;
+
+  // 2. Check server-side cache for AI-generated posts
+  const cachedPost = getCachedPost(slug);
+  if (cachedPost) {
+    // console.log(`Post "${slug}" found in cache.`);
+    return cachedPost;
+  }
+
+  // 3. If not found in static or cache, generate on-demand
+  // This typically happens if user directly accesses an AI post URL or cache expired.
+  // console.log(`Post "${slug}" not in static data or cache. Attempting AI generation.`);
+  try {
+    const generatedPostData = await generateBlogPost({ topic: slug.replace(/-/g, ' ').replace(/-ai-\d+-\d+$/, '') }); 
+    
+    const chosenCategory = categories.find(c => c.slug === generatedPostData.categorySlug) || 
+                           (categories.length > 0 ? categories[0] : { id: 'unknown', name: 'General', slug: 'general' });
+    
+    if (!chosenCategory && categories.length > 0) {
+      console.warn(`Category not found for slug: ${generatedPostData.categorySlug}. Defaulting to first category.`);
+    } else if (categories.length === 0 && !chosenCategory) {
+       console.warn(`No categories defined. Defaulting AI post category to general.`);
+    }
+
+    const aiPost: BlogPost = {
+      id: `ai-generated-${slug}-${Date.now()}`, // Ensure a unique ID if generating on demand
+      slug: slug, // Use the slug from the URL
+      title: generatedPostData.title,
+      summary: generatedPostData.summary,
+      content: generatedPostData.content,
+      category: chosenCategory,
+      author: 'MarketPulse AI',
+      publishedAt: new Date().toISOString(),
+      tags: generatedPostData.tags,
+      isAiGenerated: true,
+      imageUrl: generatedPostData.imageUrl,
+      imageAiHint: generatedPostData.imageAiHint || generatedPostData.tags.slice(0,2).join(' ') || "financial news",
+    };
+    
+    // Cache this newly generated post as well, so subsequent reloads (within TTL) don't re-generate
+    cacheSetPost(slug, aiPost, 15); // Cache for 15 minutes
+    return aiPost;
+
+  } catch (error) {
+    console.error(`Error generating blog post for slug "${slug}" on detail page:`, error);
+    return null; // This will lead to a notFound() call later
+  }
 }
 
 export async function generateMetadata(
@@ -73,11 +88,12 @@ export async function generateMetadata(
   }
 
   const previousImages = (await parent).openGraph?.images || [];
-  // Use post.imageUrl which could be a data URI or a placeholder if generation failed/skipped
-  const postImage = post.imageUrl ? [{ url: post.imageUrl, alt: post.title }] : previousImages;
-   // For data URIs, width/height might not be easily determined or necessary for OpenGraph like this
-   // but if they were normal URLs, you'd specify them:
-   // width: 800, height: 450
+  const postImage = post.imageUrl && !post.imageUrl.startsWith('https://placehold.co') 
+    ? [{ url: post.imageUrl, alt: post.title }] 
+    : post.imageUrl && post.imageUrl.startsWith('https://placehold.co')
+    ? [{url: `${SITE_URL}/api/placeholder-og?imageUrl=${encodeURIComponent(post.imageUrl)}&text=${encodeURIComponent(post.title)}`, alt: post.title, width:1200, height:630}]
+    : previousImages;
+
 
   return {
     title: post.title,
@@ -106,12 +122,16 @@ export async function generateMetadata(
   };
 }
 
-export const revalidate = 86400; 
+// export const revalidate = 86400; // Revalidate static posts daily
+export const revalidate = 0; // AI generated posts need to be dynamic if not in cache
 
 export async function generateStaticParams() {
-  return latestBlogPosts.map((post) => ({
-    slug: post.slug,
-  }));
+  // Only generate static params for non-AI generated posts from latestBlogPosts
+  return latestBlogPosts
+    .filter(post => !post.isAiGenerated) // Ensure we only pre-render truly static posts
+    .map((post) => ({
+      slug: post.slug,
+    }));
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
@@ -165,12 +185,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {post.imageUrl && (
           <div className="relative aspect-video mb-8 rounded-lg overflow-hidden shadow-lg">
             <Image
-              src={post.imageUrl} // This can now be a data URI
+              src={post.imageUrl} 
               alt={post.title}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 80vw, 768px"
               className="object-cover"
-              priority={!post.isAiGenerated} // Only prioritize for non-AI (static) posts initially
+              priority={!post.isAiGenerated} 
               data-ai-hint={post.imageAiHint || "financial news article"}
             />
           </div>

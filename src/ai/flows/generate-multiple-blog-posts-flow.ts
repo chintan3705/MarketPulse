@@ -13,30 +13,33 @@ import {ai} from '@/ai/genkit';
 import { categories } from '@/lib/data';
 import type { BlogPost } from '@/types';
 import { generateBlogPost } from './generate-blog-post-flow';
-import type { GenerateBlogPostOutput } from '../schemas/blog-post-schemas'; // Import type from schema file
+import type { GenerateBlogPostOutput } from '../schemas/blog-post-schemas';
 import {
   GenerateMultipleBlogPostsInputSchema,
   type GenerateMultipleBlogPostsInput,
   GenerateMultipleBlogPostsFlowOutputSchema,
-  // type GenerateMultipleBlogPostsFlowOutput // This type is for the internal flow, not the exported function
 } from '../schemas/multiple-blog-posts-schemas';
+import { setPost as cacheSetPost } from '@/lib/aiPostCache';
+
 
 export type { GenerateMultipleBlogPostsInput }; // Re-export input type
 
 // The exported function returns Promise<BlogPost[]>
-// The internal flow output type is GenerateMultipleBlogPostsFlowOutput
 
 export async function generateMultipleBlogPosts(
   input: GenerateMultipleBlogPostsInput
 ): Promise<BlogPost[]> {
-  const results = await generateMultipleBlogPostsFlow(input);
+  const flowResults = await generateMultipleBlogPostsFlow(input);
   
-  return results.map((item, index) => {
+  const blogPosts: BlogPost[] = flowResults.map((item, index) => {
     const chosenCategory = categories.find(c => c.slug === item.categorySlug) || 
                            (categories.length > 0 ? categories[0] : { id: 'general', name: 'General', slug: 'general' });
+    
+    const postSlug = item.title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '').substring(0, 70) + `-ai-${Date.now()}-${index}`;
+
     return {
       id: `ai-generated-${Date.now()}-${index}`,
-      slug: item.title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '').substring(0, 70),
+      slug: postSlug,
       title: item.title,
       summary: item.summary,
       content: item.content,
@@ -49,6 +52,15 @@ export async function generateMultipleBlogPosts(
       imageAiHint: item.imageAiHint || item.tags.slice(0,2).join(' ') || 'financial news',
     };
   });
+
+  // Cache the newly generated posts
+  blogPosts.forEach(post => {
+    if (post.slug) {
+      cacheSetPost(post.slug, post, 15); // Cache for 15 minutes
+    }
+  });
+
+  return blogPosts;
 }
 
 const generateMultipleBlogPostsFlow = ai.defineFlow(
@@ -59,7 +71,7 @@ const generateMultipleBlogPostsFlow = ai.defineFlow(
   },
   async (input) => {
     const { count, topics } = input;
-    const generatedPosts: GenerateBlogPostOutput[] = [];
+    const generatedPostsOutput: GenerateBlogPostOutput[] = [];
 
     const topicsToGenerate = topics && topics.length > 0 
       ? topics.slice(0, count) 
@@ -70,12 +82,13 @@ const generateMultipleBlogPostsFlow = ai.defineFlow(
         const topic = topicsToGenerate[i] || `a diverse financial news topic suitable for a blog (e.g., stock market analysis, IPO news, economic trends) - variation ${i+1}`;
         const singlePostOutput: GenerateBlogPostOutput = await generateBlogPost({ topic });
         
-        generatedPosts.push(singlePostOutput);
+        generatedPostsOutput.push(singlePostOutput);
 
       } catch (error) {
         console.error(`Error generating blog post (and image) for topic "${topicsToGenerate[i]}":`, error);
+        // Optionally, decide if you want to throw or continue generating others
       }
     }
-    return generatedPosts;
+    return generatedPostsOutput;
   }
 );
