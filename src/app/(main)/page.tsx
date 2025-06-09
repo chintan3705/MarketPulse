@@ -123,9 +123,13 @@ export default function HomePage() {
           </section>
         )}
         
-        <TrendingTagsSection />
+        <section className="animate-slide-in" style={{ animationDelay: '0.5s', animationFillMode: 'backwards' }}>
+          <TrendingTagsSection />
+        </section>
         
-        <PopularReadsSection />
+        <section className="animate-slide-in" style={{ animationDelay: '0.7s', animationFillMode: 'backwards' }}>
+          <PopularReadsSection />
+        </section>
 
 
         {adSlots.find(ad => ad.id === 'inline-ad-1') && (
@@ -135,7 +139,7 @@ export default function HomePage() {
         )}
 
         {latestBlogPosts.length > 3 && (
-          <section className="mt-8 md:mt-12" aria-labelledby="more-posts-title">
+          <section className="mt-8 md:mt-12 animate-slide-in" style={{ animationDelay: '0.9s', animationFillMode: 'backwards' }} aria-labelledby="more-posts-title">
             <SectionTitle title="More News & Analysis" viewAllLink="/news/all"/>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {latestBlogPosts.slice(3, latestBlogPosts.length > 6 ? 6 : latestBlogPosts.length).map((post) => (
