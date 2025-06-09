@@ -26,7 +26,7 @@ const SectionTitle = ({ title, icon: Icon, description }: { title: string; icon?
   <div className="mb-8">
     <div className="flex items-center gap-2 mb-2">
       {Icon && <Icon className="h-7 w-7 text-primary" />}
-      <h1 className="font-headline text-3xl font-bold">{title}</h1>
+      <h1 className="font-headline text-2xl sm:text-3xl font-bold">{title}</h1>
     </div>
     {description && <p className="text-muted-foreground">{description}</p>}
   </div>

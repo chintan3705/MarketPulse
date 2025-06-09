@@ -32,7 +32,7 @@ const SectionTitle = ({ title, icon: Icon, viewAllLink }: { title: string; icon?
   <div className="flex items-center justify-between mb-6">
     <div className="flex items-center gap-2">
       {Icon && <Icon className="h-7 w-7 text-primary" />}
-      <h2 className="font-headline text-3xl font-bold">{title}</h2>
+      <h2 className="font-headline text-2xl sm:text-3xl font-bold">{title}</h2>
     </div>
     {viewAllLink && (
       <Button variant="link" asChild className="text-primary hover:underline">
@@ -97,7 +97,7 @@ export default function HomePage() {
                 <CardHeader>
                   <div className="flex items-center gap-2">
                      <Zap className="h-6 w-6 text-primary" />
-                    <CardTitle id="trending-headlines-title" className="font-headline text-2xl">Trending Now</CardTitle>
+                    <CardTitle id="trending-headlines-title" className="font-headline text-xl sm:text-2xl">Trending Now</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -118,7 +118,7 @@ export default function HomePage() {
 
         {tradingViewAd && (
           <section className="mt-8 md:mt-12" aria-label="TradingView Chart">
-             <h2 className="font-headline text-2xl md:text-3xl font-bold text-center mb-6">Market Spotlight</h2>
+             <h2 className="font-headline text-xl sm:text-2xl md:text-3xl font-bold text-center mb-6">Market Spotlight</h2>
             <AdSlot config={tradingViewAd} />
           </section>
         )}

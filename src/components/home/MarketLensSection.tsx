@@ -49,7 +49,7 @@ export function MarketLensSection() {
       <div className="container">
         <div className="flex items-center gap-2 mb-6">
           <Eye className="h-7 w-7 text-primary" />
-          <h2 className="font-headline text-3xl font-bold">Today's Market Lens</h2>
+          <h2 className="font-headline text-2xl sm:text-3xl font-bold">Today's Market Lens</h2>
         </div>
 
         {isLoading && (
@@ -75,10 +75,10 @@ export function MarketLensSection() {
           <div className="space-y-6">
             <Card className="glass-card">
               <CardHeader>
-                <CardTitle className="text-xl text-primary">Overall Market Sentiment</CardTitle>
+                <CardTitle className="text-lg sm:text-xl text-primary">Overall Market Sentiment</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-lg text-foreground">{digest.overallMarketSentiment}</p>
+                <p className="text-base sm:text-lg text-foreground">{digest.overallMarketSentiment}</p>
               </CardContent>
             </Card>
 
@@ -88,7 +88,7 @@ export function MarketLensSection() {
                   <CardHeader>
                     <div className="flex items-start mb-2">
                       <TrendIcon sentiment={item.sentiment} trendIcon={item.trendIcon} />
-                      <CardTitle className="text-lg font-headline leading-tight flex-grow">
+                      <CardTitle className="text-base sm:text-lg font-headline leading-tight flex-grow">
                         <Link href={item.originalUrl} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
                           {item.title}
                         </Link>
@@ -111,7 +111,7 @@ export function MarketLensSection() {
         )}
          {/* Placeholder for Watchlist Feature */}
         <div className="mt-12 p-6 rounded-lg border border-dashed border-border text-center">
-            <h3 className="font-headline text-xl font-semibold text-muted-foreground">My Watchlist</h3>
+            <h3 className="font-headline text-lg sm:text-xl font-semibold text-muted-foreground">My Watchlist</h3>
             <p className="text-sm text-muted-foreground mt-2">
                 Select your favorite sectors or stocks to get a personalized feed. (Feature coming soon!)
             </p>

@@ -38,7 +38,7 @@ const CardTitle = React.forwardRef<
   <h2 // Changed from 'p'
     ref={ref}
     className={cn(
-      "text-2xl font-semibold leading-none tracking-tight",
+      "text-xl sm:text-2xl font-semibold leading-none tracking-tight", // Responsive font size
       className
     )}
     {...props}

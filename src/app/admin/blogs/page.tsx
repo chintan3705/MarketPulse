@@ -14,7 +14,7 @@ export default async function AdminBlogsPage() {
   return (
     <div className="animate-slide-in" style={{animationDelay: '0.1s', animationFillMode: 'backwards'}}>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold font-headline">Manage Blogs</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold font-headline">Manage Blogs</h1>
         <GenerateBlogDialog />
       </div>
 

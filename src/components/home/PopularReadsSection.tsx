@@ -16,7 +16,7 @@ export function PopularReadsSection() {
       <div className="container">
         <div className="flex items-center gap-2 mb-6">
           <Star className="h-6 w-6 text-primary" />
-          <h2 className="font-headline text-2xl md:text-3xl font-bold">Popular Reads</h2>
+          <h2 className="font-headline text-2xl sm:text-3xl font-bold">Popular Reads</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {popularPosts.map(post => (
@@ -27,5 +27,3 @@ export function PopularReadsSection() {
     </section>
   );
 }
-
-    

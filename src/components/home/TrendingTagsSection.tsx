@@ -27,7 +27,7 @@ export function TrendingTagsSection() {
       <div className="container">
         <div className="flex items-center gap-2 mb-6">
           <Flame className="h-6 w-6 text-primary" />
-          <h2 className="font-headline text-2xl md:text-3xl font-bold">Trending Tags</h2>
+          <h2 className="font-headline text-2xl sm:text-3xl font-bold">Trending Tags</h2>
         </div>
         <div className="flex flex-wrap gap-3">
           {trendingTags.map(tag => (
@@ -45,5 +45,3 @@ export function TrendingTagsSection() {
     </section>
   );
 }
-
-    

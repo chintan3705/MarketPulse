@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 const SectionTitle = ({ title, icon: Icon }: { title: string; icon?: React.ElementType; }) => (
   <div className="flex items-center gap-2 mb-6">
     {Icon && <Icon className="h-7 w-7 text-primary" />}
-    <h1 className="font-headline text-3xl font-bold">{title}</h1>
+    <h1 className="font-headline text-2xl sm:text-3xl font-bold">{title}</h1>
   </div>
 );
 

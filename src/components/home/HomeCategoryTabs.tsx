@@ -15,7 +15,7 @@ export function HomeCategoryTabs() {
       <div className="container">
         <div className="flex items-center gap-2 mb-6">
           <Tag className="h-6 w-6 text-primary" />
-          <h2 className="font-headline text-2xl md:text-3xl font-bold">Browse by Category</h2>
+          <h2 className="font-headline text-xl sm:text-2xl md:text-3xl font-bold">Browse by Category</h2>
         </div>
         <ScrollArea className="whitespace-nowrap rounded-md">
           <div className="flex space-x-3 pb-3">
@@ -33,5 +33,3 @@ export function HomeCategoryTabs() {
     </section>
   );
 }
-
-    

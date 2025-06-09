@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Newspaper, Users, BarChart3 } from "lucide-react";
 
@@ -5,7 +6,7 @@ export default function AdminDashboardPage() {
   return (
     <div className="animate-slide-in" style={{animationDelay: '0.1s', animationFillMode: 'backwards'}}>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold font-headline">Admin Dashboard</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold font-headline">Admin Dashboard</h1>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -50,7 +51,7 @@ export default function AdminDashboardPage() {
       <div className="mt-8">
         <Card>
           <CardHeader>
-            <CardTitle className="font-headline">Recent Activity</CardTitle>
+            <CardTitle className="font-headline text-xl sm:text-2xl">Recent Activity</CardTitle>
             <CardDescription>Overview of recent actions and updates.</CardDescription>
           </CardHeader>
           <CardContent>
