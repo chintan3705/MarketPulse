@@ -11,9 +11,9 @@ export default {
     container: {
       center: true,
       padding: {
-        DEFAULT: "1rem", // Default for mobile
-        sm: "1.5rem", // Small screens and up
-        lg: "2rem", // Large screens and up
+        DEFAULT: "1rem",
+        sm: "1.5rem",
+        lg: "2rem",
       },
       screens: {
         "2xl": "1400px",
@@ -21,8 +21,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        body: ["Inter", "sans-serif"],
-        headline: ["Space Grotesk", "sans-serif"],
+        body: ["var(--font-inter)", "sans-serif"],
+        headline: ["var(--font-space-grotesk)", "sans-serif"],
         code: ["monospace"],
       },
       colors: {
@@ -102,7 +102,7 @@ export default {
           },
         },
         "slide-in": {
-          /* Enhanced slide-in animation */ from: {
+          from: {
             transform: "translateY(30px)",
             opacity: "0",
           },
@@ -112,8 +112,7 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "slide-in":
-          "slide-in 0.6s ease-out forwards" /* Enhanced slide-in animation */,
+        "slide-in": "slide-in 0.6s ease-out forwards",
       },
     },
   },

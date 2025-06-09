@@ -1,11 +1,24 @@
 import type { Metadata } from "next";
+import { Inter, Space_Grotesk } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
-import { SmoothScroller } from "@/components/common/SmoothScroller"; // Import SmoothScroller
+import { SmoothScroller } from "@/components/common/SmoothScroller";
 import "./globals.css";
 
-// Define a base URL for your site. Replace with your actual domain.
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.marketpulse.example.com";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["500", "700"],
+  display: "swap",
+  variable: "--font-space-grotesk",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -82,22 +95,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${inter.variable} ${spaceGrotesk.variable} dark`}
+      suppressHydrationWarning
+    >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap"
-          rel="stylesheet"
-        />
+        {/* Removed direct Google Font links, next/font handles this */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
