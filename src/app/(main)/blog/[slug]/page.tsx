@@ -1,12 +1,14 @@
 
-import { latestBlogPosts } from '@/lib/data';
+import { latestBlogPosts, categories } from '@/lib/data';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, UserCircle, ArrowLeft, Headphones } from 'lucide-react'; // Added Headphones
+import { CalendarDays, UserCircle, ArrowLeft, Headphones, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { notFound } from 'next/navigation';
 import type { Metadata, ResolvingMetadata } from 'next';
+import { generateBlogPost } from '@/ai/flows/generate-blog-post-flow';
+import type { BlogPost } from '@/types';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.marketpulse.example.com';
 
@@ -16,12 +18,47 @@ interface BlogPostPageProps {
   };
 }
 
+async function getPostData(slug: string): Promise<BlogPost | null> {
+  let post = latestBlogPosts.find((p) => p.slug === slug);
+
+  if (!post) {
+    try {
+      console.log(`Static post for slug "${slug}" not found, attempting AI generation.`);
+      const generatedPostData = await generateBlogPost({ topic: slug.replace(/-/g, ' ') }); // Use de-slugified topic
+      
+      const chosenCategory = categories.find(c => c.slug === generatedPostData.categorySlug) || categories[0];
+      if (!chosenCategory) {
+        console.error(`Category not found for slug: ${generatedPostData.categorySlug}. Defaulting might occur.`);
+      }
+
+      post = {
+        id: `ai-generated-${slug}`, // Use slug as part of a unique ID
+        slug: slug,
+        title: generatedPostData.title,
+        summary: generatedPostData.summary,
+        content: generatedPostData.content,
+        category: chosenCategory || { id: 'unknown', name: 'General', slug: 'general' }, // Fallback category
+        author: 'MarketPulse AI',
+        publishedAt: new Date().toISOString(),
+        tags: generatedPostData.tags,
+        isAiGenerated: true,
+        imageUrl: `https://placehold.co/800x450.png`, // Placeholder image for AI posts
+        imageAiHint: generatedPostData.tags.length > 0 ? generatedPostData.tags.slice(0,2).join(' ') : "financial news",
+      };
+    } catch (error) {
+      console.error(`Error generating blog post for slug "${slug}" on detail page:`, error);
+      return null; // Post cannot be found or generated
+    }
+  }
+  return post;
+}
+
 export async function generateMetadata(
   { params }: BlogPostPageProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const slug = params.slug;
-  const post = latestBlogPosts.find((p) => p.slug === slug);
+  const post = await getPostData(slug);
 
   if (!post) {
     return {
@@ -31,7 +68,6 @@ export async function generateMetadata(
 
   const previousImages = (await parent).openGraph?.images || [];
   const postImage = post.imageUrl ? [{ url: post.imageUrl, alt: post.title, width: 800, height: 450 }] : previousImages;
-
 
   return {
     title: post.title,
@@ -60,9 +96,11 @@ export async function generateMetadata(
   };
 }
 
-export const revalidate = 86400;
+// Revalidate static posts every 24 hours, AI generated posts will be dynamic
+export const revalidate = 86400; 
 
 export async function generateStaticParams() {
+  // Only generate static params for posts in latestBlogPosts
   return latestBlogPosts.map((post) => ({
     slug: post.slug,
   }));
@@ -70,7 +108,7 @@ export async function generateStaticParams() {
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = params;
-  const post = latestBlogPosts.find((p) => p.slug === slug);
+  const post = await getPostData(slug);
 
   if (!post) {
     notFound();
@@ -106,7 +144,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <h1 className="font-headline text-3xl md:text-4xl font-bold mb-3 leading-tight">{post.title}</h1>
           <div className="flex flex-wrap items-center text-sm text-muted-foreground gap-x-4 gap-y-1">
             <div className="flex items-center gap-1">
-              <UserCircle size={14} />
+              {post.isAiGenerated ? <Bot size={14} className="text-primary" /> : <UserCircle size={14} />}
               <span>{post.author}</span>
             </div>
             <div className="flex items-center gap-1">
@@ -132,7 +170,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {post.content ? (
           <div
-            className="prose prose-lg dark:prose-invert max-w-none" // prose-invert handles dark mode text within prose
+            className="prose prose-lg dark:prose-invert max-w-none"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
         ) : (

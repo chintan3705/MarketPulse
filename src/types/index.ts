@@ -1,3 +1,4 @@
+
 export interface NavItem {
   label: string;
   href: string;
@@ -22,6 +23,7 @@ export interface BlogPost {
   publishedAt: string; // ISO date string
   tags: string[];
   content?: string; // Full content for blog post page
+  isAiGenerated?: boolean; // To distinguish AI-generated posts
 }
 
 export interface TrendingHeadline {
