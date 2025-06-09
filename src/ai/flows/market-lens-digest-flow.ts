@@ -35,7 +35,7 @@ const DigestedHeadlineSchema = z.object({
   publishedAt: z.string(),
   sentiment: z.enum(['Bullish', 'Bearish', 'Neutral']).describe('Sentiment derived from the headline.'),
   trendIcon: z.enum(['up', 'down']).optional().describe('Visual cue for the trend, if applicable.'),
-  originalUrl: z.string().url(),
+  originalUrl: z.string(), // Changed from z.string().url()
 });
 
 const MarketLensDigestOutputSchema = z.object({
@@ -68,6 +68,7 @@ Headlines to process:
 
 Respond strictly in the JSON format defined by the output schema.
 The digestedHeadlines array should contain one object for each input headline.
+The originalUrl, source, and publishedAt fields for each digested headline will be populated later; you do not need to generate them, but the schema requires them.
 `,
 });
 
@@ -102,3 +103,4 @@ const getMarketLensDigestFlow = ai.defineFlow(
     };
   }
 );
+
