@@ -10,18 +10,18 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { generateBlogPost, type GenerateBlogPostOutput } from './generate-blog-post-flow';
+import * as SinglePostFlow from './generate-blog-post-flow'; // Changed to namespace import
 import { categories } from '@/lib/data';
 import type { BlogPost } from '@/types';
 
 const GenerateMultipleBlogPostsInputSchema = z.object({
-  count: z.number().min(1).max(3).describe('The number of blog posts to generate (max 3 due to performance).'), // Reduced max for performance
+  count: z.number().min(1).max(2).describe('The number of blog posts to generate (max 2 due to performance with images).'), // Reduced max for performance
   topics: z.array(z.string()).optional().describe('Optional list of specific topics. If not provided, diverse financial topics will be chosen.'),
 });
 export type GenerateMultipleBlogPostsInput = z.infer<typeof GenerateMultipleBlogPostsInputSchema>;
 
 // Internal flow output - matches GenerateBlogPostOutput for each item
-const FlowOutputSchema = z.array(GenerateBlogPostOutputSchema);
+const FlowOutputSchema = z.array(SinglePostFlow.GenerateBlogPostOutputSchema); // Use namespaced schema
 
 export async function generateMultipleBlogPosts(
   input: GenerateMultipleBlogPostsInput
@@ -56,7 +56,7 @@ const generateMultipleBlogPostsFlow = ai.defineFlow(
   },
   async (input) => {
     const { count, topics } = input;
-    const generatedPosts: GenerateBlogPostOutput[] = [];
+    const generatedPosts: SinglePostFlow.GenerateBlogPostOutput[] = []; // Use namespaced type
 
     const topicsToGenerate = topics && topics.length > 0 
       ? topics.slice(0, count) 
@@ -66,7 +66,7 @@ const generateMultipleBlogPostsFlow = ai.defineFlow(
       try {
         const topic = topicsToGenerate[i] || `a diverse financial news topic suitable for a blog (e.g., stock market analysis, IPO news, economic trends) - variation ${i+1}`;
         // generateBlogPost now returns title, summary, content, categorySlug, tags, AND imageUrl, imageAiHint
-        const singlePostOutput: GenerateBlogPostOutput = await generateBlogPost({ topic });
+        const singlePostOutput: SinglePostFlow.GenerateBlogPostOutput = await SinglePostFlow.generateBlogPost({ topic }); // Use namespaced function
         
         generatedPosts.push(singlePostOutput);
 
