@@ -7,7 +7,6 @@
  * - generateBlogPost - A function that handles the blog post generation with image.
  * - type GenerateBlogPostInput - The input type for the generateBlogPost function.
  * - type GenerateBlogPostOutput - The return type for the generateBlogPost function.
- * - GenerateBlogPostOutputSchema - Zod schema for the output.
  */
 
 import { ai } from "@/ai/genkit";
@@ -15,12 +14,13 @@ import { categories } from "@/lib/data";
 import {
   GenerateBlogPostInputSchema,
   type GenerateBlogPostInput,
-  GenerateBlogPostOutputSchema, // Exporting the schema
+  GenerateBlogPostOutputSchema, // This schema is used internally by the flow
   type GenerateBlogPostOutput,
 } from "../schemas/blog-post-schemas";
 
-export { GenerateBlogPostOutputSchema }; // Explicitly export the schema
-export type { GenerateBlogPostInput, GenerateBlogPostOutput }; // Re-export types
+// Do not re-export the schema object from a 'use server' file.
+// Types can be re-exported.
+export type { GenerateBlogPostInput, GenerateBlogPostOutput };
 
 export async function generateBlogPost(
   input: GenerateBlogPostInput,
@@ -99,8 +99,10 @@ const generateBlogPostFlow = ai.defineFlow(
       (cat) => cat.slug === textOutput.categorySlug,
     );
     if (!isValidCategory && categories.length > 0) {
+      console.warn(`[generateBlogPostFlow] AI generated an invalid category slug: ${textOutput.categorySlug}. Defaulting to ${categories[0].slug}.`);
       textOutput.categorySlug = categories[0].slug; // Default to first category if AI hallucinates
     } else if (categories.length === 0) {
+      console.warn(`[generateBlogPostFlow] No categories defined. Defaulting categorySlug to "general".`);
       textOutput.categorySlug = "general"; // Fallback if no categories defined
     }
 
@@ -121,11 +123,14 @@ const generateBlogPostFlow = ai.defineFlow(
         `[generateBlogPostFlow] Attempting to generate image with prompt (first 100 chars): ${imagePromptText.substring(0, 100)}...`,
       );
 
+      // TODO: Check if GOOGLE_API_KEY is actually available to the Genkit instance.
+      // This often requires the key to be present in the environment where Genkit runs.
+
       const { media } = await ai.generate({
         model: "googleai/gemini-2.0-flash-exp",
         prompt: imagePromptText,
         config: {
-          responseModalities: ["IMAGE", "TEXT"],
+          responseModalities: ["IMAGE", "TEXT"], // Ensure TEXT is included
         },
       });
 
@@ -152,6 +157,10 @@ const generateBlogPostFlow = ai.defineFlow(
         "[generateBlogPostFlow] Error during image generation:",
         imageGenError,
       );
+      // Check if it's an API key related error (this is a common pattern for Google AI)
+      if (imageGenError instanceof Error && (imageGenError.message.toLowerCase().includes("api key not valid") || imageGenError.message.toLowerCase().includes("permission denied"))) {
+          console.error("[generateBlogPostFlow] Potentially an API key issue or Gemini API not enabled for project. Please check GOOGLE_API_KEY and API enablement in Google Cloud Console.");
+      }
       console.warn(
         "[generateBlogPostFlow] Falling back to a default placeholder image due to error.",
       );
