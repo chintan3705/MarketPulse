@@ -9,6 +9,7 @@ import { trendingHeadlines as mockHeadlines } from '@/lib/data'; // Using mock d
 import { TrendingUp, TrendingDown, MinusCircle, ExternalLink, Loader2, AlertTriangle, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '../ui/button';
+import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton component
 
 const TrendIcon = ({ sentiment, trendIcon }: { sentiment: string, trendIcon?: 'up' | 'down' }) => {
   if (trendIcon === 'up' || sentiment === 'Bullish') {
@@ -53,9 +54,44 @@ export function MarketLensSection() {
         </div>
 
         {isLoading && (
-          <div className="flex items-center justify-center p-8">
-            <Loader2 className="h-12 w-12 animate-spin text-primary" />
-            <p className="ml-3 text-lg text-muted-foreground">Loading insights...</p>
+          <div className="space-y-6">
+            <Card className="glass-card">
+              <CardHeader>
+                <CardTitle className="text-lg sm:text-xl text-primary">
+                  <Skeleton className="h-6 w-3/4" />
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-5/6" />
+              </CardContent>
+            </Card>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map((item) => (
+                <Card key={item} className="glass-card flex flex-col">
+                  <CardHeader>
+                    <div className="flex items-start mb-2">
+                      <Skeleton className="h-5 w-5 mr-2 rounded-full" /> {/* TrendIcon skeleton */}
+                      <div className="flex-grow space-y-1.5">
+                        <Skeleton className="h-4 w-full" /> {/* Title skeleton line 1 */}
+                        <Skeleton className="h-4 w-4/5" /> {/* Title skeleton line 2 */}
+                      </div>
+                      <Skeleton className="h-4 w-4 ml-2 flex-shrink-0" /> {/* ExternalLink skeleton */}
+                    </div>
+                     <div className="space-y-1 text-xs">
+                        <Skeleton className="h-3 w-1/2" /> {/* Source skeleton */}
+                        <Skeleton className="h-3 w-1/3" /> {/* Date skeleton */}
+                     </div>
+                  </CardHeader>
+                  <CardContent className="flex-grow space-y-2">
+                    <Skeleton className="h-3 w-full" /> {/* Summary skeleton line 1 */}
+                    <Skeleton className="h-3 w-full" /> {/* Summary skeleton line 2 */}
+                    <Skeleton className="h-3 w-3/4" /> {/* Summary skeleton line 3 */}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
         )}
 
@@ -121,3 +157,4 @@ export function MarketLensSection() {
     </section>
   );
 }
+
