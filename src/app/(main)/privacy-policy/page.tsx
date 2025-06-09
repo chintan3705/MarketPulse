@@ -1,18 +1,37 @@
+
 import type { Metadata } from "next";
 import { ShieldCheck } from "lucide-react";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
 export const metadata: Metadata = {
   title: "Privacy Policy | MarketPulse",
   description:
     "Read the MarketPulse Privacy Policy to understand how we collect, use, and protect your personal data when you use our financial news service.",
   alternates: {
-    canonical: "/privacy-policy",
+    canonical: `${SITE_URL}/privacy-policy`,
   },
   openGraph: {
     title: "Privacy Policy | MarketPulse",
     description:
       "Understand how MarketPulse collects, uses, and protects your personal data.",
-    url: "/privacy-policy",
+    url: `${SITE_URL}/privacy-policy`,
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "MarketPulse Privacy Policy",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Privacy Policy | MarketPulse",
+    description:
+      "Understand how MarketPulse collects, uses, and protects your personal data.",
+    images: [`${SITE_URL}/twitter-image.png`],
   },
 };
 
@@ -30,11 +49,17 @@ const SectionTitle = ({
 );
 
 export default function PrivacyPolicyPage() {
-  const lastUpdatedDate = new Date().toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const [lastUpdatedDate, setLastUpdatedDate] = React.useState("");
+
+  React.useEffect(() => {
+    setLastUpdatedDate(
+      new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
+    );
+  }, []);
 
   return (
     <div
@@ -44,7 +69,7 @@ export default function PrivacyPolicyPage() {
       <SectionTitle title="Privacy Policy" icon={ShieldCheck} />
       <div className="prose prose-sm dark:prose-invert max-w-none space-y-4">
         <p>
-          <strong>Last Updated:</strong> {lastUpdatedDate}
+          <strong>Last Updated:</strong> {lastUpdatedDate || "Loading..."}
         </p>
 
         <p>
@@ -124,10 +149,9 @@ export default function PrivacyPolicyPage() {
           laws may differ from those from your jurisdiction.
         </p>
         <p>
-          If you are located outside [Your Country/Region - e.g., India] and
-          choose to provide information to us, please note that we transfer the
-          data, including Personal Data, to [Your Country/Region] and process it
-          there.
+          If you are located outside India and choose to provide information to
+          us, please note that we transfer the data, including Personal Data, to
+          India and process it there.
         </p>
         <p>
           Your consent to this Privacy Policy followed by your submission of

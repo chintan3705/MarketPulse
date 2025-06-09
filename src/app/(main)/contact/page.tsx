@@ -1,19 +1,38 @@
+
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Mail } from "lucide-react";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
 export const metadata: Metadata = {
   title: "Contact MarketPulse",
   description:
     "Get in touch with MarketPulse for inquiries, feedback, or news tips. Find our contact email addresses for general, editorial, and advertising queries.",
   alternates: {
-    canonical: "/contact",
+    canonical: `${SITE_URL}/contact`,
   },
   openGraph: {
     title: "Contact MarketPulse",
     description:
       "Get in touch with MarketPulse for inquiries, feedback, or news tips.",
-    url: "/contact",
+    url: `${SITE_URL}/contact`,
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "Contact MarketPulse",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact MarketPulse",
+    description:
+      "Get in touch with MarketPulse for inquiries, feedback, or news tips.",
+    images: [`${SITE_URL}/twitter-image.png`],
   },
 };
 

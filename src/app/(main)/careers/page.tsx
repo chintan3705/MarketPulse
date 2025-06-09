@@ -1,18 +1,37 @@
+
 import type { Metadata } from "next";
 import { Briefcase } from "lucide-react";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
 export const metadata: Metadata = {
   title: "Careers at MarketPulse",
   description:
     "Join the MarketPulse team! Explore career opportunities in financial journalism, analysis, technology, and design. Help us shape the future of financial news.",
   alternates: {
-    canonical: "/careers",
+    canonical: `${SITE_URL}/careers`,
   },
   openGraph: {
     title: "Careers at MarketPulse",
     description:
       "Explore career opportunities at MarketPulse and help us shape the future of financial news.",
-    url: "/careers",
+    url: `${SITE_URL}/careers`,
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "Careers at MarketPulse",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Careers at MarketPulse",
+    description:
+      "Explore career opportunities at MarketPulse and help us shape the future of financial news.",
+    images: [`${SITE_URL}/twitter-image.png`],
   },
 };
 

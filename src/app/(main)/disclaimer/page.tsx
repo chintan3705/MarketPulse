@@ -1,18 +1,37 @@
+
 import type { Metadata } from "next";
 import { AlertTriangle } from "lucide-react";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
 export const metadata: Metadata = {
   title: "Disclaimer | MarketPulse",
   description:
     "Important disclaimer for MarketPulse. Information provided is for general purposes only and not financial advice. Understand investment risks and the nature of AI-generated content.",
   alternates: {
-    canonical: "/disclaimer",
+    canonical: `${SITE_URL}/disclaimer`,
   },
   openGraph: {
     title: "Disclaimer | MarketPulse",
     description:
       "Information provided is for general purposes only and not financial advice. Understand investment risks and the nature of AI-generated content.",
-    url: "/disclaimer",
+    url: `${SITE_URL}/disclaimer`,
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "MarketPulse Disclaimer",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Disclaimer | MarketPulse",
+    description:
+      "Information provided is for general purposes only and not financial advice. Understand investment risks and the nature of AI-generated content.",
+    images: [`${SITE_URL}/twitter-image.png`],
   },
 };
 

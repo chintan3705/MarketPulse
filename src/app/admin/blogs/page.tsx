@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,14 +29,13 @@ async function fetchAdminPosts(): Promise<BlogPost[]> {
   try {
     const res = await fetch(`${SITE_URL}/api/posts`, { cache: "no-store" });
     if (!res.ok) {
+      const errorText = await res.text();
       console.error(
-        "Admin: Failed to fetch posts:",
-        res.status,
-        await res.text(),
+        `Admin: Failed to fetch posts: ${res.status} ${errorText}`,
       );
       return [];
     }
-    const data = (await res.json()) as { posts: BlogPost[] }; // Ensure posts is properly typed
+    const data = (await res.json()) as { posts: BlogPost[] };
     return data.posts || [];
   } catch (error) {
     console.error("Admin: Error fetching posts from API:", error);
@@ -63,8 +63,7 @@ export default async function AdminBlogsPage() {
           <CardTitle>Blog Posts from Database</CardTitle>
           <CardDescription>
             A list of all blog posts fetched from the database. Editing and
-            Deleting are placeholders and not functional. Use &quot;Generate
-            &amp; Save Blog&quot; to create new content.
+            Deleting are placeholders. Use &quot;Generate &amp; Save Blog&quot; to create new content.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -80,7 +79,7 @@ export default async function AdminBlogsPage() {
             </TableHeader>
             <TableBody>
               {posts.map((post) => (
-                <TableRow key={post._id || post.id}>
+                <TableRow key={post._id || post.slug}>
                   <TableCell className="font-medium">
                     <Link
                       href={`/blog/${post.slug}`}
@@ -93,8 +92,9 @@ export default async function AdminBlogsPage() {
                     </Link>
                   </TableCell>
                   <TableCell>
-                    {/* API ensures categoryName is present if category.name isn't directly on post */}
-                    <Badge variant="outline">{post.categoryName}</Badge>
+                    <Badge variant="outline">
+                      {post.categoryName || post.category?.name || "N/A"}
+                    </Badge>
                   </TableCell>
                   <TableCell>{post.author}</TableCell>
                   <TableCell>

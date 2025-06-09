@@ -1,8 +1,9 @@
+
 import Link from "next/link";
 import Image from "next/image";
 import type { BlogPost } from "@/types";
 import { Badge } from "@/components/ui/badge";
-import { CalendarDays, UserCircle } from "lucide-react";
+import { CalendarDays, UserCircle, Bot } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -16,12 +17,14 @@ interface BlogPostCardProps {
   post: BlogPost;
   className?: string;
   orientation?: "vertical" | "horizontal";
+  priority?: boolean; // For LCP image optimization
 }
 
 export function BlogPostCard({
   post,
   className,
   orientation = "vertical",
+  priority = false,
 }: BlogPostCardProps) {
   const formattedDate: string = new Date(post.publishedAt).toLocaleDateString(
     "en-US",
@@ -56,10 +59,11 @@ export function BlogPostCard({
           <Link href={`/blog/${post.slug}`} aria-label={post.title}>
             <Image
               src={post.imageUrl}
-              alt={post.title}
+              alt={post.title} // Use post title for alt text
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover group-hover:scale-105 transition-transform duration-300"
+              priority={priority}
               data-ai-hint={post.imageAiHint || "financial news"}
             />
           </Link>
@@ -67,11 +71,15 @@ export function BlogPostCard({
       )}
       <div
         className={cn("flex flex-col flex-grow", {
-          "p-0": orientation === "horizontal",
+          "p-0": orientation === "horizontal", // No padding for horizontal card wrapper div
+          "p-4 md:p-6": orientation === "vertical", // Padding for vertical card content area
         })}
       >
         <CardHeader
-          className={cn({ "p-4 md:p-6": orientation === "horizontal" })}
+          className={cn("pb-2", {
+            "p-4 md:p-6 pb-2": orientation === "horizontal", // Specific padding for horizontal header
+            "p-0": orientation === "vertical", // No extra padding for vertical header, handled by parent
+          })}
         >
           <Link href={`/category/${post.category.slug}`}>
             <Badge
@@ -91,8 +99,9 @@ export function BlogPostCard({
           </CardTitle>
         </CardHeader>
         <CardContent
-          className={cn("flex-grow", {
-            "p-4 md:p-6 pt-0": orientation === "horizontal",
+          className={cn("flex-grow pt-0 pb-2", {
+            "p-4 md:p-6 pt-0 pb-2": orientation === "horizontal",
+            "p-0 pt-2": orientation === "vertical",
           })}
         >
           <p className="text-sm text-muted-foreground line-clamp-3">
@@ -101,12 +110,19 @@ export function BlogPostCard({
         </CardContent>
         <CardFooter
           className={cn(
-            "flex flex-wrap items-center justify-between text-xs text-muted-foreground gap-2",
-            { "p-4 md:p-6 pt-0": orientation === "horizontal" },
+            "flex flex-wrap items-center justify-between text-xs text-muted-foreground gap-2 pt-0",
+            {
+              "p-4 md:p-6 pt-0": orientation === "horizontal",
+              "p-0 pt-2": orientation === "vertical",
+            },
           )}
         >
           <div className="flex items-center gap-1">
-            <UserCircle size={14} />
+            {post.isAiGenerated ? (
+              <Bot size={14} className="text-primary" />
+            ) : (
+              <UserCircle size={14} />
+            )}
             <span>{post.author}</span>
           </div>
           <div className="flex items-center gap-1">
@@ -115,7 +131,11 @@ export function BlogPostCard({
           </div>
         </CardFooter>
         {post.tags && post.tags.length > 0 && orientation === "vertical" && (
-          <div className="px-6 pb-4 pt-0">
+          <div
+            className={cn("pt-2", {
+              "px-0": orientation === "vertical", // No extra padding if parent already has it
+            })}
+          >
             <div className="flex flex-wrap gap-2">
               {post.tags.slice(0, 3).map((tag) => (
                 <Link key={tag} href={`/tags/${createTagSlug(tag)}`}>

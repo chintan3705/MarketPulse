@@ -1,11 +1,10 @@
+
 import type { Metadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { Newspaper } from "lucide-react";
-import type { BlogPost } from "@/types"; // Ensure BlogPost type is available
+import type { BlogPost } from "@/types";
 import { unstable_noStore as noStore } from "next/cache";
 
-// NOTE: The SITE_URL should be configured in your environment variables.
-// For this example, using a placeholder.
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
 export const metadata: Metadata = {
@@ -13,13 +12,29 @@ export const metadata: Metadata = {
   description:
     "Get the latest financial news, stock market updates, and expert analysis from MarketPulse. Your source for timely share market insights.",
   alternates: {
-    canonical: "/news",
+    canonical: `${SITE_URL}/news`,
   },
   openGraph: {
     title: "Latest Financial News & Market Updates | MarketPulse",
     description:
       "Get the latest financial news, stock market updates, and expert analysis from MarketPulse.",
-    url: "/news",
+    url: `${SITE_URL}/news`,
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "MarketPulse Latest News",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Latest Financial News & Market Updates | MarketPulse",
+    description:
+      "Get the latest financial news, stock market updates, and expert analysis from MarketPulse.",
+    images: [`${SITE_URL}/twitter-image.png`],
   },
 };
 
@@ -42,11 +57,15 @@ const SectionTitle = ({
 );
 
 async function fetchPosts(): Promise<BlogPost[]> {
-  noStore(); // Opt out of caching for this fetch
+  noStore();
   try {
-    const res = await fetch(`${SITE_URL}/api/posts`, { cache: "no-store" });
+    const res = await fetch(`${SITE_URL}/api/posts?limit=12`, {
+      cache: "no-store",
+    }); // Fetch recent 12 posts
     if (!res.ok) {
-      console.error("Failed to fetch posts:", res.status, await res.text());
+      console.error(
+        `Failed to fetch posts: ${res.status} ${await res.text()}`,
+      );
       return [];
     }
     const data = (await res.json()) as { posts: BlogPost[] };
@@ -58,7 +77,7 @@ async function fetchPosts(): Promise<BlogPost[]> {
 }
 
 export default async function NewsPage() {
-  const allPosts: BlogPost[] = await fetchPosts();
+  const recentPosts: BlogPost[] = await fetchPosts();
 
   return (
     <div className="container py-8 md:py-12">
@@ -68,11 +87,11 @@ export default async function NewsPage() {
         description="Browse our collection of financial news, stock market updates, and expert analysis from our database."
       />
 
-      {allPosts.length > 0 ? (
+      {recentPosts.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {allPosts.map((post) => (
+          {recentPosts.map((post, index) => (
             <BlogPostCard
-              key={post._id || post.id}
+              key={post._id || post.id || index}
               post={post}
               orientation="vertical"
             />

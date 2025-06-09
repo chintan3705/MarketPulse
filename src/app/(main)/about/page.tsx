@@ -1,18 +1,37 @@
+
 import type { Metadata } from "next";
 import { Info } from "lucide-react";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
 export const metadata: Metadata = {
   title: "About MarketPulse",
   description:
     "Learn more about MarketPulse, our mission, and our dedication to providing timely financial insights and stock analysis to empower investors.",
   alternates: {
-    canonical: "/about",
+    canonical: `${SITE_URL}/about`,
   },
   openGraph: {
     title: "About MarketPulse",
     description:
       "Learn more about MarketPulse, our mission, and our dedication to providing timely financial insights.",
-    url: "/about",
+    url: `${SITE_URL}/about`,
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`, // Replace with your actual OG image URL
+        width: 1200,
+        height: 630,
+        alt: "MarketPulse - About Us",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About MarketPulse",
+    description:
+      "Learn more about MarketPulse, our mission, and our dedication to providing timely financial insights.",
+    images: [`${SITE_URL}/twitter-image.png`], // Replace with your actual Twitter image URL
   },
 };
 

@@ -1,18 +1,37 @@
+
 import type { Metadata } from "next";
 import { Megaphone } from "lucide-react";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
 export const metadata: Metadata = {
   title: "Advertise With MarketPulse",
   description:
     "Reach a highly engaged audience of investors and financial enthusiasts by advertising with MarketPulse. Explore our advertising solutions.",
   alternates: {
-    canonical: "/advertise",
+    canonical: `${SITE_URL}/advertise`,
   },
   openGraph: {
     title: "Advertise With MarketPulse",
     description:
       "Reach a highly engaged audience of investors and financial enthusiasts by advertising with MarketPulse.",
-    url: "/advertise",
+    url: `${SITE_URL}/advertise`,
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "Advertise With MarketPulse",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Advertise With MarketPulse",
+    description:
+      "Reach a highly engaged audience of investors and financial enthusiasts by advertising with MarketPulse.",
+    images: [`${SITE_URL}/twitter-image.png`],
   },
 };
 
@@ -47,7 +66,7 @@ export default function AdvertisePage() {
         </p>
         <ul className="list-disc list-inside">
           <li>Banner Ads (various sizes and placements)</li>
-          <li>Sponsored Content & Articles</li>
+          <li>Sponsored Content &amp; Articles</li>
           <li>Newsletter Sponsorships</li>
           <li>Custom Campaigns</li>
         </ul>

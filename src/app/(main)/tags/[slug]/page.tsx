@@ -1,7 +1,7 @@
+
 import type { Metadata, ResolvingMetadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { Tag } from "lucide-react";
-// import { notFound } from "next/navigation"; // notFound might not be needed if we show "no posts"
 import type { BlogPost } from "@/types";
 import { unstable_noStore as noStore } from "next/cache";
 
@@ -9,22 +9,19 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
 interface TagPageProps {
   params: {
-    slug: string; // e.g., "stock-market"
+    slug: string;
   };
 }
 
 async function fetchPostsByTag(tagSlug: string): Promise<BlogPost[]> {
   noStore();
   try {
-    // The API needs to support fetching by tag slug
     const res = await fetch(`${SITE_URL}/api/posts?tagSlug=${tagSlug}`, {
       cache: "no-store",
     });
     if (!res.ok) {
       console.error(
-        `Failed to fetch posts for tag ${tagSlug}:`,
-        res.status,
-        await res.text(),
+        `Failed to fetch posts for tag ${tagSlug}: ${res.status} ${await res.text()}`,
       );
       return [];
     }
@@ -41,28 +38,37 @@ export async function generateMetadata(
   _parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const slug = params.slug;
-  const tagName = slug.replace(/-/g, " ");
+  const tagName = slug.replace(/-/g, " "); // Convert slug back to tag name for display
 
-  const title = `Articles tagged with "${tagName}"`;
+  const title = `Articles tagged with "${tagName}" | MarketPulse`;
   const description = `Explore all articles, news, and analysis tagged with "${tagName}" on MarketPulse. Stay informed about ${tagName}.`;
 
   return {
     title: title,
     description: description,
-    keywords: [tagName],
+    keywords: [tagName], // Use the actual tag name as a keyword
     alternates: {
-      canonical: `/tags/${slug}`,
+      canonical: `${SITE_URL}/tags/${slug}`,
     },
     openGraph: {
       title: title,
       description: description,
       url: `${SITE_URL}/tags/${slug}`,
       type: "website",
+      images: [
+        {
+          url: `${SITE_URL}/og-image.png`, // Generic OG for tag pages
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: title,
       description: description,
+      images: [`${SITE_URL}/twitter-image.png`], // Generic Twitter image
     },
   };
 }
@@ -83,17 +89,14 @@ const SectionTitle = ({
 );
 
 export async function generateStaticParams() {
-  return []; // All tag pages will be dynamically rendered
+  // Dynamically render tag pages as fetching all possible tags might be extensive
+  return [];
 }
 
 export default async function TagPage({ params }: TagPageProps) {
   const { slug } = params;
   const tagName = slug.replace(/-/g, " ");
   const postsWithTag = await fetchPostsByTag(slug);
-
-  // if (postsWithTag.length === 0) {
-  // notFound(); // Optionally call notFound if you prefer a 404 for tags with no posts
-  // }
 
   return (
     <div
@@ -103,9 +106,9 @@ export default async function TagPage({ params }: TagPageProps) {
       <SectionTitle title={tagName} icon={Tag} />
       {postsWithTag.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {postsWithTag.map((post) => (
+          {postsWithTag.map((post, index) => (
             <BlogPostCard
-              key={post._id || post.id}
+              key={post._id || post.id || index}
               post={post}
               orientation="vertical"
             />

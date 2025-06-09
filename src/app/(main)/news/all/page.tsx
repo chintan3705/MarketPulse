@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { Newspaper } from "lucide-react";
@@ -11,13 +12,29 @@ export const metadata: Metadata = {
   description:
     "Browse all news articles and in-depth analysis from MarketPulse. Stay updated with the latest financial insights and market trends.",
   alternates: {
-    canonical: "/news/all",
+    canonical: `${SITE_URL}/news/all`,
   },
   openGraph: {
     title: "All News & Analysis | MarketPulse",
     description:
       "Browse all news articles and in-depth analysis from MarketPulse.",
-    url: "/news/all",
+    url: `${SITE_URL}/news/all`,
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "All News from MarketPulse",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "All News & Analysis | MarketPulse",
+    description:
+      "Browse all news articles and in-depth analysis from MarketPulse.",
+    images: [`${SITE_URL}/twitter-image.png`],
   },
 };
 
@@ -37,9 +54,11 @@ const SectionTitle = ({
 async function fetchAllPosts(): Promise<BlogPost[]> {
   noStore();
   try {
-    const res = await fetch(`${SITE_URL}/api/posts`, { cache: "no-store" }); // Fetches all posts, no limit
+    const res = await fetch(`${SITE_URL}/api/posts`, { cache: "no-store" });
     if (!res.ok) {
-      console.error("Failed to fetch all posts:", res.status, await res.text());
+      console.error(
+        `Failed to fetch all posts: ${res.status} ${await res.text()}`,
+      );
       return [];
     }
     const data = (await res.json()) as { posts: BlogPost[] };
@@ -61,9 +80,9 @@ export default async function AllNewsPage() {
       <SectionTitle title="All News & Analysis" icon={Newspaper} />
       {allPosts.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {allPosts.map((post) => (
+          {allPosts.map((post, index) => (
             <BlogPostCard
-              key={post._id || post.id}
+              key={post._id || post.id || index}
               post={post}
               orientation="vertical"
             />

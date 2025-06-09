@@ -1,18 +1,37 @@
+
 import type { Metadata } from "next";
 import { Activity } from "lucide-react";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
 export const metadata: Metadata = {
   title: "Stock Market Overview & Trends",
   description:
     "Get a comprehensive overview of current stock market trends, data, and performance indicators. Insights into Nifty, Sensex, global markets, and commodities.",
   alternates: {
-    canonical: "/markets",
+    canonical: `${SITE_URL}/markets`,
   },
   openGraph: {
     title: "Stock Market Overview & Trends | MarketPulse",
     description:
       "Comprehensive overview of current stock market trends, data, and performance indicators.",
-    url: "/markets",
+    url: `${SITE_URL}/markets`,
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "Stock Market Overview by MarketPulse",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Stock Market Overview & Trends | MarketPulse",
+    description:
+      "Comprehensive overview of current stock market trends, data, and performance indicators.",
+    images: [`${SITE_URL}/twitter-image.png`],
   },
 };
 

@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { TrendingHeadlineCard } from "@/components/blog/TrendingHeadlineCard";
@@ -21,15 +22,30 @@ export const metadata: Metadata = {
   title: "MarketPulse – Your Daily Lens on the Share Market",
   description:
     "Get the latest share market news, stock analysis, IPO updates, and financial insights. MarketPulse helps you stay informed and invest wisely.",
+  alternates: {
+    canonical: SITE_URL,
+  },
   openGraph: {
     title: "MarketPulse – Your Daily Lens on the Share Market",
     description:
       "Get the latest share market news, stock analysis, IPO updates, and financial insights.",
+    url: SITE_URL,
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`, // Ensure this image exists in /public
+        width: 1200,
+        height: 630,
+        alt: "MarketPulse Homepage",
+      },
+    ],
   },
   twitter: {
+    card: "summary_large_image",
     title: "MarketPulse – Your Daily Lens on the Share Market",
     description:
       "Get the latest share market news, stock analysis, IPO updates, and financial insights.",
+    images: [`${SITE_URL}/twitter-image.png`], // Ensure this image exists in /public
   },
 };
 
@@ -60,17 +76,14 @@ const SectionTitle = ({
 );
 
 async function fetchHomePagePosts(): Promise<BlogPost[]> {
-  noStore(); // Opt out of caching for this fetch
+  noStore();
   try {
-    // Fetch a limited number of posts for the homepage, e.g., 6
     const res = await fetch(`${SITE_URL}/api/posts?limit=6`, {
       cache: "no-store",
     });
     if (!res.ok) {
       console.error(
-        "Failed to fetch homepage posts:",
-        res.status,
-        await res.text(),
+        `Failed to fetch homepage posts: ${res.status} ${await res.text()}`,
       );
       return [];
     }
@@ -126,6 +139,7 @@ export default async function HomePage() {
                   post={featuredPost}
                   orientation="vertical"
                   className="shadow-lg"
+                  priority={true} // Featured post is LCP candidate
                 />
               </section>
             )}
@@ -138,9 +152,9 @@ export default async function HomePage() {
                   viewAllLink="/news"
                 />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {otherPosts.map((post) => (
+                  {otherPosts.map((post, index) => (
                     <BlogPostCard
-                      key={post._id || post.id}
+                      key={post._id || post.id || index}
                       post={post}
                       orientation="vertical"
                     />
@@ -199,16 +213,14 @@ export default async function HomePage() {
           className="animate-slide-in"
           style={{ animationDelay: "0.5s", animationFillMode: "backwards" }}
         >
-          <TrendingTagsSection posts={latestBlogPosts} />{" "}
-          {/* Pass posts for dynamic tag generation */}
+          <TrendingTagsSection posts={latestBlogPosts} />
         </section>
 
         <section
           className="animate-slide-in"
           style={{ animationDelay: "0.7s", animationFillMode: "backwards" }}
         >
-          <PopularReadsSection posts={latestBlogPosts.slice(0, 3)} />{" "}
-          {/* Pass a slice for popular reads */}
+          <PopularReadsSection posts={latestBlogPosts.slice(0, 3)} />
         </section>
 
         {inlineAd1 && (
@@ -228,8 +240,11 @@ export default async function HomePage() {
               viewAllLink="/news/all"
             />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {moreNewsPosts.map((post) => (
-                <BlogPostCard key={post._id || post.id} post={post} />
+              {moreNewsPosts.map((post, index) => (
+                <BlogPostCard
+                  key={post._id || post.id || index}
+                  post={post}
+                />
               ))}
             </div>
           </section>

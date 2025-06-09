@@ -1,18 +1,38 @@
+
 import type { Metadata } from "next";
 import { FileText } from "lucide-react";
+import React from "react"; // Import React for useEffect and useState
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
 export const metadata: Metadata = {
   title: "Terms of Service | MarketPulse",
   description:
     "Read the MarketPulse Terms of Service. Understand the rules and guidelines for using our financial news and analysis platform.",
   alternates: {
-    canonical: "/terms-of-service",
+    canonical: `${SITE_URL}/terms-of-service`,
   },
   openGraph: {
     title: "Terms of Service | MarketPulse",
     description:
       "Understand the rules and guidelines for using the MarketPulse platform.",
-    url: "/terms-of-service",
+    url: `${SITE_URL}/terms-of-service`,
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "MarketPulse Terms of Service",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Terms of Service | MarketPulse",
+    description:
+      "Understand the rules and guidelines for using the MarketPulse platform.",
+    images: [`${SITE_URL}/twitter-image.png`],
   },
 };
 
@@ -30,11 +50,17 @@ const SectionTitle = ({
 );
 
 export default function TermsOfServicePage() {
-  const lastUpdatedDate = new Date().toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const [lastUpdatedDate, setLastUpdatedDate] = React.useState("");
+
+  React.useEffect(() => {
+    setLastUpdatedDate(
+      new Date().toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
+    );
+  }, []);
 
   return (
     <div
@@ -44,7 +70,7 @@ export default function TermsOfServicePage() {
       <SectionTitle title="Terms of Service" icon={FileText} />
       <div className="prose prose-sm dark:prose-invert max-w-none space-y-4">
         <p>
-          <strong>Last Updated:</strong> {lastUpdatedDate}
+          <strong>Last Updated:</strong> {lastUpdatedDate || "Loading..."}
         </p>
 
         <p>
@@ -141,7 +167,7 @@ export default function TermsOfServicePage() {
             or commercial enterprise.
           </li>
           <li>
-            Decipher, decompile, disassemble, or reverse engineer any of fooling
+            Decipher, decompile, disassemble, or reverse engineer any of the
             software comprising or in any way making up a part of the Site.
           </li>
           <li>
@@ -160,7 +186,7 @@ export default function TermsOfServicePage() {
             Upload or transmit (or attempt to upload or to transmit) viruses,
             Trojan horses, or other material, including excessive use of capital
             letters and spamming (continuous posting of repetitive text), that
-            interferes with any party’s uninterrupted use and enjoyment of the
+            interferes with any party&apos;s uninterrupted use and enjoyment of the
             Site or modifies, impairs, disrupts, alters, or interferes with the
             use, features, functions, operation, or maintenance of the Site.
           </li>
@@ -246,10 +272,9 @@ export default function TermsOfServicePage() {
         <h3 className="font-semibold text-lg mt-5">8. Governing Law</h3>
         <p>
           These Terms of Service and your use of the Site are governed by and
-          construed in accordance with the laws of [Your Jurisdiction - e.g.,
-          India] applicable to agreements made and to be entirely performed
-          within [Your Jurisdiction], without regard to its conflict of law
-          principles.
+          construed in accordance with the laws of India applicable to
+          agreements made and to be entirely performed within India, without
+          regard to its conflict of law principles.
         </p>
 
         <h3 className="font-semibold text-lg mt-5">9. Disclaimer</h3>

@@ -1,6 +1,7 @@
+
 import type { Metadata, ResolvingMetadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
-import { categories } from "@/lib/data"; // Static categories for metadata and title
+import { categories } from "@/lib/data";
 import { LayoutGrid } from "lucide-react";
 import { notFound } from "next/navigation";
 import type { BlogPost } from "@/types";
@@ -25,9 +26,7 @@ async function fetchPostsByCategory(categorySlug: string): Promise<BlogPost[]> {
     );
     if (!res.ok) {
       console.error(
-        `Failed to fetch posts for category ${categorySlug}:`,
-        res.status,
-        await res.text(),
+        `Failed to fetch posts for category ${categorySlug}: ${res.status} ${await res.text()}`,
       );
       return [];
     }
@@ -52,6 +51,7 @@ export async function generateMetadata(
   if (!category) {
     return {
       title: "Category Not Found",
+      description: "The category you are looking for could not be found.",
     };
   }
 
@@ -62,18 +62,27 @@ export async function generateMetadata(
     title: title,
     description: description,
     alternates: {
-      canonical: `/category/${category.slug}`,
+      canonical: `${SITE_URL}/category/${category.slug}`,
     },
     openGraph: {
       title: title,
       description: description,
       url: `${SITE_URL}/category/${category.slug}`,
       type: "website",
+      images: [
+        {
+          url: `${SITE_URL}/og-image.png`, // Generic OG for category pages
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: title,
       description: description,
+      images: [`${SITE_URL}/twitter-image.png`], // Generic Twitter image
     },
   };
 }
@@ -94,7 +103,6 @@ const SectionTitle = ({
 );
 
 export async function generateStaticParams() {
-  // Static categories are used, so we can pre-render these pages
   return categories.map((category) => ({
     slug: category.slug,
   }));
@@ -121,9 +129,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       />
       {postsInCategory.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {postsInCategory.map((post) => (
+          {postsInCategory.map((post, index) => (
             <BlogPostCard
-              key={post._id || post.id}
+              key={post._id || post.id || index}
               post={post}
               orientation="vertical"
             />

@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -23,93 +24,84 @@ interface BlogPostPageProps {
 }
 
 async function getPostData(slug: string): Promise<BlogPost | null> {
-  noStore(); // Opt out of caching for this fetch
+  noStore();
   try {
     const res = await fetch(`${SITE_URL}/api/posts/${slug}`, {
       cache: "no-store",
     });
     if (!res.ok) {
       if (res.status === 404) {
-        return null; // Post not found
+        return null;
       }
       console.error(
-        `Failed to fetch post ${slug}:`,
-        res.status,
-        await res.text(),
+        `Failed to fetch post ${slug}: ${res.status} ${await res.text()}`,
       );
-      return null; // Or throw error to trigger error boundary
+      return null;
     }
     const post = (await res.json()) as BlogPost;
     return post;
   } catch (error) {
     console.error(`Error fetching post ${slug} from API:`, error);
-    return null; // Or throw
+    return null;
   }
 }
 
 export async function generateMetadata(
-  { params: { slug } }: { params: { slug: string } },
+  { params }: BlogPostPageProps,
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
-  const post = await getPostData(slug);
+  const post = await getPostData(params.slug);
 
   if (!post) {
     return {
       title: "Post Not Found",
+      description: "The blog post you are looking for could not be found.",
     };
   }
 
   const previousImages = (await parent).openGraph?.images || [];
-  const postImage =
-    post.imageUrl && !post.imageUrl.startsWith("https://placehold.co")
-      ? [
-          {
-            url: post.imageUrl.startsWith("data:")
-              ? post.imageUrl
-              : `${SITE_URL}${post.imageUrl}`,
-            alt: post.title,
-          },
-        ]
-      : post.imageUrl && post.imageUrl.startsWith("https://placehold.co")
-        ? [
-            {
-              url: `${SITE_URL}/api/placeholder-og?imageUrl=${encodeURIComponent(post.imageUrl)}&text=${encodeURIComponent(post.title)}`,
-              alt: post.title,
-              width: 1200,
-              height: 630,
-            },
-          ]
-        : previousImages;
+  const postOgImage = post.imageUrl
+    ? [
+        {
+          url: post.imageUrl, // Assuming Cloudinary URL is absolute
+          alt: post.title,
+          width: 800, // Adjust if your Cloudinary images have specific dimensions
+          height: 450,
+        },
+      ]
+    : previousImages;
 
   return {
     title: post.title,
     description: post.summary,
     keywords: post.tags,
     alternates: {
-      canonical: `/blog/${slug}`,
+      canonical: `${SITE_URL}/blog/${params.slug}`,
     },
     openGraph: {
       title: post.title,
       description: post.summary,
-      url: `${SITE_URL}/blog/${slug}`,
+      url: `${SITE_URL}/blog/${params.slug}`,
       type: "article",
       publishedTime: post.publishedAt,
       authors: [post.author],
       tags: post.tags,
-      images: postImage,
+      images: postOgImage,
       siteName: "MarketPulse",
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.summary,
-      images: postImage.map((img) => img.url),
+      images: postOgImage.map((img) => img.url), // Use the same image URL
     },
   };
 }
 
 export async function generateStaticParams() {
-  return []; // All pages will be dynamically rendered
+  // For truly static generation, you'd fetch all slugs here.
+  // Returning an empty array means all pages are dynamically rendered or ISR.
+  return [];
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
@@ -185,7 +177,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 80vw, 768px"
               className="object-cover"
-              priority={!post.isAiGenerated}
+              priority={true} // Main image on the page, good candidate for LCP
               data-ai-hint={post.imageAiHint || "financial news article"}
             />
           </div>

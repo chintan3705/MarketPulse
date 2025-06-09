@@ -1,18 +1,37 @@
+
 import type { Metadata } from "next";
 import { BarChart3 } from "lucide-react";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
 export const metadata: Metadata = {
   title: "Market Analysis & Financial Insights",
   description:
     "In-depth market analysis, expert opinions, and detailed financial reports from MarketPulse. Guide your investment decisions with our comprehensive insights.",
   alternates: {
-    canonical: "/analysis",
+    canonical: `${SITE_URL}/analysis`,
   },
   openGraph: {
     title: "Market Analysis & Financial Insights | MarketPulse",
     description:
       "In-depth market analysis, expert opinions, and detailed financial reports from MarketPulse.",
-    url: "/analysis",
+    url: `${SITE_URL}/analysis`,
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "Market Analysis by MarketPulse",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Market Analysis & Financial Insights | MarketPulse",
+    description:
+      "In-depth market analysis, expert opinions, and detailed financial reports from MarketPulse.",
+    images: [`${SITE_URL}/twitter-image.png`],
   },
 };
 
