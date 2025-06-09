@@ -1,7 +1,7 @@
 
 import { NextResponse } from 'next/server';
 import { generateBlogPost, type GenerateBlogPostInput } from '@/ai/flows/generate-blog-post-flow';
-import { z } from 'genkit/zod';
+import { z } from 'genkit'; // Corrected import path
 
 // Input schema for this API route
 const ApiInputSchema = z.object({
