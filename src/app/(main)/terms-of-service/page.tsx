@@ -1,18 +1,18 @@
-import type { Metadata } from "next";
-import { FileText } from "lucide-react";
+import type { Metadata } from 'next';
+import { FileText } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: "Terms of Service | MarketPulse",
+  title: 'Terms of Service | MarketPulse',
   description:
-    "Read the MarketPulse Terms of Service. Understand the rules and guidelines for using our financial news and analysis platform.",
+    'Read the MarketPulse Terms of Service. Understand the rules and guidelines for using our financial news and analysis platform.',
   alternates: {
-    canonical: "/terms-of-service",
+    canonical: '/terms-of-service',
   },
   openGraph: {
-    title: "Terms of Service | MarketPulse",
+    title: 'Terms of Service | MarketPulse',
     description:
-      "Understand the rules and guidelines for using the MarketPulse platform.",
-    url: "/terms-of-service",
+      'Understand the rules and guidelines for using the MarketPulse platform.',
+    url: '/terms-of-service',
   },
 };
 
@@ -30,16 +30,16 @@ const SectionTitle = ({
 );
 
 export default function TermsOfServicePage() {
-  const lastUpdatedDate = new Date().toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+  const lastUpdatedDate = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
 
   return (
     <div
       className="container py-8 md:py-12 animate-slide-in"
-      style={{ animationDelay: "0.1s", animationFillMode: "backwards" }}
+      style={{ animationDelay: '0.1s', animationFillMode: 'backwards' }}
     >
       <SectionTitle title="Terms of Service" icon={FileText} />
       <div className="prose prose-sm dark:prose-invert max-w-none space-y-4">
@@ -48,9 +48,9 @@ export default function TermsOfServicePage() {
         </p>
 
         <p>
-          Please read these Terms of Service ("Terms", "Terms of Service")
-          carefully before using the MarketPulse website (the "Service")
-          operated by MarketPulse ("us", "we", or "our").
+          Please read these Terms of Service (&quot;Terms&quot;, &quot;Terms of Service&quot;)
+          carefully before using the MarketPulse website (the &quot;Service&quot;)
+          operated by MarketPulse (&quot;us&quot;, &quot;we&quot;, or &quot;our&quot;).
         </p>
         <p>
           Your access to and use of the Service is conditioned on your
@@ -68,14 +68,14 @@ export default function TermsOfServicePage() {
           Unless otherwise indicated, the Service is our proprietary property
           and all source code, databases, functionality, software, website
           designs, audio, video, text, photographs, and graphics on the Site
-          (collectively, the "Content") and the trademarks, service marks, and
-          logos contained therein (the "Marks") are owned or controlled by us or
+          (collectively, the &quot;Content&quot;) and the trademarks, service marks, and
+          logos contained therein (the &quot;Marks&quot;) are owned or controlled by us or
           licensed to us, and are protected by copyright and trademark laws and
           various other intellectual property rights and unfair competition
           laws.
         </p>
         <p>
-          The Content and the Marks are provided on the Site "AS IS" for your
+          The Content and the Marks are provided on the Site &quot;AS IS&quot; for your
           information and personal use only. Except as expressly provided in
           these Terms of Service, no part of the Site and no Content or Marks
           may be copied, reproduced, aggregated, republished, uploaded, posted,
@@ -178,10 +178,10 @@ export default function TermsOfServicePage() {
         </h3>
         <p>
           The Site may contain (or you may be sent via the Site) links to other
-          websites ("Third-Party Websites") as well as articles, photographs,
+          websites (&quot;Third-Party Websites&quot;) as well as articles, photographs,
           text, graphics, pictures, designs, music, sound, video, information,
           applications, software, and other content or items belonging to or
-          originating from third parties ("Third-Party Content"). Such
+          originating from third parties (&quot;Third-Party Content&quot;). Such
           Third-Party Websites and Third-Party Content are not investigated,
           monitored, or checked for accuracy, appropriateness, or completeness
           by us, and we are not responsible for any Third-Party Websites
@@ -324,7 +324,7 @@ export default function TermsOfServicePage() {
         <h3 className="font-semibold text-lg mt-5">13. Contact Us</h3>
         <p>
           If you have any questions about these Terms, please contact us by
-          email:{" "}
+          email:{' '}
           <a
             href="mailto:legal@marketpulse.example.com"
             className="text-primary hover:underline"

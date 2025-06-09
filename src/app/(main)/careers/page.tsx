@@ -1,18 +1,18 @@
-import type { Metadata } from "next";
-import { Briefcase } from "lucide-react";
+import type { Metadata } from 'next';
+import { Briefcase } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: "Careers at MarketPulse",
+  title: 'Careers at MarketPulse',
   description:
-    "Join the MarketPulse team! Explore career opportunities in financial journalism, analysis, technology, and design. Help us shape the future of financial news.",
+    'Join the MarketPulse team! Explore career opportunities in financial journalism, analysis, technology, and design. Help us shape the future of financial news.',
   alternates: {
-    canonical: "/careers",
+    canonical: '/careers',
   },
   openGraph: {
-    title: "Careers at MarketPulse",
+    title: 'Careers at MarketPulse',
     description:
-      "Explore career opportunities at MarketPulse and help us shape the future of financial news.",
-    url: "/careers",
+      'Explore career opportunities at MarketPulse and help us shape the future of financial news.',
+    url: '/careers',
   },
 };
 
@@ -33,7 +33,7 @@ export default function CareersPage() {
   return (
     <div
       className="container py-8 md:py-12 animate-slide-in"
-      style={{ animationDelay: "0.1s", animationFillMode: "backwards" }}
+      style={{ animationDelay: '0.1s', animationFillMode: 'backwards' }}
     >
       <SectionTitle title="Careers at MarketPulse" icon={Briefcase} />
       <div className="prose prose-lg dark:prose-invert max-w-none space-y-4">
@@ -67,14 +67,14 @@ export default function CareersPage() {
 
         <p>
           If you believe you have the skills and passion to contribute to
-          MarketPulse, feel free to send your resume and a cover letter to:{" "}
+          MarketPulse, feel free to send your resume and a cover letter to:{' '}
           <a
             href="mailto:careers@marketpulse.example.com"
             className="text-primary hover:underline"
           >
             careers@marketpulse.example.com
           </a>
-          . We'll keep your profile on file for future opportunities.
+          . We&apos;ll keep your profile on file for future opportunities.
         </p>
       </div>
     </div>

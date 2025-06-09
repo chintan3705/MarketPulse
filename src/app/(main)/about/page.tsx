@@ -1,18 +1,18 @@
-import type { Metadata } from "next";
-import { Info } from "lucide-react";
+import type { Metadata } from 'next';
+import { Info } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: "About MarketPulse",
+  title: 'About MarketPulse',
   description:
-    "Learn more about MarketPulse, our mission, and our dedication to providing timely financial insights and stock analysis to empower investors.",
+    'Learn more about MarketPulse, our mission, and our dedication to providing timely financial insights and stock analysis to empower investors.',
   alternates: {
-    canonical: "/about",
+    canonical: '/about',
   },
   openGraph: {
-    title: "About MarketPulse",
+    title: 'About MarketPulse',
     description:
-      "Learn more about MarketPulse, our mission, and our dedication to providing timely financial insights.",
-    url: "/about",
+      'Learn more about MarketPulse, our mission, and our dedication to providing timely financial insights.',
+    url: '/about',
   },
 };
 
@@ -33,7 +33,7 @@ export default function AboutPage() {
   return (
     <div
       className="container py-8 md:py-12 animate-slide-in"
-      style={{ animationDelay: "0.1s", animationFillMode: "backwards" }}
+      style={{ animationDelay: '0.1s', animationFillMode: 'backwards' }}
     >
       <SectionTitle title="About MarketPulse" icon={Info} />
       <div className="prose prose-lg dark:prose-invert max-w-none space-y-4">
@@ -46,7 +46,7 @@ export default function AboutPage() {
         <p>
           Our mission is to empower investors of all levels with accurate
           information and expert perspectives, enabling them to make informed
-          decisions. Whether you're interested in the latest stock movements,
+          decisions. Whether you&apos;re interested in the latest stock movements,
           IPO news, mutual fund performance, or broader economic trends,
           MarketPulse aims to be your go-to resource.
         </p>

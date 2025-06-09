@@ -1,38 +1,38 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import type { TrendingHeadline } from "@/types";
+import React, { useEffect, useState } from 'react';
+import type { TrendingHeadline } from '@/types';
 import {
   getMarketLensDigest,
   type MarketLensDigestOutput,
   type MarketLensDigestInput,
-} from "@/ai/flows/market-lens-digest-flow"; // MarketLensDigestInput made explicit
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { trendingHeadlines as mockHeadlinesData } from "@/lib/data"; // Renamed for clarity
+} from '@/ai/flows/market-lens-digest-flow'; // MarketLensDigestInput made explicit
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { trendingHeadlines as mockHeadlinesData } from '@/lib/data'; // Renamed for clarity
 import {
   TrendingUp,
   TrendingDown,
   MinusCircle,
   ExternalLink,
-  Loader2,
+  // Loader2, // Unused import
   AlertTriangle,
   Eye,
-} from "lucide-react";
-import Link from "next/link";
-import { Button } from "../ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+} from 'lucide-react';
+import Link from 'next/link';
+import { Button } from '../ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const TrendIcon = ({
   sentiment,
   trendIcon,
 }: {
   sentiment: string;
-  trendIcon?: "up" | "down";
+  trendIcon?: 'up' | 'down';
 }) => {
-  if (trendIcon === "up" || sentiment === "Bullish") {
+  if (trendIcon === 'up' || sentiment === 'Bullish') {
     return <TrendingUp className="h-5 w-5 text-gain mr-2 flex-shrink-0" />;
   }
-  if (trendIcon === "down" || sentiment === "Bearish") {
+  if (trendIcon === 'down' || sentiment === 'Bearish') {
     return <TrendingDown className="h-5 w-5 text-loss mr-2 flex-shrink-0" />;
   }
   return (
@@ -51,22 +51,34 @@ export function MarketLensSection() {
       setError(null);
       try {
         // Using top 3 mock headlines for the digest
-        const headlinesToProcess: MarketLensDigestInput["headlines"] =
-          mockHeadlinesData.slice(0, 3).map((h) => ({ ...h })); // Ensure it matches the schema type
+        const headlinesToProcess: TrendingHeadline[] = // Use TrendingHeadline type for mock data
+          mockHeadlinesData.slice(0, 3).map((h: TrendingHeadline) => ({ ...h }));
+
+        // Adapt to MarketLensDigestInput["headlines"] which expects specific fields
+        const marketLensInputHeadlines: MarketLensDigestInput['headlines'] =
+          headlinesToProcess.map((h) => ({
+            id: h.id,
+            title: h.title,
+            source: h.source,
+            url: h.url,
+            publishedAt: h.publishedAt,
+            isGain: h.isGain,
+          }));
+
         const result = await getMarketLensDigest({
-          headlines: headlinesToProcess,
-          region: "Global",
+          headlines: marketLensInputHeadlines,
+          region: 'Global',
         });
         setDigest(result);
       } catch (err) {
         const catchedError = err as Error;
-        console.error("Error fetching market lens digest:", catchedError);
-        setError(catchedError.message || "Failed to load market insights.");
+        console.error('Error fetching market lens digest:', catchedError);
+        setError(catchedError.message || 'Failed to load market insights.');
       } finally {
         setIsLoading(false);
       }
     }
-    fetchDigest();
+    void fetchDigest(); // Call async function
   }, []);
 
   return (
@@ -98,15 +110,15 @@ export function MarketLensSection() {
                 <Card key={item} className="glass-card flex flex-col">
                   <CardHeader>
                     <div className="flex items-start mb-2">
-                      <Skeleton className="h-5 w-5 mr-2 rounded-full" />{" "}
+                      <Skeleton className="h-5 w-5 mr-2 rounded-full" />{' '}
                       {/* TrendIcon skeleton */}
                       <div className="flex-grow space-y-1.5">
-                        <Skeleton className="h-4 w-full" />{" "}
+                        <Skeleton className="h-4 w-full" />{' '}
                         {/* Title skeleton line 1 */}
-                        <Skeleton className="h-4 w-4/5" />{" "}
+                        <Skeleton className="h-4 w-4/5" />{' '}
                         {/* Title skeleton line 2 */}
                       </div>
-                      <Skeleton className="h-4 w-4 ml-2 flex-shrink-0" />{" "}
+                      <Skeleton className="h-4 w-4 ml-2 flex-shrink-0" />{' '}
                       {/* ExternalLink skeleton */}
                     </div>
                     <div className="space-y-1 text-xs">
@@ -115,11 +127,11 @@ export function MarketLensSection() {
                     </div>
                   </CardHeader>
                   <CardContent className="flex-grow space-y-2">
-                    <Skeleton className="h-3 w-full" />{" "}
+                    <Skeleton className="h-3 w-full" />{' '}
                     {/* Summary skeleton line 1 */}
-                    <Skeleton className="h-3 w-full" />{" "}
+                    <Skeleton className="h-3 w-full" />{' '}
                     {/* Summary skeleton line 2 */}
-                    <Skeleton className="h-3 w-3/4" />{" "}
+                    <Skeleton className="h-3 w-3/4" />{' '}
                     {/* Summary skeleton line 3 */}
                   </CardContent>
                 </Card>
@@ -191,7 +203,7 @@ export function MarketLensSection() {
                       </Link>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Source: {item.source} -{" "}
+                      Source: {item.source} -{' '}
                       <time dateTime={item.publishedAt}>
                         {new Date(item.publishedAt).toLocaleDateString()}
                       </time>
