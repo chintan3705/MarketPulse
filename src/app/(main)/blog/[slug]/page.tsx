@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { notFound } from 'next/navigation';
 import type { Metadata, ResolvingMetadata } from 'next';
 import type { BlogPost } from '@/types';
-// AI generation and cache imports removed: generateBlogPost, getCachedPost, cacheSetPost
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.marketpulse.example.com';
 
@@ -28,10 +27,10 @@ async function getPostData(slug: string): Promise<BlogPost | null> {
 }
 
 export async function generateMetadata(
-  { params }: BlogPostPageProps,
+  { params: { slug } }: { params: { slug: string } }, // Directly destructure slug and use inline type for params
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const slug = params.slug;
+  // 'slug' is now directly available from destructuring.
   const post = await getPostData(slug);
 
   if (!post) {
@@ -53,12 +52,12 @@ export async function generateMetadata(
     description: post.summary,
     keywords: post.tags,
     alternates: {
-      canonical: `/blog/${post.slug}`,
+      canonical: `/blog/${slug}`, // Use the destructured slug
     },
     openGraph: {
       title: post.title,
       description: post.summary,
-      url: `${SITE_URL}/blog/${post.slug}`,
+      url: `${SITE_URL}/blog/${slug}`, // Use the destructured slug
       type: 'article',
       publishedTime: post.publishedAt,
       authors: [post.author],
@@ -77,7 +76,6 @@ export async function generateMetadata(
 
 // Revalidate static posts (e.g., daily). Adjust as needed.
 export const revalidate = 86400; 
-// Removed: export const revalidate = 0;
 
 export async function generateStaticParams() {
   // Generate static params from latestBlogPosts in data.ts
@@ -173,5 +171,3 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     </div>
   );
 }
-
-    
