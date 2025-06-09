@@ -9,7 +9,7 @@ body {
 
 @layer base {
   html {
-    /* Removed scroll-smooth here as Lenis will handle scroll behavior */
+    /* scroll-smooth is handled by Lenis when active */
   }
   :root {
     /* NeoTrader Dark Theme (Default) */
@@ -134,8 +134,8 @@ html.lenis {
 }
 
 html.lenis body {
-  /* This hides the native scrollbar, allowing Lenis to control scrolling */
-  overflow: hidden;
+  /* Native scrollbar will remain visible based on user request */
+  /* overflow: hidden; */ /* This line was removed/commented out */
 }
 
 /* Lenis recommended styles for specific states */
