@@ -1,3 +1,4 @@
+
 /**
  * @fileOverview Zod schemas and TypeScript types for single blog post generation.
  *
@@ -7,10 +8,16 @@
  * - GenerateBlogPostOutput - TypeScript type for the output.
  */
 import { z } from "genkit";
-import { categories } from "@/lib/data"; // Import categories for the prompt in the flow
+import { categories } from "@/lib/data";
 
 export const GenerateBlogPostInputSchema = z.object({
   topic: z.string().describe("The topic or keywords for the blog post."),
+  categorySlug: z
+    .string()
+    .optional()
+    .describe(
+      "Optional slug of the category to guide the blog post generation.",
+    ),
 });
 export type GenerateBlogPostInput = z.infer<typeof GenerateBlogPostInputSchema>;
 
@@ -36,7 +43,7 @@ export const GenerateBlogPostOutputSchema = z.object({
     .string()
     .optional()
     .describe(
-      'The data URI of the AI-generated image for the blog post, if available. Expected format: "data:image/png;base64,<encoded_data>".',
+      'The URL of the AI-generated image for the blog post, if available. This will be a placeholder if third-party upload is not implemented. Expected format: "https://placehold.co/WIDTHxHEIGHT.png" or actual hosted image URL.',
     ),
   imageAiHint: z
     .string()

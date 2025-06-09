@@ -10,11 +10,18 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogDescription, // This was unused, keeping it for now as it's a common pattern
+  DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import {
   Loader2,
@@ -26,6 +33,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import type { IMongoBlogPost } from "@/models/BlogPost";
 import { DialogTrigger } from "@radix-ui/react-dialog";
+import { categories } from "@/lib/data"; // Import categories for the dropdown
 
 type SavedPostData = Pick<
   IMongoBlogPost,
@@ -47,6 +55,9 @@ type SavedPostData = Pick<
 export function GenerateBlogDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [topic, setTopic] = useState("");
+  const [selectedCategorySlug, setSelectedCategorySlug] = useState<
+    string | undefined
+  >(undefined);
   const [savedPostData, setSavedPostData] = useState<SavedPostData | null>(
     null,
   );
@@ -74,9 +85,9 @@ export function GenerateBlogDialog() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json", // Explicitly accept JSON
+          Accept: "application/json",
         },
-        body: JSON.stringify({ topic }),
+        body: JSON.stringify({ topic, categorySlug: selectedCategorySlug }),
       });
 
       if (!response.ok) {
@@ -85,7 +96,6 @@ export function GenerateBlogDialog() {
 
         if (contentType && contentType.includes("application/json")) {
           try {
-            // Type assertion for the error result
             const errorResult = (await response.json()) as {
               message?: string;
               error?: string;
@@ -95,8 +105,10 @@ export function GenerateBlogDialog() {
               errorResult.message || errorResult.error || serverErrorMessage;
           } catch (jsonError) {
             console.error("Failed to parse error response JSON:", jsonError);
+            // serverErrorMessage will remain as the initial HTTP status error
           }
         } else {
+          // If not JSON, try to get text for more context, but limit its length.
           const textResponse = await response.text();
           console.error(
             "Server returned non-JSON error response:",
@@ -107,12 +119,9 @@ export function GenerateBlogDialog() {
         throw new Error(serverErrorMessage);
       }
 
-      // If response.ok is true, we expect JSON
       const result = (await response.json()) as {
         message: string;
         post?: SavedPostData;
-        error?: string;
-        errors?: unknown;
       };
 
       if (!result.post) {
@@ -125,12 +134,12 @@ export function GenerateBlogDialog() {
       setSavedPostData(result.post);
       toast({
         title: "Blog Post Generated & Saved to DB!",
-        description: `"${result.post.title}" has been saved to the database. It will appear on the site.`,
+        description: `"${result.post.title}" has been saved. It will appear on the site.`,
         duration: 7000,
       });
     } catch (err) {
       const catchedError = err as Error;
-      console.error("Error in handleSubmit for blog generation:", catchedError); // More specific console log
+      console.error("Error in handleSubmit for blog generation:", catchedError);
       const errorMessage =
         catchedError.message || "An unexpected error occurred.";
       setError(errorMessage);
@@ -153,6 +162,7 @@ export function GenerateBlogDialog() {
           setSavedPostData(null);
           setError(null);
           // setTopic(""); // Optionally reset topic on close
+          // setSelectedCategorySlug(undefined); // Optionally reset category
         }
       }}
     >
@@ -168,9 +178,8 @@ export function GenerateBlogDialog() {
             Generate &amp; Save AI Blog Post to Database
           </DialogTitle>
           <DialogDescription>
-            Enter a topic. AI will generate a blog post and save it directly to
-            the database. The new post will then be available on the main
-            website.
+            Enter a topic and optionally select a category. AI will generate a
+            blog post and save it to the database.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -188,6 +197,29 @@ export function GenerateBlogDialog() {
                 className="col-span-3"
                 placeholder="e.g., Future of Renewable Energy Stocks"
               />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="category" className="text-right">
+                Category
+              </Label>
+              <Select
+                value={selectedCategorySlug}
+                onValueChange={setSelectedCategorySlug}
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Let AI choose category (optional)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ai-choose">
+                    Let AI choose category
+                  </SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category.slug} value={category.slug}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter className="mt-4">
@@ -258,6 +290,7 @@ export function GenerateBlogDialog() {
                 onClick={() => {
                   setSavedPostData(null);
                   setTopic("");
+                  setSelectedCategorySlug(undefined);
                 }}
               >
                 Generate Another

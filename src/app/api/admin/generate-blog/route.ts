@@ -1,7 +1,7 @@
 
 import { NextResponse, type NextRequest } from "next/server";
 import { generateBlogPost } from "@/ai/flows/generate-blog-post-flow";
-import { z } from "genkit"; // Corrected import
+import { z } from "genkit";
 import connectDB from "@/lib/mongodb";
 import BlogPostModel, { type IMongoBlogPost } from "@/models/BlogPost";
 import { categories } from "@/lib/data";
@@ -11,6 +11,7 @@ const ApiInputSchema = z.object({
   topic: z
     .string()
     .min(3, { message: "Topic must be at least 3 characters long." }),
+  categorySlug: z.string().optional(), // Added optional categorySlug
 });
 
 interface GenerateBlogSuccessResponse {
@@ -21,7 +22,7 @@ interface GenerateBlogSuccessResponse {
 interface GenerateBlogErrorResponse {
   message: string;
   error?: string;
-  detail?: string; // For more detailed error info
+  detail?: string;
   errors?: unknown;
 }
 
@@ -48,15 +49,18 @@ export async function POST(
       );
     }
 
-    const { topic } = validationResult.data;
+    const { topic, categorySlug } = validationResult.data;
     console.log(
-      `[API /admin/generate-blog] Validated topic: "${topic}". Calling Genkit flow...`,
+      `[API /admin/generate-blog] Validated topic: "${topic}", categorySlug: "${categorySlug || "AI choice"}". Calling Genkit flow...`,
     );
 
     // 1. Call the Genkit flow to generate content
-    const generatedData = await generateBlogPost({
-      topic,
-    } as GenerateBlogPostInput);
+    const genkitInput: GenerateBlogPostInput = { topic };
+    if (categorySlug && categorySlug !== "ai-choose") {
+      genkitInput.categorySlug = categorySlug;
+    }
+
+    const generatedData = await generateBlogPost(genkitInput);
     console.log(
       "[API /admin/generate-blog] Genkit flow completed. Generated data:",
       generatedData ? "Data received" : "No data received",
@@ -73,11 +77,9 @@ export async function POST(
     }
 
     console.log("[API /admin/generate-blog] Connecting to MongoDB...");
-    // 2. Connect to MongoDB
     await connectDB();
     console.log("[API /admin/generate-blog] Connected to MongoDB.");
 
-    // 3. Prepare data for MongoDB
     const categoryDetails = categories.find(
       (c) => c.slug === generatedData.categorySlug,
     );
@@ -123,7 +125,6 @@ export async function POST(
 
     const newPost = new BlogPostModel(newPostData);
     console.log("[API /admin/generate-blog] Saving post to MongoDB...");
-    // 4. Save to MongoDB
     const savedPost = (await newPost.save()) as IMongoBlogPost;
     console.log(
       "[API /admin/generate-blog] Post saved successfully. ID:",
@@ -148,7 +149,7 @@ export async function POST(
 
     if (error instanceof Error) {
       errorMessage = error.message;
-      errorDetail = error.stack; // Include stack trace for debugging
+      errorDetail = error.stack;
     } else if (typeof error === "string") {
       errorMessage = error;
     } else if (
@@ -160,11 +161,9 @@ export async function POST(
       errorMessage = (error as { message: string }).message;
     }
 
-
     if (errorMessage.toLowerCase().includes("api key") || errorMessage.toLowerCase().includes("permission denied")) {
         errorMessage = "Error with AI service: Potentially an API key or permission issue. Please verify your GOOGLE_API_KEY and ensure the Gemini API is enabled for your project.";
     }
-
 
     return NextResponse.json(
       {
