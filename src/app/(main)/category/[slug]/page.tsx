@@ -1,7 +1,11 @@
 
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { categories, latestBlogPosts } from "@/lib/data";
-import { LayoutGrid } from "lucide-react"; // Using a generic icon for categories
+import { LayoutGrid } from "lucide-react"; 
+import { notFound } from "next/navigation";
+
+// ISR: Revalidate every 24 hours (86400 seconds)
+export const revalidate = 86400;
 
 const SectionTitle = ({ title, icon: Icon }: { title: string; icon?: React.ElementType; }) => (
   <div className="flex items-center gap-2 mb-6">
@@ -16,22 +20,21 @@ interface CategoryPageProps {
   };
 }
 
-export default function CategoryPage({ params }: CategoryPageProps) {
+export async function generateStaticParams() {
+  return categories.map(category => ({
+    slug: category.slug,
+  }));
+}
+
+export default async function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = params;
   const category = categories.find(cat => cat.slug === slug);
-  const postsInCategory = latestBlogPosts.filter(post => post.category.slug === slug);
-
+  
   if (!category) {
-    // Fallback or not found page for unknown categories
-    return (
-      <div className="container py-8 md:py-12 animate-slide-in" style={{animationDelay: '0.1s', animationFillMode: 'backwards'}}>
-        <SectionTitle title="Category Not Found" icon={LayoutGrid} />
-        <p className="text-lg text-muted-foreground">
-          The category you're looking for doesn't exist or has been moved.
-        </p>
-      </div>
-    );
+    notFound();
   }
+
+  const postsInCategory = latestBlogPosts.filter(post => post.category.slug === slug);
 
   return (
     <div className="container py-8 md:py-12 animate-slide-in" style={{animationDelay: '0.1s', animationFillMode: 'backwards'}}>
@@ -50,10 +53,3 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     </div>
   );
 }
-
-// Optional: Generate static paths if you know all categories beforehand
-// export async function generateStaticParams() {
-//   return categories.map(category => ({
-//     slug: category.slug,
-//   }));
-// }
