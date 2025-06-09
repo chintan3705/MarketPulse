@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -97,15 +98,15 @@ export default {
             height: '0',
           },
         },
-        'slide-in': {
-          from: { transform: 'translateY(20px)', opacity: '0' },
+        'slide-in': { /* Enhanced slide-in animation */
+          from: { transform: 'translateY(30px)', opacity: '0' },
           to: { transform: 'translateY(0)', opacity: '1'},
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'slide-in': 'slide-in 0.5s ease-out forwards',
+        'slide-in': 'slide-in 0.6s ease-out forwards', /* Enhanced slide-in animation */
       },
     },
   },
