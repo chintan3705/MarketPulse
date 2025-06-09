@@ -1,7 +1,7 @@
 
 "use server";
 /**
- * @fileOverview A Genkit flow to generate a blog post based on a topic, including an AI-generated image.
+ * @fileOverview A Genkit flow to generate a blog post based on a topic, including an AI-generated image uploaded to Cloudinary.
  *
  * Exports:
  * - generateBlogPost - A function that handles the blog post generation with image.
@@ -17,9 +17,29 @@ import {
   GenerateBlogPostOutputSchema,
   type GenerateBlogPostOutput,
 } from "../schemas/blog-post-schemas";
+import { v2 as cloudinary } from "cloudinary";
 
 // Types can be exported from "use server" files
 export type { GenerateBlogPostInput, GenerateBlogPostOutput };
+
+// Configure Cloudinary
+if (
+  !process.env.CLOUDINARY_CLOUD_NAME ||
+  !process.env.CLOUDINARY_API_KEY ||
+  !process.env.CLOUDINARY_API_SECRET
+) {
+  console.warn(
+    "[Cloudinary Setup] Cloudinary environment variables (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET) are not fully set. Image uploads will fail.",
+  );
+} else {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    secure: true,
+  });
+  console.log("[Cloudinary Setup] Cloudinary configured successfully.");
+}
 
 export async function generateBlogPost(
   input: GenerateBlogPostInput,
@@ -74,89 +94,52 @@ const generateBlogPostTextPrompt = ai.definePrompt({
   // prompt is dynamically generated inside the flow
 });
 
-// --- START: USER INTEGRATION POINT for Third-Party Upload ---
-// This is an example stub. You need to implement this function
-// to upload the image data to your chosen third-party service.
-/*
-async function uploadImageToThirdParty(
+// --- START: Cloudinary Upload Function ---
+async function uploadImageToCloudinary(
   imageDataUri: string,
   fileNamePrefix: string = "blog-image",
 ): Promise<string | undefined> {
   console.log(
-    `[uploadImageToThirdParty] Called with imageDataUri (length: ${imageDataUri.length})`,
+    `[uploadImageToCloudinary] Called with imageDataUri (length: ${imageDataUri.length})`,
   );
 
-  // **1. Choose your service and get credentials (e.g., ImgBB, Cloudinary, Firebase Storage)**
-  //    Store credentials securely (e.g., in .env.local).
-  //    const YOUR_SERVICE_API_KEY = process.env.IMAGE_UPLOAD_API_KEY;
-  //    const YOUR_SERVICE_UPLOAD_ENDPOINT = "https://api.yourchosenervice.com/upload";
+  if (
+    !process.env.CLOUDINARY_CLOUD_NAME ||
+    !process.env.CLOUDINARY_API_KEY ||
+    !process.env.CLOUDINARY_API_SECRET
+  ) {
+    console.error(
+      "[uploadImageToCloudinary] Cloudinary credentials not configured. Skipping upload.",
+    );
+    return undefined;
+  }
 
-  // **2. Prepare the data for upload**
-  //    This often involves converting the data URI to a Blob or using the base64 string directly,
-  //    depending on the service's API.
-
-  //    Example: Converting data URI to Blob
-  //    const fetchResponse = await fetch(imageDataUri);
-  //    const blob = await fetchResponse.blob();
-  //    const uniqueFileName = `${fileNamePrefix}-${Date.now()}.${blob.type.split('/')[1] || 'png'}`;
-
-  // **3. Make the API request to your chosen service**
-  //    Use `fetch` or the service's SDK.
-
-  //    Example using FormData with `fetch` (common for many services):
-  //    const formData = new FormData();
-  //    formData.append('image', blob, uniqueFileName); // 'image' is often the field name
-  //    // formData.append('key', YOUR_SERVICE_API_KEY); // If API key is sent in form data
-  //
-  //    try {
-  //      const response = await fetch(YOUR_SERVICE_UPLOAD_ENDPOINT, {
-  //        method: 'POST',
-  //        body: formData,
-  //        // headers: { 'Authorization': `Bearer ${YOUR_SERVICE_API_KEY}` }, // If API key is in header
-  //      });
-  //
-  //      if (!response.ok) {
-  //        const errorBody = await response.text();
-  //        console.error(
-  //         `[uploadImageToThirdParty] Upload failed: ${response.status}`,
-  //          errorBody,
-  //        );
-  //        return undefined;
-  //      }
-  //
-  //      const result = await response.json(); // Response format depends on the service
-  //      // Assuming the service returns a JSON object with a 'data.url' or similar field
-  //      const publicUrl = result?.data?.url || result?.link || result?.secure_url;
-  //
-  //      if (publicUrl) {
-  //        console.log(
-  //          `[uploadImageToThirdParty] Image uploaded successfully. URL: ${publicUrl}`,
-  //        );
-  //        return publicUrl;
-  //      } else {
-  //        console.error(
-  //          "[uploadImageToThirdParty] Upload successful, but no URL found in response:",
-  //          result,
-  //        );
-  //        return undefined;
-  //      }
-  //    } catch (uploadError) {
-  //      console.error(
-  //        "[uploadImageToThirdParty] Error during upload API call:",
-  //        uploadError,
-  //      );
-  //      return undefined;
-  //    }
-
-  // **IF YOU ARE NOT READY TO IMPLEMENT, COMMENT OUT THE CALL TO THIS FUNCTION BELOW**
-  // **OR RETURN A PLACEHOLDER FOR DEVELOPMENT**
-  console.warn(
-    "[uploadImageToThirdParty] STUB FUNCTION: Actual image upload not implemented. Returning undefined.",
-  );
-  return undefined; // Or return a placeholder like "https://placehold.co/800x450.png/0e1a2b/d3dce6?text=Upload+Failed"
+  try {
+    // Cloudinary's upload method can take a data URI directly
+    const uniqueFileName = `${fileNamePrefix.replace(/[^a-zA-Z0-9-_]/g, "-").substring(0, 50)}-${Date.now()}`; // Sanitize and shorten prefix
+    const result = await cloudinary.uploader.upload(imageDataUri, {
+      public_id: uniqueFileName,
+      folder: "marketpulse_blog_images", // Optional: organize in a folder
+      overwrite: true,
+      // Example transformation:
+      // transformation: [{ width: 800, height: 450, crop: "limit", quality: "auto:good" }]
+    });
+    console.log(
+      `[uploadImageToCloudinary] Image uploaded successfully to Cloudinary. URL: ${result.secure_url}`,
+    );
+    return result.secure_url;
+  } catch (uploadError: unknown) {
+    const errorMessage =
+      uploadError instanceof Error ? uploadError.message : String(uploadError);
+    console.error(
+      "[uploadImageToCloudinary] Error during Cloudinary upload:",
+      errorMessage,
+      uploadError,
+    );
+    return undefined;
+  }
 }
-*/
-// --- END: USER INTEGRATION POINT ---
+// --- END: Cloudinary Upload Function ---
 
 const generateBlogPostFlow = ai.defineFlow(
   {
@@ -221,7 +204,7 @@ const generateBlogPostFlow = ai.defineFlow(
     const imageAiHint =
       textOutput.tags && textOutput.tags.length > 0
         ? textOutput.tags.slice(0, 2).join(" ")
-        : input.topic.substring(0, 50) || "financial news article"; // Use part of topic if tags are sparse
+        : input.topic.substring(0, 50) || "financial news article";
 
     try {
       const categoryForImage =
@@ -251,48 +234,19 @@ const generateBlogPostFlow = ai.defineFlow(
           `[generateBlogPostFlow] Image data URI generated by Genkit. Length: ${imageDataUri.length}. Hint: "${imageAiHint}"`,
         );
 
-        // --- USER INTEGRATION: Call your upload function here ---
-        // Uncomment and implement the `uploadImageToThirdParty` function above,
-        // then uncomment the line below to call it.
-        /*
         try {
-          const uploadedPublicUrl = await uploadImageToThirdParty(
+          const uploadedPublicUrl = await uploadImageToCloudinary(
             imageDataUri,
             textOutput.title.toLowerCase().replace(/\s+/g, "-").substring(0,30) // pass a sanitized title as part of filename
           );
           if (uploadedPublicUrl) {
             imageUrl = uploadedPublicUrl;
-            console.log(`[generateBlogPostFlow] Image successfully uploaded. URL: ${imageUrl}`);
+            console.log(`[generateBlogPostFlow] Image successfully uploaded to Cloudinary. URL: ${imageUrl}`);
           } else {
-            console.warn("[generateBlogPostFlow] Image upload failed or was skipped. No image URL will be saved.");
+            console.warn("[generateBlogPostFlow] Cloudinary upload failed or was skipped (e.g., missing credentials). No image URL will be saved.");
           }
         } catch (uploadError) {
-          console.error("[generateBlogPostFlow] Error calling uploadImageToThirdParty:", uploadError);
-        }
-        */
-        // --- END USER INTEGRATION ---
-
-        // Fallback/Placeholder logic (optional, for development if upload isn't implemented yet)
-        // If you want a placeholder *during development* while actual upload is pending,
-        // and your upload function isn't setting imageUrl, uncomment the block below.
-        // Make sure to remove or comment this out for production if you want `undefined` when upload fails.
-        /*
-        if (!imageUrl && process.env.NODE_ENV === 'development') {
-          imageUrl = `https://placehold.co/800x450.png/0e1a2b/d3dce6?text=${encodeURIComponent(imageAiHint)}`;
-          console.log(
-            `[generateBlogPostFlow] DEVELOPMENT: Using placeholder image URL as actual upload is not implemented/failed. URL: ${imageUrl}.`
-          );
-        }
-        */
-
-        if (imageUrl) {
-          console.log(
-            `[generateBlogPostFlow] Using image URL: ${imageUrl}.`,
-          );
-        } else {
-           console.log(
-            `[generateBlogPostFlow] No image URL set. This means either the 'uploadImageToThirdParty' function was not implemented, it failed, or development placeholder logic is not active. Image URL will be undefined for this post.`,
-          );
+          console.error("[generateBlogPostFlow] Error calling uploadImageToCloudinary:", uploadError);
         }
 
       } else {
@@ -316,7 +270,12 @@ const generateBlogPostFlow = ai.defineFlow(
         errorMessage.toLowerCase().includes("api_key")
       ) {
         console.error(
-          "[generateBlogPostFlow] Potentially an API key issue or Gemini API not enabled for project. Please check GOOGLE_API_KEY and API enablement in Google Cloud Console.",
+          "[generateBlogPostFlow] Potentially a Google AI API key issue or Gemini API not enabled for project. Please check GOOGLE_API_KEY and API enablement in Google Cloud Console.",
+        );
+      }
+       if (errorMessage.toLowerCase().includes("cloudinary")) {
+        console.error(
+          "[generateBlogPostFlow] Potentially a Cloudinary API key issue. Please check CLOUDINARY environment variables.",
         );
       }
       console.warn(
