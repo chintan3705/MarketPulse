@@ -3,12 +3,11 @@ import { latestBlogPosts } from '@/lib/data';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, UserCircle, ArrowLeft } from 'lucide-react';
+import { CalendarDays, UserCircle, ArrowLeft, Headphones } from 'lucide-react'; // Added Headphones
 import { Button } from '@/components/ui/button';
 import { notFound } from 'next/navigation';
 import type { Metadata, ResolvingMetadata } from 'next';
 
-// Define a base URL for your site. Replace with your actual domain.
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.marketpulse.example.com';
 
 interface BlogPostPageProps {
@@ -47,7 +46,6 @@ export async function generateMetadata(
       url: `${SITE_URL}/blog/${post.slug}`,
       type: 'article',
       publishedTime: post.publishedAt,
-      // modifiedTime: post.updatedAt, // Add if you have an updatedAt field
       authors: [post.author],
       tags: post.tags,
       images: postImage,
@@ -57,14 +55,11 @@ export async function generateMetadata(
       card: 'summary_large_image',
       title: post.title,
       description: post.summary,
-      images: postImage.map(img => img.url), // Use the same image as Open Graph
-      // creator: '@YourTwitterHandle', // If you have author-specific handles
+      images: postImage.map(img => img.url), 
     },
   };
 }
 
-
-// ISR: Revalidate every 24 hours (86400 seconds)
 export const revalidate = 86400;
 
 export async function generateStaticParams() {
@@ -91,12 +86,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     <div className="container py-8 md:py-12 animate-slide-in" style={{animationDelay: '0.1s', animationFillMode: 'backwards'}}>
       <article className="max-w-3xl mx-auto">
         <header className="mb-8">
-          <div className="mb-4">
+          <div className="flex justify-between items-center mb-4">
             <Button variant="outline" asChild size="sm">
               <Link href="/news" className="text-sm">
                 <ArrowLeft size={16} className="mr-2" />
                 Back to News
               </Link>
+            </Button>
+            <Button variant="outline" size="sm" disabled title="Listen to article (Feature coming soon)">
+              <Headphones size={16} className="mr-2" />
+              Listen
             </Button>
           </div>
           <Link href={`/category/${post.category.slug}`}>
@@ -133,7 +132,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {post.content ? (
           <div
-            className="prose prose-lg dark:prose-invert max-w-none"
+            className="prose prose-lg dark:prose-invert max-w-none" // prose-invert handles dark mode text within prose
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
         ) : (

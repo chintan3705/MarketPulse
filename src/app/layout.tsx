@@ -53,9 +53,8 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  // Optional: Add icons, manifest if you have them
-  // icons: {
-  //   icon: '/favicon.ico', // Temporarily commented out
+  // icons: { // Temporarily commented out based on previous error debugging
+  //   icon: '/favicon.ico',
   //   shortcut: '/favicon-16x16.png',
   //   apple: '/apple-touch-icon.png',
   // },
@@ -68,14 +67,35 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const preference = localStorage.getItem('theme');
+                  if (preference === 'light') {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.classList.add('light');
+                  } else {
+                    document.documentElement.classList.add('dark');
+                     document.documentElement.classList.remove('light');
+                  }
+                } catch (e) {
+                  // If localStorage is not available, default to dark
+                  document.documentElement.classList.add('dark');
+                }
+              })();
+            `,
+          }}
+        />
       </head>
-      <body className="font-body antialiased flex flex-col min-h-screen">
+      <body className="font-body antialiased flex flex-col min-h-screen bg-background text-foreground">
         {children}
         <Toaster />
       </body>

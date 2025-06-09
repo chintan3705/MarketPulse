@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { TrendingHeadlineCard } from "@/components/blog/TrendingHeadlineCard";
 import { AdSlot } from "@/components/ads/AdSlot";
-import { latestBlogPosts, trendingHeadlines, adSlots, categories } from "@/lib/data";
+import { latestBlogPosts, trendingHeadlines, adSlots } from "@/lib/data"; // Removed categories as it's used in HomeCategoryTabs
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +12,7 @@ import { HeroSection } from '@/components/home/HeroSection';
 import { HomeCategoryTabs } from '@/components/home/HomeCategoryTabs';
 import { TrendingTagsSection } from '@/components/home/TrendingTagsSection';
 import { PopularReadsSection } from '@/components/home/PopularReadsSection';
+import { MarketLensSection } from '@/components/home/MarketLensSection';
 
 
 export const metadata: Metadata = {
@@ -36,7 +37,7 @@ const SectionTitle = ({ title, icon: Icon, viewAllLink }: { title: string; icon?
     {viewAllLink && (
       <Button variant="link" asChild className="text-primary hover:underline">
         <Link href={viewAllLink}>
-          <span className="inline-flex items-center"> {/* Wrapped children of Link in a span */}
+          <span className="inline-flex items-center">
             View All <ArrowRight className="ml-1 h-4 w-4" />
           </span>
         </Link>
@@ -55,6 +56,8 @@ export default function HomePage() {
     <div className="animate-slide-in" style={{animationDelay: '0.1s', animationFillMode: 'backwards'}}>
       <HeroSection />
       
+      <MarketLensSection /> {/* Added Market Lens Section */}
+
       <HomeCategoryTabs />
 
       {/* Top Banner Ad - Can be moved or kept based on design preference */}
@@ -90,7 +93,7 @@ export default function HomePage() {
 
           <aside className="lg:col-span-1 space-y-8">
             <section aria-labelledby="trending-headlines-title">
-              <Card className="shadow-lg">
+              <Card className="shadow-lg"> {/* Will inherit glass-card style if base Card component is updated */}
                 <CardHeader>
                   <div className="flex items-center gap-2">
                      <Zap className="h-6 w-6 text-primary" />
@@ -135,7 +138,7 @@ export default function HomePage() {
           <section className="mt-8 md:mt-12" aria-labelledby="more-posts-title">
             <SectionTitle title="More News & Analysis" viewAllLink="/news/all"/>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {latestBlogPosts.slice(3, latestBlogPosts.length > 6 ? 6 : latestBlogPosts.length).map((post) => ( // Show next 3 or fewer
+              {latestBlogPosts.slice(3, latestBlogPosts.length > 6 ? 6 : latestBlogPosts.length).map((post) => (
                 <BlogPostCard key={post.id} post={post} />
               ))}
             </div>
