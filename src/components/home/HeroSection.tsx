@@ -27,19 +27,32 @@ const initialStaticData: MarketTickerData[] = [
   { id: "FTSE100", name: "FTSE 100", value: "8,237.72", change: "-10.50", changePercent: "-0.13%", isPositive: false, region: "UK", icon: Globe },
 ];
 
-// This is a MOCK function. Replace with your actual API call.
-// It demonstrates how you might transform data from a hypothetical API.
-const transformApiData = (apiResponse: any[]): MarketTickerData[] => {
-  // Example: Assuming apiResponse is an array of objects like { symbol: 'NIFTY50', price: 23500, change: 50 ... }
-  // This is highly dependent on the actual API structure.
-  // For this example, we'll just return a slightly modified version of initialStaticData
-  // to show the update mechanism.
-  return initialStaticData.map(item => ({
-    ...item,
-    value: (parseFloat(item.value.replace(/,/g, '')) + (Math.random() * 100 - 50)).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
-    change: (Math.random() * 50 - 25).toFixed(2),
-    isPositive: Math.random() > 0.5,
-  })).slice(0, 4); // Ensure we only take 4 items for display consistency
+// MOCK API Fetch function - REPLACE THIS WITH YOUR ACTUAL API CALL
+const fetchMarketDataFromAPI = async (): Promise<MarketTickerData[]> => {
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 700));
+
+  // Simulate potential API error (uncomment to test error handling)
+  // if (Math.random() < 0.2) {
+  //   throw new Error("Simulated API error: Failed to fetch market data.");
+  // }
+
+  // Simulate new data - In a real scenario, this data comes from an API
+  return initialStaticData.map(item => {
+    const currentValue = parseFloat(item.value.replace(/,/g, ''));
+    const randomChange = (Math.random() * 100 - 50); // Random change between -50 and +50
+    const newValue = currentValue + randomChange;
+    const changePercent = (randomChange / currentValue) * 100;
+    const isPositive = randomChange >= 0;
+
+    return {
+      ...item,
+      value: newValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+      change: `${isPositive ? '+' : ''}${randomChange.toFixed(2)}`,
+      changePercent: `${isPositive ? '+' : ''}${changePercent.toFixed(2)}%`,
+      isPositive: isPositive,
+    };
+  });
 };
 
 
@@ -67,23 +80,20 @@ export function HeroSection() {
     // setLoading(true); // Optionally set loading true for each refresh
     setError(null);
     try {
-      // IMPORTANT: Replace this URL with your actual financial data API endpoint
-      const response = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=4'); // Placeholder API
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`);
-      }
-      const dataFromApi = await response.json();
-
-      // *** You will need to adapt this transformation based on your chosen API's response structure ***
-      // For this example, transformApiData returns a modified version of initialStaticData
-      const formattedData = transformApiData(dataFromApi);
+      // IMPORTANT: Replace fetchMarketDataFromAPI with your actual API call.
+      // For example, if using Alpha Vantage:
+      // const response = await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=IBM&apikey=YOUR_API_KEY`);
+      // const dataFromApi = await response.json();
+      // Then transform dataFromApi into MarketTickerData[]
+      const formattedData = await fetchMarketDataFromAPI();
       setMarketData(formattedData);
 
     } catch (err) {
       console.error("Failed to fetch market data:", err);
       setError(err instanceof Error ? err.message : "An unknown error occurred");
       // Fallback to initial static data in case of error so UI doesn't break
-      setMarketData(initialStaticData);
+      // You might want to keep previous successful data instead of resetting to initialStaticData
+      // setMarketData(initialStaticData); 
     } finally {
       setLoading(false);
     }
@@ -93,8 +103,8 @@ export function HeroSection() {
     fetchData(); // Initial fetch
 
     const intervalId = setInterval(() => {
-      fetchData(); // Refresh data every 15 seconds
-    }, 15000); // 15 seconds interval
+      fetchData(); // Refresh data every 30 seconds
+    }, 30000); // 30 seconds interval
 
     return () => clearInterval(intervalId); // Cleanup interval on component unmount
   }, []);
@@ -110,7 +120,7 @@ export function HeroSection() {
         </p>
         
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 max-w-4xl mx-auto mb-10 animate-slide-in" style={{animationDelay: '0.4s', minHeight: '100px'}}>
-          {loading ? (
+          {loading && marketData === initialStaticData ? ( // Show loader only on initial load or if data hasn't changed from initial
             <div className="col-span-full flex flex-col justify-center items-center min-h-[100px]">
               <Loader2 className="h-10 w-10 text-primary animate-spin" />
               <span className="mt-2 text-muted-foreground">Loading market data...</span>
@@ -118,8 +128,12 @@ export function HeroSection() {
           ) : error ? (
             <div className="col-span-full flex flex-col justify-center items-center min-h-[100px] p-4 bg-destructive/10 border border-destructive rounded-md">
               <AlertTriangle className="h-8 w-8 text-destructive mb-2" />
-              <p className="text-sm text-destructive-foreground font-semibold">Failed to load market data</p>
-              <p className="text-xs text-destructive-foreground/80">{error}. Displaying static data.</p>
+              <p className="text-sm text-destructive-foreground font-semibold">Failed to load live market data</p>
+              <p className="text-xs text-destructive-foreground/80">{error}. Displaying cached data.</p>
+              {/* Render static/cached data below the error message */}
+              {marketData.map((item) => (
+                 <MarketTickerItem key={item.id} {...item} />
+              ))}
             </div>
           ) : (
             marketData.map((item) => (
@@ -127,14 +141,6 @@ export function HeroSection() {
             ))
           )}
         </div>
-        
-        {!loading && error && ( // Show static data below error message if fetch failed
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 max-w-4xl mx-auto mb-10 animate-slide-in" style={{animationDelay: '0.4s'}}>
-            {initialStaticData.map((item) => (
-              <MarketTickerItem key={item.id} {...item} />
-            ))}
-          </div>
-        )}
         
         <div className="animate-slide-in" style={{animationDelay: '0.5s'}}>
           <Button size="lg" asChild className="shadow-lg hover:shadow-primary/30 transition-shadow">
