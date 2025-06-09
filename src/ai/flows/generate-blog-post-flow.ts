@@ -6,6 +6,7 @@
  * - generateBlogPost - A function that handles the blog post generation with image.
  * - GenerateBlogPostInput - The input type for the generateBlogPost function.
  * - GenerateBlogPostOutput - The return type for the generateBlogPost function.
+ * - GenerateBlogPostOutputSchema - The Zod schema for the output.
  */
 
 import {ai} from '@/ai/genkit';
@@ -17,7 +18,7 @@ const GenerateBlogPostInputSchema = z.object({
 });
 export type GenerateBlogPostInput = z.infer<typeof GenerateBlogPostInputSchema>;
 
-const GenerateBlogPostOutputSchema = z.object({
+export const GenerateBlogPostOutputSchema = z.object({ // Added export here
   title: z.string().describe('The catchy title of the blog post.'),
   summary: z.string().describe('A concise 2-3 sentence summary of the blog post.'),
   content: z.string().describe('The full blog post content in HTML format. Should include multiple paragraphs, <h3> for subheadings, and <ul>/<li> for lists where appropriate. Aim for 300-500 words.'),
