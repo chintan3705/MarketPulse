@@ -3,9 +3,10 @@
 
 import { useState, useEffect } from 'react';
 import type { ElementType } from 'react';
+import useSWR from 'swr';
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { TrendingUp, TrendingDown, Newspaper, Globe, Landmark, Loader2, AlertTriangle } from "lucide-react";
+import { TrendingUp, TrendingDown, Newspaper, Loader2, AlertTriangle, Landmark } from "lucide-react";
 import { cn } from '@/lib/utils';
 
 interface MarketTickerData {
@@ -15,51 +16,81 @@ interface MarketTickerData {
   change: string;
   changePercent: string;
   isPositive: boolean;
-  region?: string;
-  icon?: ElementType;
 }
 
-// Initial static data / fallback data
-const initialStaticData: MarketTickerData[] = [
-  { id: "NIFTY50", name: "NIFTY 50", value: "23,450.75", change: "+120.25", changePercent: "+0.51%", isPositive: true, region: "India", icon: Landmark },
-  { id: "SENSEX", name: "SENSEX", value: "78,050.90", change: "-50.10", changePercent: "-0.06%", isPositive: false, region: "India", icon: Landmark },
-  { id: "NASDAQ", name: "NASDAQ", value: "17,688.88", change: "+21.32", changePercent: "+0.12%", isPositive: true, region: "US", icon: Globe },
-  { id: "FTSE100", name: "FTSE 100", value: "8,237.72", change: "-10.50", changePercent: "-0.13%", isPositive: false, region: "UK", icon: Globe },
-];
+// These are the specific symbols we're interested in from the Yahoo Finance API (for Indian market)
+const TARGET_SYMBOLS = {
+  NIFTY_50: '^NSEI',
+  SENSEX: '^BSESN',
+  BANKNIFTY: '^NSEBANK',
+  // You can add more if the API provides them and you want to display them
+};
 
-// MOCK API Fetch function - REPLACE THIS WITH YOUR ACTUAL API CALL
-const fetchMarketDataFromAPI = async (): Promise<MarketTickerData[]> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 700));
+const API_URL = "https://apidojo-yahoo-finance-v1.p.rapidapi.com/market/v2/get-summary?region=IN";
+const RAPIDAPI_HOST = "apidojo-yahoo-finance-v1.p.rapidapi.com";
 
-  // Simulate potential API error (uncomment to test error handling)
-  // if (Math.random() < 0.2) {
-  //   throw new Error("Simulated API error: Failed to fetch market data.");
-  // }
+// IMPORTANT: User must set this in their .env.local file
+const API_KEY = process.env.NEXT_PUBLIC_RAPIDAPI_KEY;
 
-  // Simulate new data - In a real scenario, this data comes from an API
-  return initialStaticData.map(item => {
-    const currentValue = parseFloat(item.value.replace(/,/g, ''));
-    const randomChange = (Math.random() * 100 - 50); // Random change between -50 and +50
-    const newValue = currentValue + randomChange;
-    const changePercent = (randomChange / currentValue) * 100;
-    const isPositive = randomChange >= 0;
-
-    return {
-      ...item,
-      value: newValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
-      change: `${isPositive ? '+' : ''}${randomChange.toFixed(2)}`,
-      changePercent: `${isPositive ? '+' : ''}${changePercent.toFixed(2)}%`,
-      isPositive: isPositive,
-    };
+const fetcher = async (url: string) => {
+  if (!API_KEY) {
+    throw new Error("RapidAPI key is missing. Please set NEXT_PUBLIC_RAPIDAPI_KEY in your .env.local file.");
+  }
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      "x-rapidapi-key": API_KEY,
+      "x-rapidapi-host": RAPIDAPI_HOST,
+    },
   });
+
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ message: res.statusText }));
+    throw new Error(`Failed to fetch data: ${res.status} ${errorData.message || res.statusText}`);
+  }
+  return res.json();
+};
+
+const transformApiData = (apiData: any): MarketTickerData[] => {
+  if (!apiData?.marketSummaryAndSparkResponse?.result) {
+    return [];
+  }
+
+  const results = apiData.marketSummaryAndSparkResponse.result;
+  const transformed: MarketTickerData[] = [];
+
+  const symbolMap: { [key: string]: string } = {
+    [TARGET_SYMBOLS.NIFTY_50]: "NIFTY 50",
+    [TARGET_SYMBOLS.SENSEX]: "SENSEX",
+    [TARGET_SYMBOLS.BANKNIFTY]: "BANKNIFTY",
+  };
+
+  for (const item of results) {
+    if (item.symbol && symbolMap[item.symbol]) {
+      const marketPrice = item.regularMarketPrice;
+      const marketChange = item.regularMarketChange;
+      const marketChangePercent = item.regularMarketChangePercent;
+
+      if (marketPrice && marketChange && marketChangePercent) {
+        transformed.push({
+          id: item.symbol,
+          name: item.shortName || symbolMap[item.symbol] || item.symbol,
+          value: marketPrice.fmt || "N/A",
+          change: marketChange.fmt || "N/A",
+          changePercent: marketChangePercent.fmt || "N/A",
+          isPositive: marketChange.raw >= 0,
+        });
+      }
+    }
+  }
+  return transformed;
 };
 
 
-const MarketTickerItem = ({ name, value, change, changePercent, isPositive, region, icon: Icon }: MarketTickerData) => (
+const MarketTickerItem = ({ name, value, change, changePercent, isPositive }: MarketTickerData) => (
   <div className="text-center md:text-left p-3 bg-card/50 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 flex-1 min-w-[150px] md:min-w-[180px]">
     <div className="flex items-center justify-center md:justify-start mb-1">
-      {Icon && <Icon size={16} className="mr-2 text-primary flex-shrink-0" />}
+      <Landmark size={16} className="mr-2 text-primary flex-shrink-0 hidden md:inline" />
       <p className="text-sm text-muted-foreground truncate" title={name}>{name}</p>
     </div>
     <p className="text-xl md:text-2xl font-bold text-foreground">{value}</p>
@@ -67,47 +98,19 @@ const MarketTickerItem = ({ name, value, change, changePercent, isPositive, regi
       {isPositive ? <TrendingUp size={16} className="mr-1 flex-shrink-0" /> : <TrendingDown size={16} className="mr-1 flex-shrink-0" />}
       <span className="truncate">{change} ({changePercent})</span>
     </div>
-    {region && <p className="text-xs text-muted-foreground mt-1">{region}</p>}
   </div>
 );
 
 export function HeroSection() {
-  const [marketData, setMarketData] = useState<MarketTickerData[]>(initialStaticData);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: apiData, error, isLoading } = useSWR(API_URL, fetcher, {
+    refreshInterval: 30000, // 30 seconds
+    dedupingInterval: 25000, // Avoid duplicate requests close together
+    revalidateOnFocus: true,
+  });
 
-  const fetchData = async () => {
-    // setLoading(true); // Optionally set loading true for each refresh
-    setError(null);
-    try {
-      // IMPORTANT: Replace fetchMarketDataFromAPI with your actual API call.
-      // For example, if using Alpha Vantage:
-      // const response = await fetch(`https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=IBM&apikey=YOUR_API_KEY`);
-      // const dataFromApi = await response.json();
-      // Then transform dataFromApi into MarketTickerData[]
-      const formattedData = await fetchMarketDataFromAPI();
-      setMarketData(formattedData);
+  const marketData = apiData ? transformApiData(apiData) : [];
 
-    } catch (err) {
-      console.error("Failed to fetch market data:", err);
-      setError(err instanceof Error ? err.message : "An unknown error occurred");
-      // Fallback to initial static data in case of error so UI doesn't break
-      // You might want to keep previous successful data instead of resetting to initialStaticData
-      // setMarketData(initialStaticData); 
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData(); // Initial fetch
-
-    const intervalId = setInterval(() => {
-      fetchData(); // Refresh data every 30 seconds
-    }, 30000); // 30 seconds interval
-
-    return () => clearInterval(intervalId); // Cleanup interval on component unmount
-  }, []);
+  const initialLoad = isLoading && !apiData && !error;
 
   return (
     <section className="py-12 md:py-16 bg-gradient-to-br from-background to-muted/30">
@@ -119,8 +122,8 @@ export function HeroSection() {
           Your Daily Lens on the Share Market. Timely updates, financial insights, and stock analysis to empower your investment decisions.
         </p>
         
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 max-w-4xl mx-auto mb-10 animate-slide-in" style={{animationDelay: '0.4s', minHeight: '100px'}}>
-          {loading && marketData === initialStaticData ? ( // Show loader only on initial load or if data hasn't changed from initial
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 max-w-4xl mx-auto mb-10 animate-slide-in" style={{animationDelay: '0.4s', minHeight: '100px'}}>
+          {initialLoad ? (
             <div className="col-span-full flex flex-col justify-center items-center min-h-[100px]">
               <Loader2 className="h-10 w-10 text-primary animate-spin" />
               <span className="mt-2 text-muted-foreground">Loading market data...</span>
@@ -128,17 +131,19 @@ export function HeroSection() {
           ) : error ? (
             <div className="col-span-full flex flex-col justify-center items-center min-h-[100px] p-4 bg-destructive/10 border border-destructive rounded-md">
               <AlertTriangle className="h-8 w-8 text-destructive mb-2" />
-              <p className="text-sm text-destructive-foreground font-semibold">Failed to load live market data</p>
-              <p className="text-xs text-destructive-foreground/80">{error}. Displaying cached data.</p>
-              {/* Render static/cached data below the error message */}
-              {marketData.map((item) => (
-                 <MarketTickerItem key={item.id} {...item} />
-              ))}
+              <p className="text-sm text-destructive-foreground font-semibold">Failed to load market data</p>
+              <p className="text-xs text-destructive-foreground/80">{error.message}. Please ensure your API key is correct and active.</p>
             </div>
-          ) : (
+          ) : marketData.length > 0 ? (
             marketData.map((item) => (
               <MarketTickerItem key={item.id} {...item} />
             ))
+          ) : (
+             <div className="col-span-full flex flex-col justify-center items-center min-h-[100px]">
+                <AlertTriangle className="h-8 w-8 text-muted-foreground mb-2" />
+                <p className="text-sm text-muted-foreground">Market data currently unavailable.</p>
+                {!API_KEY && <p className="text-xs text-muted-foreground/80 mt-1">NEXT_PUBLIC_RAPIDAPI_KEY is not set.</p>}
+            </div>
           )}
         </div>
         
