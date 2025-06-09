@@ -55,7 +55,7 @@ export const metadata: Metadata = {
   },
   // Optional: Add icons, manifest if you have them
   // icons: {
-  //   icon: '/favicon.ico',
+  //   icon: '/favicon.ico', // Temporarily commented out
   //   shortcut: '/favicon-16x16.png',
   //   apple: '/apple-touch-icon.png',
   // },

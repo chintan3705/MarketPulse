@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import type { AdConfig } from '@/types';
 import { cn } from '@/lib/utils';
+import { AreaChart, BarChartBig } from 'lucide-react'; // Added icons for chart placeholder
 
 interface AdSlotProps {
   config: AdConfig;
@@ -15,7 +16,7 @@ export function AdSlot({ config }: AdSlotProps) {
         <Image
           src={src}
           alt={altText || "Advertisement"}
-          width={typeof width === 'number' ? width : 300} // Default for '100%' case
+          width={typeof width === 'number' ? width : 300} 
           height={typeof height === 'number' ? height : 250}
           className="object-contain"
           data-ai-hint={imageAiHint || "advertisement"}
@@ -25,8 +26,6 @@ export function AdSlot({ config }: AdSlotProps) {
   }
 
   if (type === 'script') {
-    // In a real app, you might use dangerouslySetInnerHTML or a library to manage scripts
-    // For now, a placeholder:
     return (
       <div 
         className={cn("bg-muted/50 flex items-center justify-center text-sm text-muted-foreground p-4 rounded-md shadow", className)}
@@ -38,13 +37,15 @@ export function AdSlot({ config }: AdSlotProps) {
   }
   
   if (type === 'tradingview-widget') {
-     // Placeholder for TradingView widget. Actual implementation would involve their script.
     return (
       <div 
-        className={cn("bg-muted/50 flex items-center justify-center text-sm text-muted-foreground p-4 rounded-md shadow", className)}
+        className={cn("bg-card border border-border flex flex-col items-center justify-center text-sm text-muted-foreground p-4 rounded-lg shadow-lg", className)}
         style={{ width: width, height: height }}
       >
-        TradingView Widget - {config.id}
+        <AreaChart className="w-16 h-16 text-primary mb-2" />
+        <p className="font-semibold text-foreground">TradingView Chart</p>
+        <p className="text-xs">Symbol: {tradingViewWidgetConfig?.symbol || 'N/A'}</p>
+        <p className="text-xs mt-2">(Live chart will be embedded here)</p>
       </div>
     );
   }
@@ -59,3 +60,5 @@ export function AdSlot({ config }: AdSlotProps) {
     </div>
   );
 }
+
+    

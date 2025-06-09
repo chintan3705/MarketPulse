@@ -21,7 +21,7 @@ export const latestBlogPosts: BlogPost[] = [
     category: categories[0], // Stocks
     author: 'Priya Sharma',
     publishedAt: new Date(Date.now() - 86400000).toISOString(), // Yesterday
-    tags: ['Nifty', 'Stock Market', 'Bull Run'],
+    tags: ['Nifty', 'Stock Market', 'Bull Run', 'Investing'],
     content: `
       <p>The Indian equity markets continued their upward trajectory on Tuesday, with the Nifty 50 index scaling a fresh record high of 2X,XXX.XX, surpassing its previous lifetime peak. The Sensex also traded firmly in the green, nearing its all-time high. This bullish momentum is attributed to a confluence of positive factors, including sustained foreign institutional investor (FII) inflows, encouraging domestic macroeconomic data, and favorable global market sentiment.</p>
       <h3 class="text-xl font-semibold mt-4 mb-2">Key Drivers of the Rally:</h3>
@@ -45,7 +45,7 @@ export const latestBlogPosts: BlogPost[] = [
     category: categories[1], // IPOs
     author: 'Rohan Mehra',
     publishedAt: new Date(Date.now() - 2 * 86400000).toISOString(), // 2 days ago
-    tags: ['IPO', 'Investing', 'Beginners Guide'],
+    tags: ['IPO', 'Investing', 'Beginners Guide', 'Finance'],
     content: `
       <p>Initial Public Offerings (IPOs) often generate significant buzz in the investment world. The prospect of getting in on the ground floor of a promising company can be alluring. However, IPO investing is not without its complexities and risks. This guide aims to demystify IPOs for beginner investors.</p>
       <h3 class="text-xl font-semibold mt-4 mb-2">What is an IPO?</h3>
@@ -100,7 +100,7 @@ export const latestBlogPosts: BlogPost[] = [
     category: categories[2], // Mutual Funds
     author: 'Vikram Singh',
     publishedAt: new Date(Date.now() - 4 * 86400000).toISOString(), // 4 days ago
-    tags: ['Mutual Funds', 'Investment', 'Top Picks'],
+    tags: ['Mutual Funds', 'Investment', 'Top Picks', 'Finance'],
     content: `
       <p>Choosing the right mutual fund can be a daunting task given the plethora of options available. This article highlights some of the top-performing mutual funds that investors could consider watching or adding to their portfolio in the third quarter of 2024, based on expert analysis and past performance. Remember, past performance is not indicative of future returns, and it's crucial to align investments with your financial goals and risk appetite.</p>
       <h3 class="text-xl font-semibold mt-4 mb-2">Key Categories to Consider:</h3>
@@ -114,6 +114,34 @@ export const latestBlogPosts: BlogPost[] = [
       <p>When evaluating mutual funds, look beyond just returns. Consider factors like the fund manager's experience, expense ratio, investment strategy, and the fund house's reputation. Diversification across different fund types and asset classes is key to building a resilient portfolio. It's always recommended to consult with a financial advisor before making any investment decisions.</p>
     `,
   },
+  {
+    id: '5',
+    slug: 'crypto-market-trends-q3',
+    title: 'Cryptocurrency Market: Key Trends and Predictions for Q3 2024',
+    summary: 'The crypto market remains volatile. This post explores recent trends, major coin performance, and expert predictions for the third quarter of 2024.',
+    imageUrl: 'https://placehold.co/800x450.png',
+    imageAiHint: 'cryptocurrency digital coins',
+    category: categories[5], // Crypto
+    author: 'Alex Chen',
+    publishedAt: new Date(Date.now() - 5 * 86400000).toISOString(), // 5 days ago
+    tags: ['Crypto', 'Bitcoin', 'Ethereum', 'Blockchain', 'Altcoins'],
+    content: `
+      <p>The cryptocurrency market continues to be a focal point for investors seeking high growth, albeit with significant risk. As we head into the third quarter of 2024, several key trends and predictions are shaping the landscape. Regulatory discussions worldwide, adoption by institutional investors, and technological advancements within blockchain projects are major factors to watch.</p>
+      <h3 class="text-xl font-semibold mt-4 mb-2">Major Coin Performance:</h3>
+      <ul class="list-disc list-inside space-y-1 mb-4">
+        <li><strong>Bitcoin (BTC):</strong> Remains the bellwether of the crypto market. Its price movements often dictate the overall market sentiment. Analysts are watching key support and resistance levels.</li>
+        <li><strong>Ethereum (ETH):</strong> With ongoing network upgrades, Ethereum's utility and scalability continue to be hot topics. Its performance is crucial for the broader DeFi and NFT ecosystems.</li>
+        <li><strong>Altcoins:</strong> Various altcoins, from layer-1 solutions to meme coins, show mixed performance. Research and due diligence are paramount before investing in lesser-known projects.</li>
+      </ul>
+      <h3 class="text-xl font-semibold mt-4 mb-2">Predictions & Factors to Watch:</h3>
+       <ul class="list-disc list-inside space-y-1 mb-4">
+        <li><strong>Regulatory Clarity:</strong> Any significant regulatory announcements from major economies could heavily impact prices.</li>
+        <li><strong>Macroeconomic Factors:</strong> Inflation rates, interest rate decisions by central banks, and overall global economic health can influence crypto market liquidity and investor appetite.</li>
+        <li><strong>Adoption Curve:</strong> Increased adoption by businesses and mainstream users can drive long-term value.</li>
+      </ul>
+      <p>Investing in cryptocurrencies carries substantial risk, and investors should only allocate funds they can afford to lose. Staying informed and understanding the underlying technology are crucial for navigating this dynamic market.</p>
+    `,
+  }
 ];
 
 export const trendingHeadlines: TrendingHeadline[] = [
@@ -187,5 +215,18 @@ export const adSlots: AdConfig[] = [
     width: '100%',
     height: 60,
     className: 'mx-auto my-4',
+  },
+  {
+    id: 'tradingview-chart-example',
+    type: 'tradingview-widget',
+    width: '100%',
+    height: 400,
+    className: 'mx-auto my-4',
+    tradingViewWidgetConfig: {
+      symbol: 'NASDAQ:AAPL',
+      theme: 'light', // This would be dynamically set based on theme
+    }
   }
 ];
+
+    

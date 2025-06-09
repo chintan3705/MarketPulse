@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -5,11 +6,12 @@ import { Logo } from '@/components/common/Logo';
 import { SearchInput } from '@/components/common/SearchInput';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, X, UserCog } from 'lucide-react'; // Added UserCog
+import { Menu, X, UserCog } from 'lucide-react';
 import type { NavItem } from '@/types';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/common/ThemeToggle'; // Import ThemeToggle
 
 const mainNavItems: NavItem[] = [
   { label: 'Home', href: '/' },
@@ -43,22 +45,27 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex-1 flex justify-end items-center space-x-4">
+        <div className="flex-1 flex justify-end items-center space-x-2"> {/* Reduced space-x-4 to space-x-2 */}
           <div className="hidden md:block">
             <SearchInput />
           </div>
+          <ThemeToggle /> {/* Add ThemeToggle here */}
           <Button variant="outline" size="sm" asChild className="hidden md:inline-flex">
             <Link href="/admin">
-              <UserCog className="mr-2 h-4 w-4" />
-              Admin Panel
+              <span className="inline-flex items-center">
+                <UserCog className="mr-2 h-4 w-4" />
+                Admin Panel
+              </span>
             </Link>
           </Button>
         </div>
 
 
-        <div className="md:hidden flex items-center ml-auto">
-           <Button variant="ghost" size="icon" asChild className="mr-2">
+        <div className="md:hidden flex items-center ml-auto space-x-1"> {/* Added space-x-1 for mobile */}
+           <ThemeToggle /> {/* Add ThemeToggle for mobile */}
+           <Button variant="ghost" size="icon" asChild className="mr-0"> {/* Removed mr-2 */}
             <Link href="/admin" aria-label="Admin Panel">
+              {/* Ensure Link has a single child if asChild is used on Button, or ensure Button itself is the single child */}
               <UserCog className="h-5 w-5" />
             </Link>
           </Button>
@@ -103,8 +110,10 @@ export function Header() {
                       )}
                       onClick={() => setMobileMenuOpen(false)}
                     >
-                      <UserCog className="inline-block mr-2 h-5 w-5 align-text-bottom" />
-                      Admin Panel
+                      <span className="inline-flex items-center">
+                        <UserCog className="inline-block mr-2 h-5 w-5 align-text-bottom" />
+                        Admin Panel
+                      </span>
                     </Link>
                 </nav>
               </div>
@@ -115,3 +124,5 @@ export function Header() {
     </header>
   );
 }
+
+    
