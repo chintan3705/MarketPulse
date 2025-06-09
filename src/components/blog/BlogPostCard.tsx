@@ -19,6 +19,8 @@ export function BlogPostCard({ post, className, orientation = 'vertical' }: Blog
     day: 'numeric',
   });
 
+  const createTagSlug = (tag: string) => tag.toLowerCase().replace(/\s+/g, '-');
+
   return (
     <Card className={cn("overflow-hidden hover:shadow-xl transition-shadow duration-300 group", className, {
       'flex flex-col': orientation === 'vertical',
@@ -69,7 +71,7 @@ export function BlogPostCard({ post, className, orientation = 'vertical' }: Blog
           <div className="px-6 pb-4 pt-0">
             <div className="flex flex-wrap gap-2">
               {post.tags.slice(0,3).map(tag => (
-                <Link key={tag} href={`/tags/${tag.toLowerCase()}`}>
+                <Link key={tag} href={`/tags/${createTagSlug(tag)}`}>
                   <Badge variant="outline" className="text-xs hover:bg-muted transition-colors"># {tag}</Badge>
                 </Link>
               ))}

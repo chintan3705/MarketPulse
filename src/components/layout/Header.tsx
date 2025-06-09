@@ -5,7 +5,7 @@ import { Logo } from '@/components/common/Logo';
 import { SearchInput } from '@/components/common/SearchInput';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, UserCog } from 'lucide-react'; // Added UserCog
 import type { NavItem } from '@/types';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
@@ -25,10 +25,10 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
+      <div className="container flex h-16 items-center">
         <Logo />
         
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+        <nav className="hidden md:flex items-center space-x-4 ml-6 text-sm font-medium">
           {mainNavItems.map((item) => (
             <Link
               key={item.label}
@@ -43,11 +43,25 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="hidden md:block">
-          <SearchInput />
+        <div className="flex-1 flex justify-end items-center space-x-4">
+          <div className="hidden md:block">
+            <SearchInput />
+          </div>
+          <Button variant="outline" size="sm" asChild className="hidden md:inline-flex">
+            <Link href="/admin">
+              <UserCog className="mr-2 h-4 w-4" />
+              Admin Panel
+            </Link>
+          </Button>
         </div>
 
-        <div className="md:hidden flex items-center">
+
+        <div className="md:hidden flex items-center ml-auto">
+           <Button variant="ghost" size="icon" asChild className="mr-2">
+            <Link href="/admin" aria-label="Admin Panel">
+              <UserCog className="h-5 w-5" />
+            </Link>
+          </Button>
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" aria-label="Open menu">
@@ -81,6 +95,17 @@ export function Header() {
                       {item.label}
                     </Link>
                   ))}
+                   <Link
+                      href="/admin"
+                      className={cn(
+                        "block px-3 py-2 rounded-md text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+                         pathname.startsWith('/admin') ? "bg-accent text-accent-foreground" : "text-foreground"
+                      )}
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <UserCog className="inline-block mr-2 h-5 w-5 align-text-bottom" />
+                      Admin Panel
+                    </Link>
                 </nav>
               </div>
             </SheetContent>
