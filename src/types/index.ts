@@ -12,18 +12,21 @@ export interface Category {
 }
 
 export interface BlogPost {
-  id: string;
+  _id?: string; // Added for MongoDB
+  id?: string; // Kept for potential compatibility, but _id is primary for DB
   slug: string;
   title: string;
-  summary: string; // AI-generated or manual
+  summary: string;
   imageUrl?: string;
   imageAiHint?: string;
-  category: Category;
+  category: Category; // This will be populated by API based on categorySlug
+  categorySlug: string; // Stored in DB
+  categoryName: string; // Stored in DB
   author: string;
   publishedAt: string; // ISO date string
   tags: string[];
-  content?: string; // Full content for blog post page
-  isAiGenerated?: boolean; // To distinguish AI-generated posts
+  content?: string;
+  isAiGenerated?: boolean;
 }
 
 export interface TrendingHeadline {
@@ -32,14 +35,14 @@ export interface TrendingHeadline {
   source: string;
   url: string;
   publishedAt: string; // ISO date string
-  isGain?: boolean; // Optional: to color code if it's a stock price movement
+  isGain?: boolean;
 }
 
 export interface AdConfig {
   id: string;
   type: 'image' | 'script' | 'tradingview-widget';
-  src?: string; // For image or script URL
-  tradingViewWidgetConfig?: any; // For TradingView specific config
+  src?: string;
+  tradingViewWidgetConfig?: any;
   altText?: string;
   width?: number | string;
   height?: number | string;

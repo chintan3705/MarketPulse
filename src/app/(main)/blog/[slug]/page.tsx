@@ -1,5 +1,4 @@
 
-import { latestBlogPosts, categories } from '@/lib/data';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
@@ -8,8 +7,9 @@ import { Button } from '@/components/ui/button';
 import { notFound } from 'next/navigation';
 import type { Metadata, ResolvingMetadata } from 'next';
 import type { BlogPost } from '@/types';
+import { unstable_noStore as noStore } from 'next/cache';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.marketpulse.example.com';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';
 
 interface BlogPostPageProps {
   params: {
@@ -18,19 +18,28 @@ interface BlogPostPageProps {
 }
 
 async function getPostData(slug: string): Promise<BlogPost | null> {
-  // Only fetch from static posts in data.ts
-  const post = latestBlogPosts.find((p) => p.slug === slug);
-  if (post) {
+  noStore(); // Opt out of caching for this fetch
+  try {
+    const res = await fetch(`${SITE_URL}/api/posts/${slug}`, { cache: 'no-store' });
+    if (!res.ok) {
+      if (res.status === 404) {
+        return null; // Post not found
+      }
+      console.error(`Failed to fetch post ${slug}:`, res.status, await res.text());
+      return null; // Or throw error to trigger error boundary
+    }
+    const post = await res.json();
     return post;
+  } catch (error) {
+    console.error(`Error fetching post ${slug} from API:`, error);
+    return null; // Or throw
   }
-  return null; // Post not found
 }
 
 export async function generateMetadata(
-  { params: { slug } }: { params: { slug: string } }, // Directly destructure slug and use inline type for params
+  { params: { slug } }: { params: { slug: string } },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  // 'slug' is now directly available from destructuring.
   const post = await getPostData(slug);
 
   if (!post) {
@@ -41,7 +50,7 @@ export async function generateMetadata(
 
   const previousImages = (await parent).openGraph?.images || [];
   const postImage = post.imageUrl && !post.imageUrl.startsWith('https://placehold.co') 
-    ? [{ url: post.imageUrl, alt: post.title }] 
+    ? [{ url: post.imageUrl.startsWith('data:') ? post.imageUrl : `${SITE_URL}${post.imageUrl}`, alt: post.title }] 
     : post.imageUrl && post.imageUrl.startsWith('https://placehold.co')
     ? [{url: `${SITE_URL}/api/placeholder-og?imageUrl=${encodeURIComponent(post.imageUrl)}&text=${encodeURIComponent(post.title)}`, alt: post.title, width:1200, height:630}]
     : previousImages;
@@ -52,12 +61,12 @@ export async function generateMetadata(
     description: post.summary,
     keywords: post.tags,
     alternates: {
-      canonical: `/blog/${slug}`, // Use the destructured slug
+      canonical: `/blog/${slug}`,
     },
     openGraph: {
       title: post.title,
       description: post.summary,
-      url: `${SITE_URL}/blog/${slug}`, // Use the destructured slug
+      url: `${SITE_URL}/blog/${slug}`,
       type: 'article',
       publishedTime: post.publishedAt,
       authors: [post.author],
@@ -74,15 +83,20 @@ export async function generateMetadata(
   };
 }
 
-// Revalidate static posts (e.g., daily). Adjust as needed.
-export const revalidate = 86400; 
+// Revalidate dynamically fetched posts. Adjust as needed or remove if purely dynamic.
+// export const revalidate = 3600; // e.g. revalidate every hour for dynamic content
 
+// generateStaticParams can be used if you want to pre-render popular posts at build time
+// For a fully dynamic approach from DB, you might omit this or fetch a limited set of slugs.
+// For now, we'll keep it empty to ensure all slugs are resolved dynamically.
 export async function generateStaticParams() {
-  // Generate static params from latestBlogPosts in data.ts
-  return latestBlogPosts.map((post) => ({
-    slug: post.slug,
-  }));
+  // To pre-render some posts, fetch slugs from your API:
+  // const res = await fetch(`${SITE_URL}/api/posts?limit=10`); // Fetch, e.g., 10 most recent slugs
+  // const { posts } = await res.json();
+  // return posts.map((post: BlogPost) => ({ slug: post.slug }));
+  return []; // All pages will be dynamically rendered
 }
+
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = params;

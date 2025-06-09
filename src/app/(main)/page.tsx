@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { TrendingHeadlineCard } from "@/components/blog/TrendingHeadlineCard";
 import { AdSlot } from "@/components/ads/AdSlot";
-import { latestBlogPosts, trendingHeadlines, adSlots } from "@/lib/data"; // Removed categories as it's used in HomeCategoryTabs
+import { trendingHeadlines, adSlots } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +13,10 @@ import { HomeCategoryTabs } from '@/components/home/HomeCategoryTabs';
 import { TrendingTagsSection } from '@/components/home/TrendingTagsSection';
 import { PopularReadsSection } from '@/components/home/PopularReadsSection';
 import { MarketLensSection } from '@/components/home/MarketLensSection';
+import type { BlogPost } from '@/types';
+import { unstable_noStore as noStore } from 'next/cache';
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';
 
 export const metadata: Metadata = {
   title: 'MarketPulse – Your Daily Lens on the Share Market',
@@ -46,21 +49,39 @@ const SectionTitle = ({ title, icon: Icon, viewAllLink }: { title: string; icon?
   </div>
 );
 
+async function fetchHomePagePosts(): Promise<BlogPost[]> {
+  noStore(); // Opt out of caching for this fetch
+  try {
+    // Fetch a limited number of posts for the homepage, e.g., 6
+    const res = await fetch(`${SITE_URL}/api/posts?limit=6`, { cache: 'no-store' });
+    if (!res.ok) {
+      console.error("Failed to fetch homepage posts:", res.status, await res.text());
+      return [];
+    }
+    const data = await res.json();
+    return data.posts || [];
+  } catch (error) {
+    console.error("Error fetching homepage posts from API:", error);
+    return [];
+  }
+}
 
-export default function HomePage() {
+export default async function HomePage() {
+  const latestBlogPosts = await fetchHomePagePosts();
+  
   const featuredPost = latestBlogPosts[0];
   const otherPosts = latestBlogPosts.slice(1, 3); 
+  const moreNewsPosts = latestBlogPosts.slice(3, 6);
   const tradingViewAd = adSlots.find(ad => ad.id === 'tradingview-chart-example');
 
   return (
     <div className="animate-slide-in" style={{animationDelay: '0.1s', animationFillMode: 'backwards'}}>
       <HeroSection />
       
-      <MarketLensSection /> {/* Added Market Lens Section */}
+      <MarketLensSection />
 
       <HomeCategoryTabs />
 
-      {/* Top Banner Ad - Can be moved or kept based on design preference */}
       {adSlots.find(ad => ad.id === 'top-banner') && (
         <section className="py-6 bg-muted/30">
           <div className="container">
@@ -84,7 +105,7 @@ export default function HomePage() {
                 <SectionTitle title="Latest Insights" icon={Newspaper} viewAllLink="/news" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {otherPosts.map((post) => (
-                    <BlogPostCard key={post.id} post={post} orientation="vertical"/>
+                    <BlogPostCard key={post._id || post.id} post={post} orientation="vertical"/>
                   ))}
                 </div>
               </section>
@@ -93,7 +114,7 @@ export default function HomePage() {
 
           <aside className="lg:col-span-1 space-y-8">
             <section aria-labelledby="trending-headlines-title">
-              <Card className="shadow-lg"> {/* Will inherit glass-card style if base Card component is updated */}
+              <Card className="shadow-lg">
                 <CardHeader>
                   <div className="flex items-center gap-2">
                      <Zap className="h-6 w-6 text-primary" />
@@ -124,13 +145,12 @@ export default function HomePage() {
         )}
         
         <section className="animate-slide-in" style={{ animationDelay: '0.5s', animationFillMode: 'backwards' }}>
-          <TrendingTagsSection />
+          <TrendingTagsSection posts={latestBlogPosts} /> {/* Pass posts for dynamic tag generation */}
         </section>
         
         <section className="animate-slide-in" style={{ animationDelay: '0.7s', animationFillMode: 'backwards' }}>
-          <PopularReadsSection />
+          <PopularReadsSection posts={latestBlogPosts.slice(0,3)} /> {/* Pass a slice for popular reads */}
         </section>
-
 
         {adSlots.find(ad => ad.id === 'inline-ad-1') && (
           <section className="mt-8 md:mt-12" aria-label="Advertisement">
@@ -138,12 +158,12 @@ export default function HomePage() {
           </section>
         )}
 
-        {latestBlogPosts.length > 3 && (
+        {moreNewsPosts.length > 0 && (
           <section className="mt-8 md:mt-12 animate-slide-in" style={{ animationDelay: '0.9s', animationFillMode: 'backwards' }} aria-labelledby="more-posts-title">
             <SectionTitle title="More News & Analysis" viewAllLink="/news/all"/>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {latestBlogPosts.slice(3, latestBlogPosts.length > 6 ? 6 : latestBlogPosts.length).map((post) => (
-                <BlogPostCard key={post.id} post={post} />
+              {moreNewsPosts.map((post) => (
+                <BlogPostCard key={post._id || post.id} post={post} />
               ))}
             </div>
           </section>

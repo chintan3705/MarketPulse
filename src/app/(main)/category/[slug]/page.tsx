@@ -1,20 +1,34 @@
 
 import type { Metadata, ResolvingMetadata } from 'next';
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
-import { categories, latestBlogPosts } from "@/lib/data";
+import { categories } from "@/lib/data"; // Static categories for metadata and title
 import { LayoutGrid } from "lucide-react"; 
 import { notFound } from "next/navigation";
+import type { BlogPost } from '@/types';
+import { unstable_noStore as noStore } from 'next/cache';
 
-// Define a base URL for your site. Replace with your actual domain.
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.marketpulse.example.com';
-
-// ISR: Revalidate every 24 hours (86400 seconds)
-export const revalidate = 86400;
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';
 
 interface CategoryPageProps {
   params: {
     slug: string;
   };
+}
+
+async function fetchPostsByCategory(categorySlug: string): Promise<BlogPost[]> {
+  noStore(); 
+  try {
+    const res = await fetch(`${SITE_URL}/api/posts?categorySlug=${categorySlug}`, { cache: 'no-store' });
+    if (!res.ok) {
+      console.error(`Failed to fetch posts for category ${categorySlug}:`, res.status, await res.text());
+      return [];
+    }
+    const data = await res.json();
+    return data.posts || [];
+  } catch (error) {
+    console.error(`Error fetching posts for category ${categorySlug} from API:`, error);
+    return [];
+  }
 }
 
 export async function generateMetadata(
@@ -43,14 +57,12 @@ export async function generateMetadata(
       title: title,
       description: description,
       url: `${SITE_URL}/category/${category.slug}`,
-      type: 'website', // or 'profile' if it makes sense for a category
-      // images: ... // You might want a default category image or use an image from a featured post
+      type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
       title: title,
       description: description,
-      // images: ...
     },
   };
 }
@@ -62,8 +74,8 @@ const SectionTitle = ({ title, icon: Icon }: { title: string; icon?: React.Eleme
   </div>
 );
 
-
 export async function generateStaticParams() {
+  // Static categories are used, so we can pre-render these pages
   return categories.map(category => ({
     slug: category.slug,
   }));
@@ -77,7 +89,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     notFound();
   }
 
-  const postsInCategory = latestBlogPosts.filter(post => post.category.slug === slug);
+  const postsInCategory = await fetchPostsByCategory(slug);
 
   return (
     <div className="container py-8 md:py-12 animate-slide-in" style={{animationDelay: '0.1s', animationFillMode: 'backwards'}}>
@@ -85,7 +97,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       {postsInCategory.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {postsInCategory.map((post) => (
-            <BlogPostCard key={post.id} post={post} orientation="vertical" />
+            <BlogPostCard key={post._id || post.id} post={post} orientation="vertical" />
           ))}
         </div>
       ) : (

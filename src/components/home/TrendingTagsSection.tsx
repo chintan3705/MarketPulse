@@ -1,11 +1,29 @@
 
 import Link from 'next/link';
-import { latestBlogPosts } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
 import { Flame } from 'lucide-react';
+import type { BlogPost } from "@/types";
 
-export function TrendingTagsSection() {
-  const allTags = latestBlogPosts.flatMap(post => post.tags);
+interface TrendingTagsSectionProps {
+  posts: BlogPost[]; // Pass posts to derive tags
+}
+
+export function TrendingTagsSection({ posts }: TrendingTagsSectionProps) {
+  if (!posts || posts.length === 0) {
+    return (
+      <section className="py-8 md:py-12">
+        <div className="container">
+          <div className="flex items-center gap-2 mb-6">
+            <Flame className="h-6 w-6 text-primary" />
+            <h2 className="font-headline text-2xl sm:text-3xl font-bold">Trending Tags</h2>
+          </div>
+          <p className="text-muted-foreground">No trending tags to display at the moment.</p>
+        </div>
+      </section>
+    );
+  }
+
+  const allTags = posts.flatMap(post => post.tags);
   const tagCounts: { [key: string]: number } = {};
   allTags.forEach(tag => {
     tagCounts[tag] = (tagCounts[tag] || 0) + 1;
@@ -13,11 +31,21 @@ export function TrendingTagsSection() {
 
   const trendingTags = Object.entries(tagCounts)
     .sort(([, countA], [, countB]) => countB - countA)
-    .slice(0, 8) // Show top 8 trending tags
+    .slice(0, 8) 
     .map(([tag]) => tag);
 
   if (trendingTags.length === 0) {
-    return null;
+    return (
+      <section className="py-8 md:py-12">
+        <div className="container">
+          <div className="flex items-center gap-2 mb-6">
+            <Flame className="h-6 w-6 text-primary" />
+            <h2 className="font-headline text-2xl sm:text-3xl font-bold">Trending Tags</h2>
+          </div>
+          <p className="text-muted-foreground">No trending tags to display at the moment.</p>
+        </div>
+      </section>
+    );
   }
 
   const createTagSlug = (tag: string) => tag.toLowerCase().replace(/\s+/g, '-');
