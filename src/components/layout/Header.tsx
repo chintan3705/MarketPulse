@@ -63,11 +63,11 @@ export function Header() {
 
         <div className="md:hidden flex items-center ml-auto space-x-1"> {/* Added space-x-1 for mobile */}
            <ThemeToggle /> {/* Add ThemeToggle for mobile */}
-           <Link href="/admin" passHref legacyBehavior>
-             <Button variant="ghost" size="icon" className="mr-0" aria-label="Admin Panel">
+           <Button variant="ghost" size="icon" asChild className="mr-0">
+             <Link href="/admin" aria-label="Admin Panel">
                <UserCog className="h-5 w-5" />
-             </Button>
-           </Link>
+             </Link>
+           </Button>
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" aria-label="Open menu">
