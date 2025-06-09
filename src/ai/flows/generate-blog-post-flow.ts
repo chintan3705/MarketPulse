@@ -148,7 +148,8 @@ const generateBlogPostFlow = ai.defineFlow(
           slug: "general",
         };
 
-      const imagePromptText = `A visually appealing blog post illustration for an article in the "${categoryForImage.name}" category, titled "${textOutput.title}". The article is about: ${textOutput.summary.substring(0, 150)}... Focus on themes like: ${imageAiHint}. Style: Modern, professional, financial, potentially conceptual or abstract. Avoid text in the image.`;
+      // Updated image prompt to emphasize imageAiHint
+      const imagePromptText = `Generate an image primarily themed around "${imageAiHint}". This image is for a blog post in the "${categoryForImage.name}" category, titled "${textOutput.title}", which is about "${textOutput.summary.substring(0, 120)}...". The image should be visually appealing, modern, professional, and financial in style, possibly conceptual or abstract. Avoid text in the image.`;
 
       console.log(
         `[generateBlogPostFlow] Attempting to generate image with prompt (first 150 chars): ${imagePromptText.substring(0, 150)}...`,
@@ -196,25 +197,26 @@ const generateBlogPostFlow = ai.defineFlow(
 
         // If the TODO section above is not implemented, or if an implemented upload fails and
         // does not set `imageUrl`, then `imageUrl` will remain `undefined`.
-
-        // FOR DEVELOPMENT/TESTING WITHOUT ACTUAL UPLOAD:
-        // If you want to use a placeholder when your upload logic isn't ready,
-        // you can uncomment and use the block below.
+        // The following line means if you don't implement the upload, imageUrl will be undefined.
+        // If you want a placeholder during development while actual upload is pending,
+        // uncomment the block below.
+        
         /*
-        if (!imageUrl) { // Only set placeholder if no actual URL was obtained
+        if (!imageUrl && process.env.NODE_ENV === 'development') { // Only set placeholder in dev if no actual URL was obtained
           imageUrl = `https://placehold.co/800x450.png`;
           console.log(
             `[generateBlogPostFlow] DEVELOPMENT: Using placeholder image URL as actual upload is not implemented/failed. URL: ${imageUrl}. AI hint: "${imageAiHint}"`,
           );
         }
         */
+
         if (imageUrl) {
           console.log(
             `[generateBlogPostFlow] Using image URL: ${imageUrl}. AI hint for placeholder: "${imageAiHint}"`,
           );
         } else {
            console.log(
-            `[generateBlogPostFlow] No image URL set. This means either the //TODO: upload section was not implemented, or it failed to return a URL. Image URL will be undefined for this post.`,
+            `[generateBlogPostFlow] No image URL set. This means either the //TODO: upload section was not implemented, or it failed to return a URL, or placeholder logic is not active. Image URL will be undefined for this post.`,
           );
         }
 
@@ -305,5 +307,3 @@ async function uploadImageToThirdParty(dataUri: string): Promise<string | undefi
   // return dataUri;
 }
 */
-
-
