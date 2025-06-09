@@ -1,15 +1,15 @@
 
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import BlogPostModel from '@/models/BlogPost';
+import BlogPostModel, { type IMongoBlogPost } from '@/models/BlogPost';
 import type { BlogPost, Category } from '@/types';
-import { categories as staticCategories } from '@/lib/data'; // For populating category object
+import { categories as staticCategories } from '@/lib/data'; 
 
 // Helper function to transform MongoDB document to BlogPost type
-function transformPost(doc: any): BlogPost {
-   const category = staticCategories.find(c => c.slug === doc.categorySlug) || 
-                   staticCategories.find(c => c.slug === 'general') || 
-                   { id: doc.categorySlug, name: doc.categoryName || 'General', slug: doc.categorySlug };
+function transformPost(doc: IMongoBlogPost): BlogPost {
+   const categoryObject: Category = staticCategories.find(c => c.slug === doc.categorySlug) || 
+                                   staticCategories.find(c => c.slug === 'general') || 
+                                   { id: doc.categorySlug, name: doc.categoryName || 'General', slug: doc.categorySlug };
   return {
     _id: doc._id.toString(),
     slug: doc.slug,
@@ -17,7 +17,7 @@ function transformPost(doc: any): BlogPost {
     summary: doc.summary,
     imageUrl: doc.imageUrl,
     imageAiHint: doc.imageAiHint,
-    category: category,
+    category: categoryObject,
     categorySlug: doc.categorySlug,
     categoryName: doc.categoryName,
     author: doc.author,
@@ -29,9 +29,9 @@ function transformPost(doc: any): BlogPost {
 }
 
 export async function GET(
-  request: Request,
+  _request: NextRequest, // Renamed to avoid unused var error, as it's not used
   { params }: { params: { slug: string } }
-) {
+): Promise<NextResponse> {
   try {
     await connectDB();
     const slug = params.slug;

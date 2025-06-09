@@ -1,7 +1,11 @@
+
+'use client'; // Required for usePathname
+
 import Link from 'next/link';
 import { Logo } from '@/components/common/Logo';
 import { Home, Newspaper, Settings, LayoutDashboard } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation'; // Import usePathname
 
 const AdminNavItem = ({ href, label, icon: Icon, currentPath }: { href: string; label: string; icon: React.ElementType; currentPath: string; }) => {
   const isActive = currentPath === href || (href !== "/admin" && currentPath.startsWith(href));
@@ -19,19 +23,13 @@ const AdminNavItem = ({ href, label, icon: Icon, currentPath }: { href: string; 
   );
 };
 
-// This is a simplified way to get currentPath for server component, in real app usePathname hook on client side or pass as prop.
-// For this prototype, we'll assume a way to determine currentPath or it will default to non-active for deeper paths.
-// As this is a server component, we can't use usePathname directly.
-// We'll pass a mock path for styling demonstration. For a real app, middleware or page props would provide this.
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Mock current path for styling example in a server component.
-  // In a real app, this would need to be derived differently for server components or handled by client components.
-  const mockCurrentPath = "/admin/blogs"; // Example path
+  const currentPath = usePathname(); // Get current path using the hook
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -42,10 +40,10 @@ export default function AdminLayout({
           </div>
           <div className="flex-1">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-              <AdminNavItem href="/admin" label="Dashboard" icon={LayoutDashboard} currentPath={mockCurrentPath} />
-              <AdminNavItem href="/admin/blogs" label="Blogs" icon={Newspaper} currentPath={mockCurrentPath} />
+              <AdminNavItem href="/admin" label="Dashboard" icon={LayoutDashboard} currentPath={currentPath} />
+              <AdminNavItem href="/admin/blogs" label="Blogs" icon={Newspaper} currentPath={currentPath} />
               {/* Add more admin navigation items here */}
-              <AdminNavItem href="/admin/settings" label="Settings" icon={Settings} currentPath={mockCurrentPath} />
+              <AdminNavItem href="/admin/settings" label="Settings" icon={Settings} currentPath={currentPath} />
             </nav>
           </div>
           <div className="mt-auto p-4">

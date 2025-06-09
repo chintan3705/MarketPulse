@@ -28,7 +28,7 @@ async function getPostData(slug: string): Promise<BlogPost | null> {
       console.error(`Failed to fetch post ${slug}:`, res.status, await res.text());
       return null; // Or throw error to trigger error boundary
     }
-    const post = await res.json();
+    const post = await res.json() as BlogPost;
     return post;
   } catch (error) {
     console.error(`Error fetching post ${slug} from API:`, error);
@@ -83,17 +83,7 @@ export async function generateMetadata(
   };
 }
 
-// Revalidate dynamically fetched posts. Adjust as needed or remove if purely dynamic.
-// export const revalidate = 3600; // e.g. revalidate every hour for dynamic content
-
-// generateStaticParams can be used if you want to pre-render popular posts at build time
-// For a fully dynamic approach from DB, you might omit this or fetch a limited set of slugs.
-// For now, we'll keep it empty to ensure all slugs are resolved dynamically.
 export async function generateStaticParams() {
-  // To pre-render some posts, fetch slugs from your API:
-  // const res = await fetch(`${SITE_URL}/api/posts?limit=10`); // Fetch, e.g., 10 most recent slugs
-  // const { posts } = await res.json();
-  // return posts.map((post: BlogPost) => ({ slug: post.slug }));
   return []; // All pages will be dynamically rendered
 }
 

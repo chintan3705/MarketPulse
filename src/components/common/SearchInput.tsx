@@ -1,16 +1,17 @@
+
 'use client';
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+// import { useRouter } from 'next/navigation'; // Not used currently
 
 export function SearchInput({ className }: { className?: string }) {
   const [searchTerm, setSearchTerm] = useState('');
-  const router = useRouter();
+  // const router = useRouter(); // Not used currently
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (searchTerm.trim()) {
       // For now, we'll just log. A real implementation would navigate to a search results page.
@@ -21,7 +22,7 @@ export function SearchInput({ className }: { className?: string }) {
   };
 
   return (
-    <form onSubmit={handleSearch} className={`relative flex items-center w-full max-w-sm ${className}`}>
+    <form onSubmit={handleSearch} className={`relative flex items-center w-full max-w-sm ${className || ''}`}>
       <Input
         type="search"
         placeholder="Search market insights (e.g. Nifty)"

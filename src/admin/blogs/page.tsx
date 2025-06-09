@@ -18,13 +18,13 @@ async function fetchAdminPosts(): Promise<BlogPost[]> {
     // Using the same API as the frontend for consistency
     const res = await fetch(`${SITE_URL}/api/posts`, { cache: 'no-store' });
     if (!res.ok) {
-      console.error("Admin: Failed to fetch posts:", res.status, await res.text());
+      console.error('Admin: Failed to fetch posts:', res.status, await res.text());
       return [];
     }
-    const data = await res.json();
+    const data = (await res.json()) as { posts: BlogPost[] };
     return data.posts || [];
   } catch (error) {
-    console.error("Admin: Error fetching posts from API:", error);
+    console.error('Admin: Error fetching posts from API:', error);
     return [];
   }
 }
@@ -45,7 +45,7 @@ export default async function AdminBlogsPage() {
           <CardTitle>Blog Posts from Database</CardTitle>
           <CardDescription>
             A list of all blog posts fetched from the database. Editing and Deleting are placeholders and not functional.
-            Use "Generate & Save Blog" to create new content.
+            Use &quot;Generate & Save Blog&quot; to create new content.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -63,7 +63,7 @@ export default async function AdminBlogsPage() {
               {posts.map((post) => (
                 <TableRow key={post._id || post.id}>
                   <TableCell className="font-medium">
-                    <Link href={`/blog/${post.slug}`} target="_blank" className="hover:underline" title="View live post">
+                    <Link href={`/blog/${post.slug}`} target="_blank" rel="noopener noreferrer" className="hover:underline" title="View live post">
                       {post.title}
                     </Link>
                   </TableCell>
@@ -80,7 +80,7 @@ export default async function AdminBlogsPage() {
                   </TableCell>
                   <TableCell className="text-right space-x-2">
                     <Button variant="outline" size="icon" asChild title="View live post">
-                       <Link href={`/blog/${post.slug}`} target="_blank"><Eye className="h-4 w-4" /></Link>
+                       <Link href={`/blog/${post.slug}`} target="_blank" rel="noopener noreferrer"><Eye className="h-4 w-4" /></Link>
                     </Button>
                     <Button variant="outline" size="icon" disabled title="Edit (Placeholder)"> {/* Disabled */}
                       <Edit3 className="h-4 w-4" />

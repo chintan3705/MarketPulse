@@ -41,7 +41,7 @@ async function fetchPosts(): Promise<BlogPost[]> {
       console.error("Failed to fetch posts:", res.status, await res.text());
       return [];
     }
-    const data = await res.json();
+    const data = (await res.json()) as { posts: BlogPost[] };
     return data.posts || [];
   } catch (error) {
     console.error("Error fetching posts from API:", error);

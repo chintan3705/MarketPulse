@@ -1,15 +1,15 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { TrendingHeadline } from '@/types';
-import { getMarketLensDigest, MarketLensDigestOutput } from '@/ai/flows/market-lens-digest-flow';
+import { getMarketLensDigest, type MarketLensDigestOutput, type MarketLensDigestInput } from '@/ai/flows/market-lens-digest-flow'; // MarketLensDigestInput made explicit
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { trendingHeadlines as mockHeadlines } from '@/lib/data'; // Using mock data for now
+import { trendingHeadlines as mockHeadlinesData } from '@/lib/data'; // Renamed for clarity
 import { TrendingUp, TrendingDown, MinusCircle, ExternalLink, Loader2, AlertTriangle, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '../ui/button';
-import { Skeleton } from '@/components/ui/skeleton'; // Import Skeleton component
+import { Skeleton } from '@/components/ui/skeleton'; 
 
 const TrendIcon = ({ sentiment, trendIcon }: { sentiment: string, trendIcon?: 'up' | 'down' }) => {
   if (trendIcon === 'up' || sentiment === 'Bullish') {
@@ -32,12 +32,13 @@ export function MarketLensSection() {
       setError(null);
       try {
         // Using top 3 mock headlines for the digest
-        const headlinesToProcess = mockHeadlines.slice(0, 3);
+        const headlinesToProcess: MarketLensDigestInput['headlines'] = mockHeadlinesData.slice(0, 3).map(h => ({...h})); // Ensure it matches the schema type
         const result = await getMarketLensDigest({ headlines: headlinesToProcess, region: "Global" });
         setDigest(result);
       } catch (err) {
-        console.error("Error fetching market lens digest:", err);
-        setError(err instanceof Error ? err.message : "Failed to load market insights.");
+        const catchedError = err as Error;
+        console.error("Error fetching market lens digest:", catchedError);
+        setError(catchedError.message || "Failed to load market insights.");
       } finally {
         setIsLoading(false);
       }
@@ -50,7 +51,7 @@ export function MarketLensSection() {
       <div className="container">
         <div className="flex items-center gap-2 mb-6">
           <Eye className="h-7 w-7 text-primary" />
-          <h2 className="font-headline text-2xl sm:text-3xl font-bold">Today's Market Lens</h2>
+          <h2 className="font-headline text-2xl sm:text-3xl font-bold">Today&apos;s Market Lens</h2>
         </div>
 
         {isLoading && (
@@ -157,4 +158,3 @@ export function MarketLensSection() {
     </section>
   );
 }
-

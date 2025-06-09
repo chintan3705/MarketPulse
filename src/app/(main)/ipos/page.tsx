@@ -36,7 +36,7 @@ async function fetchIpoPosts(): Promise<BlogPost[]> {
       console.error("Failed to fetch IPO posts:", res.status, await res.text());
       return [];
     }
-    const data = await res.json();
+    const data = (await res.json()) as { posts: BlogPost[] };
     return data.posts || [];
   } catch (error) {
     console.error("Error fetching IPO posts from API:", error);
@@ -63,7 +63,7 @@ export default async function IPOsPage() {
         </p>
       )}
        <div className="mt-8 p-6 bg-card rounded-lg shadow-md">
-          <h2 className="font-headline text-xl font-semibold mb-2">IPO Calendar</h2>
+          <h2 className="font-headline text-xl sm:text-2xl font-semibold mb-2">IPO Calendar</h2>
           <p className="text-muted-foreground">Upcoming: A dedicated calendar to track upcoming IPOs, their opening and closing dates, and expected listing prices.</p>
         </div>
     </div>

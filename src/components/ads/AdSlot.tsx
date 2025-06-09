@@ -1,7 +1,8 @@
+
 import Image from 'next/image';
 import type { AdConfig } from '@/types';
 import { cn } from '@/lib/utils';
-import { AreaChart, BarChartBig } from 'lucide-react'; // Added icons for chart placeholder
+import { AreaChart } from 'lucide-react'; // Removed BarChartBig as it's not used
 
 interface AdSlotProps {
   config: AdConfig;
@@ -60,5 +61,3 @@ export function AdSlot({ config }: AdSlotProps) {
     </div>
   );
 }
-
-    

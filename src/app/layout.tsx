@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     siteName: 'MarketPulse',
     images: [
       {
-        url: `${SITE_URL}/og-image.png`, // Replace with your actual OG image path
+        url: `${SITE_URL}/og-image.png`, 
         width: 1200,
         height: 630,
         alt: 'MarketPulse Logo and Tagline',
@@ -38,10 +38,10 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'MarketPulse – Your Daily Lens on the Share Market',
     description: 'Real-time Share Market News Blog Platform delivering timely updates, financial insights, and stock analysis.',
-    // siteId: 'YourTwitterSiteId', // Optional: Your Twitter user ID
-    creator: '@YourTwitterHandle', // Optional: Your Twitter handle
-    // creatorId: 'YourTwitterCreatorId', // Optional: Your Twitter user ID for the creator
-    images: [`${SITE_URL}/twitter-image.png`], // Replace with your actual Twitter image path
+    // siteId: 'YourTwitterSiteId', 
+    creator: '@YourTwitterHandle', 
+    // creatorId: 'YourTwitterCreatorId', 
+    images: [`${SITE_URL}/twitter-image.png`], 
   },
   robots: {
     index: true,
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  // icons: { // Temporarily commented out based on previous error debugging
+  // icons: { 
   //   icon: '/favicon.ico',
   //   shortcut: '/favicon-16x16.png',
   //   apple: '/apple-touch-icon.png',

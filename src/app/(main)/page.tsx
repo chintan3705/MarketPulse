@@ -58,7 +58,7 @@ async function fetchHomePagePosts(): Promise<BlogPost[]> {
       console.error("Failed to fetch homepage posts:", res.status, await res.text());
       return [];
     }
-    const data = await res.json();
+    const data = (await res.json()) as { posts: BlogPost[] };
     return data.posts || [];
   } catch (error) {
     console.error("Error fetching homepage posts from API:", error);
@@ -73,6 +73,9 @@ export default async function HomePage() {
   const otherPosts = latestBlogPosts.slice(1, 3); 
   const moreNewsPosts = latestBlogPosts.slice(3, 6);
   const tradingViewAd = adSlots.find(ad => ad.id === 'tradingview-chart-example');
+  const topBannerAd = adSlots.find(ad => ad.id === 'top-banner');
+  const sidebarAd = adSlots.find(ad => ad.id === 'sidebar-ad');
+  const inlineAd1 = adSlots.find(ad => ad.id === 'inline-ad-1');
 
   return (
     <div className="animate-slide-in" style={{animationDelay: '0.1s', animationFillMode: 'backwards'}}>
@@ -82,10 +85,10 @@ export default async function HomePage() {
 
       <HomeCategoryTabs />
 
-      {adSlots.find(ad => ad.id === 'top-banner') && (
+      {topBannerAd && (
         <section className="py-6 bg-muted/30">
           <div className="container">
-            <AdSlot config={adSlots.find(ad => ad.id === 'top-banner')!} />
+            <AdSlot config={topBannerAd} />
           </div>
         </section>
       )}
@@ -129,9 +132,9 @@ export default async function HomePage() {
               </Card>
             </section>
 
-            {adSlots.find(ad => ad.id === 'sidebar-ad') && (
+            {sidebarAd && (
               <section aria-label="Sidebar Advertisement" className="sticky top-28">
-                <AdSlot config={adSlots.find(ad => ad.id === 'sidebar-ad')!} />
+                <AdSlot config={sidebarAd} />
               </section>
             )}
           </aside>
@@ -152,9 +155,9 @@ export default async function HomePage() {
           <PopularReadsSection posts={latestBlogPosts.slice(0,3)} /> {/* Pass a slice for popular reads */}
         </section>
 
-        {adSlots.find(ad => ad.id === 'inline-ad-1') && (
+        {inlineAd1 && (
           <section className="mt-8 md:mt-12" aria-label="Advertisement">
-            <AdSlot config={adSlots.find(ad => ad.id === 'inline-ad-1')!} />
+            <AdSlot config={inlineAd1} />
           </section>
         )}
 

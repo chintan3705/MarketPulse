@@ -2,7 +2,7 @@
 import type { Metadata, ResolvingMetadata } from 'next';
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { Tag } from "lucide-react"; 
-import { notFound } from "next/navigation";
+// import { notFound } from "next/navigation"; // notFound might not be needed if we show "no posts"
 import type { BlogPost } from '@/types';
 import { unstable_noStore as noStore } from 'next/cache';
 
@@ -23,7 +23,7 @@ async function fetchPostsByTag(tagSlug: string): Promise<BlogPost[]> {
       console.error(`Failed to fetch posts for tag ${tagSlug}:`, res.status, await res.text());
       return [];
     }
-    const data = await res.json();
+    const data = (await res.json()) as { posts: BlogPost[] };
     return data.posts || [];
   } catch (error) {
     console.error(`Error fetching posts for tag ${tagSlug} from API:`, error);
@@ -33,14 +33,10 @@ async function fetchPostsByTag(tagSlug: string): Promise<BlogPost[]> {
 
 export async function generateMetadata(
   { params }: TagPageProps,
-  parent: ResolvingMetadata
+  _parent: ResolvingMetadata
 ): Promise<Metadata> {
   const slug = params.slug;
   const tagName = slug.replace(/-/g, ' '); 
-  
-  // For metadata, we might not need to fetch all posts, just confirm tag exists or use generic text
-  // For this example, we'll keep it simple and not fetch posts for metadata generation to avoid extra API calls.
-  // A more robust solution might involve a separate API endpoint to get tag details or check existence.
   
   const title = `Articles tagged with "${tagName}"`;
   const description = `Explore all articles, news, and analysis tagged with "${tagName}" on MarketPulse. Stay informed about ${tagName}.`;
@@ -73,14 +69,7 @@ const SectionTitle = ({ title, icon: Icon }: { title: string; icon?: React.Eleme
   </div>
 );
 
-// generateStaticParams for tags would require fetching all unique tags from the DB.
-// This can be slow for build times if there are many tags.
-// For a dynamic approach, return an empty array or a few popular tags.
 export async function generateStaticParams() {
-  // Example: fetch top N tags if you have an API endpoint for it
-  // const res = await fetch(`${SITE_URL}/api/tags/popular?limit=10`);
-  // const tags = await res.json();
-  // return tags.map((tag: { slug: string }) => ({ slug: tag.slug }));
   return []; // All tag pages will be dynamically rendered
 }
 
@@ -89,10 +78,9 @@ export default async function TagPage({ params }: TagPageProps) {
   const tagName = slug.replace(/-/g, ' ');
   const postsWithTag = await fetchPostsByTag(slug);
   
-  if (postsWithTag.length === 0) {
-    // Optionally, you could show a specific message or redirect
-    // For now, it will show "no posts tagged with..."
-  }
+  // if (postsWithTag.length === 0) {
+    // notFound(); // Optionally call notFound if you prefer a 404 for tags with no posts
+  // }
 
   return (
     <div className="container py-8 md:py-12 animate-slide-in" style={{animationDelay: '0.1s', animationFillMode: 'backwards'}}>
@@ -105,7 +93,7 @@ export default async function TagPage({ params }: TagPageProps) {
         </div>
       ) : (
         <p className="text-lg text-muted-foreground">
-          There are no posts tagged with "{tagName}" at the moment. Please check back later.
+          There are no posts tagged with &quot;{tagName}&quot; at the moment. Please check back later.
         </p>
       )}
     </div>

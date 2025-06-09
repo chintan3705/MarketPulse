@@ -23,7 +23,7 @@ async function fetchPostsByCategory(categorySlug: string): Promise<BlogPost[]> {
       console.error(`Failed to fetch posts for category ${categorySlug}:`, res.status, await res.text());
       return [];
     }
-    const data = await res.json();
+    const data = (await res.json()) as { posts: BlogPost[] };
     return data.posts || [];
   } catch (error) {
     console.error(`Error fetching posts for category ${categorySlug} from API:`, error);
@@ -33,7 +33,7 @@ async function fetchPostsByCategory(categorySlug: string): Promise<BlogPost[]> {
 
 export async function generateMetadata(
   { params }: CategoryPageProps,
-  parent: ResolvingMetadata
+  _parent: ResolvingMetadata
 ): Promise<Metadata> {
   const slug = params.slug;
   const category = categories.find(cat => cat.slug === slug);
@@ -102,7 +102,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         </div>
       ) : (
         <p className="text-lg text-muted-foreground">
-          There are no posts in the "{category.name}" category at the moment. Please check back later.
+          There are no posts in the &quot;{category.name}&quot; category at the moment. Please check back later.
         </p>
       )}
     </div>
