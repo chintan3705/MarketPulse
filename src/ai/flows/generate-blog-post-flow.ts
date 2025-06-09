@@ -1,3 +1,4 @@
+
 "use server";
 /**
  * @fileOverview A Genkit flow to generate a blog post based on a topic, including an AI-generated image.
@@ -65,9 +66,33 @@ const generateBlogPostFlow = ai.defineFlow(
     outputSchema: GenerateBlogPostOutputSchema,
   },
   async (input) => {
-    const { output: textOutput } = await generateBlogPostTextPrompt(input);
+    let textOutput;
+    try {
+      console.log(
+        `[generateBlogPostFlow] Calling generateBlogPostTextPrompt for topic: ${input.topic}`,
+      );
+      const { output } = await generateBlogPostTextPrompt(input);
+      textOutput = output;
+      console.log("[generateBlogPostFlow] Successfully received textOutput.");
+    } catch (flowError: unknown) {
+      console.error(
+        "[generateBlogPostFlow] Error calling generateBlogPostTextPrompt:",
+        flowError,
+      );
+      throw new Error(
+        `Failed to generate blog post text content: ${
+          flowError instanceof Error ? flowError.message : String(flowError)
+        }`,
+      );
+    }
+
     if (!textOutput) {
-      throw new Error("Failed to generate blog post text content.");
+      console.error(
+        "[generateBlogPostFlow] textOutput is null or undefined after prompt call.",
+      );
+      throw new Error(
+        "Failed to generate blog post text content: received no output.",
+      );
     }
 
     const isValidCategory = categories.some(
@@ -79,20 +104,21 @@ const generateBlogPostFlow = ai.defineFlow(
       textOutput.categorySlug = "general"; // Fallback if no categories defined
     }
 
-    const categoryNameForImage =
-      categories.find((c) => c.slug === textOutput.categorySlug)?.name ||
-      "financial";
-    const imageAiHint =
-      textOutput.tags.length > 0
-        ? textOutput.tags.slice(0, 2).join(" ")
-        : input.topic;
     let imageUrl: string | undefined = undefined;
+    // Define imageAiHint here as it's used in the image prompt log
+    const imageAiHint =
+      textOutput.tags && textOutput.tags.length > 0
+        ? textOutput.tags.slice(0, 2).join(" ")
+        : input.topic || "financial news";
 
     try {
+      const categoryNameForImage =
+        categories.find((c) => c.slug === textOutput.categorySlug)?.name ||
+        "financial";
       const imagePromptText = `A visually appealing blog post illustration for an article in the "${categoryNameForImage}" category, titled "${textOutput.title}". The article is about: ${textOutput.summary.substring(0, 100)}... Focus on themes like: ${imageAiHint}. Financial, modern, abstract or conceptual style.`;
 
       console.log(
-        `Generating image with prompt: ${imagePromptText.substring(0, 100)}...`,
+        `[generateBlogPostFlow] Attempting to generate image with prompt (first 100 chars): ${imagePromptText.substring(0, 100)}...`,
       );
 
       const { media } = await ai.generate({
@@ -104,34 +130,38 @@ const generateBlogPostFlow = ai.defineFlow(
       });
 
       if (media && media.url) {
-        console.log("Image generated successfully by Genkit (as data URI).");
-        // In a real application, you would upload this data URI to a third-party image service.
-        // const imageDataUri = media.url;
-        // const uploadedImageUrl = await uploadToThirdPartyService(imageDataUri); // Your custom upload function
-        // imageUrl = uploadedImageUrl;
-
-        // For this prototype, we'll use a placeholder and save the AI hint.
-        // The actual data URI (media.url) is not being stored in the DB.
-        imageUrl = `https://placehold.co/800x450.png`;
         console.log(
-          `Using placeholder URL for now: ${imageUrl}. AI hint for image: "${imageAiHint}"`,
+          "[generateBlogPostFlow] Image generated successfully by Genkit (as data URI).",
+        );
+        // TODO: Upload image data to a third-party service (e.g., Cloudinary, Firebase Storage)
+        // const imageDataUri = media.url;
+        // const uploadedImageUrl = await uploadToThirdParty(imageDataUri);
+        // imageUrl = uploadedImageUrl;
+        imageUrl = `https://placehold.co/800x450.png`; // Using placeholder for now
+        console.log(
+          `[generateBlogPostFlow] Using placeholder URL: ${imageUrl}. AI hint: "${imageAiHint}"`,
         );
       } else {
         console.warn(
-          "Image generation did not return a media URL. Using default placeholder.",
+          "[generateBlogPostFlow] Image generation did not return a media URL. Using default placeholder.",
         );
         imageUrl = `https://placehold.co/800x450.png`;
       }
-    } catch (imageError) {
-      console.error("Error generating image for blog post:", imageError);
-      console.warn("Falling back to a default placeholder image due to error.");
+    } catch (imageGenError: unknown) {
+      console.error(
+        "[generateBlogPostFlow] Error during image generation:",
+        imageGenError,
+      );
+      console.warn(
+        "[generateBlogPostFlow] Falling back to a default placeholder image due to error.",
+      );
       imageUrl = `https://placehold.co/800x450.png`;
     }
 
     return {
       ...textOutput,
-      imageUrl: imageUrl, // This will be the placeholder URL or undefined
-      imageAiHint: imageAiHint,
+      imageUrl: imageUrl,
+      imageAiHint: imageAiHint, // Ensure imageAiHint is consistently returned
     };
   },
 );
