@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview A Genkit flow to generate a blog post based on a topic, including an AI-generated image.
@@ -10,19 +9,21 @@
  * - GenerateBlogPostOutputSchema - Zod schema for the output.
  */
 
-import {ai} from '@/ai/genkit';
+import { ai } from '@/ai/genkit';
 import { categories } from '@/lib/data';
 import {
   GenerateBlogPostInputSchema,
   type GenerateBlogPostInput,
   GenerateBlogPostOutputSchema, // Exporting the schema
-  type GenerateBlogPostOutput
+  type GenerateBlogPostOutput,
 } from '../schemas/blog-post-schemas';
 
 export { GenerateBlogPostOutputSchema }; // Explicitly export the schema
 export type { GenerateBlogPostInput, GenerateBlogPostOutput }; // Re-export types
 
-export async function generateBlogPost(input: GenerateBlogPostInput): Promise<GenerateBlogPostOutput> {
+export async function generateBlogPost(
+  input: GenerateBlogPostInput
+): Promise<GenerateBlogPostOutput> {
   return generateBlogPostFlow(input);
 }
 
@@ -31,7 +32,7 @@ const systemInstruction = `You are an expert financial news writer for a blog ca
 The blog post should be engaging, informative, and suitable for an audience interested in stock markets, finance, and investments.
 
 Available Categories (choose the most relevant one and return its slug):
-${categories.map(cat => `- Name: ${cat.name}, Slug: ${cat.slug}`).join('\n')}
+${categories.map((cat) => `- Name: ${cat.name}, Slug: ${cat.slug}`).join('\n')}
 
 Topic: {{{topic}}}
 
@@ -64,21 +65,23 @@ const generateBlogPostFlow = ai.defineFlow(
       throw new Error('Failed to generate blog post text content.');
     }
 
-    const isValidCategory = categories.some(cat => cat.slug === textOutput.categorySlug);
+    const isValidCategory = categories.some((cat) => cat.slug === textOutput.categorySlug);
     if (!isValidCategory && categories.length > 0) {
       textOutput.categorySlug = categories[0].slug; // Default to first category if AI hallucinates
     } else if (categories.length === 0) {
       textOutput.categorySlug = 'general'; // Fallback if no categories defined
     }
-    
-    const categoryNameForImage = categories.find(c => c.slug === textOutput.categorySlug)?.name || 'financial';
-    const imageAiHint = textOutput.tags.length > 0 ? textOutput.tags.slice(0,2).join(' ') : input.topic;
+
+    const categoryNameForImage =
+      categories.find((c) => c.slug === textOutput.categorySlug)?.name || 'financial';
+    const imageAiHint =
+      textOutput.tags.length > 0 ? textOutput.tags.slice(0, 2).join(' ') : input.topic;
     let imageUrl: string | undefined = undefined;
 
     try {
       const imagePromptText = `A visually appealing blog post illustration for an article in the "${categoryNameForImage}" category, titled "${textOutput.title}". The article is about: ${textOutput.summary.substring(0, 100)}... Focus on themes like: ${imageAiHint}. Financial, modern, abstract or conceptual style.`;
-      
-      console.log(`Generating image with prompt: ${imagePromptText.substring(0,100)}...`);
+
+      console.log(`Generating image with prompt: ${imagePromptText.substring(0, 100)}...`);
 
       const { media } = await ai.generate({
         model: 'googleai/gemini-2.0-flash-exp',
@@ -91,14 +94,16 @@ const generateBlogPostFlow = ai.defineFlow(
       if (media && media.url) {
         console.log('Image generated successfully by Genkit (as data URI).');
         // In a real application, you would upload this data URI to a third-party image service.
-        // const imageDataUri = media.url; 
+        // const imageDataUri = media.url;
         // const uploadedImageUrl = await uploadToThirdPartyService(imageDataUri); // Your custom upload function
         // imageUrl = uploadedImageUrl;
-        
+
         // For this prototype, we'll use a placeholder and save the AI hint.
         // The actual data URI (media.url) is not being stored in the DB.
-        imageUrl = `https://placehold.co/800x450.png`; 
-        console.log(`Using placeholder URL for now: ${imageUrl}. AI hint for image: "${imageAiHint}"`);
+        imageUrl = `https://placehold.co/800x450.png`;
+        console.log(
+          `Using placeholder URL for now: ${imageUrl}. AI hint for image: "${imageAiHint}"`
+        );
       } else {
         console.warn('Image generation did not return a media URL. Using default placeholder.');
         imageUrl = `https://placehold.co/800x450.png`;
@@ -116,4 +121,3 @@ const generateBlogPostFlow = ai.defineFlow(
     };
   }
 );
-

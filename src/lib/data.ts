@@ -1,4 +1,3 @@
-
 import type { BlogPost, TrendingHeadline, Category, AdConfig } from '@/types';
 
 export const categories: Category[] = [
@@ -9,7 +8,7 @@ export const categories: Category[] = [
   { id: '5', name: 'Global Markets', slug: 'global-markets' },
   { id: '6', name: 'Crypto', slug: 'crypto' },
   { id: '7', name: 'Personal Finance', slug: 'personal-finance' },
-  { id: '8', name: 'General', slug: 'general'} 
+  { id: '8', name: 'General', slug: 'general' },
 ];
 
 // IMPORTANT: Blog posts are now managed in MongoDB.
@@ -49,7 +48,6 @@ export const latestBlogPosts: BlogPost[] = [
   // ... other static posts can be commented out or removed
 ];
 
-
 export const trendingHeadlines: TrendingHeadline[] = [
   {
     id: '1',
@@ -64,14 +62,14 @@ export const trendingHeadlines: TrendingHeadline[] = [
     title: 'New SEBI regulations for small-cap funds: A deep dive.',
     source: 'FinNews Daily',
     url: '#',
-    publishedAt: new Date(Date.now() - 3600000).toISOString(), 
+    publishedAt: new Date(Date.now() - 3600000).toISOString(),
   },
   {
     id: '3',
     title: 'Gold prices hit 2-week low on strong US dollar.',
     source: 'Commodity Times',
     url: '#',
-    publishedAt: new Date(Date.now() - 2 * 3600000).toISOString(), 
+    publishedAt: new Date(Date.now() - 2 * 3600000).toISOString(),
     isGain: false,
   },
   {
@@ -79,15 +77,15 @@ export const trendingHeadlines: TrendingHeadline[] = [
     title: 'Tech Mahindra Q2 results beat estimates, stock up 5%.',
     source: 'StockWatch',
     url: '#',
-    publishedAt: new Date(Date.now() - 3 * 3600000).toISOString(), 
+    publishedAt: new Date(Date.now() - 3 * 3600000).toISOString(),
     isGain: true,
   },
-   {
+  {
     id: '5',
     title: 'Global markets choppy ahead of Fed Chair testimony.',
     source: 'Global Investor',
     url: '#',
-    publishedAt: new Date(Date.now() - 4 * 3600000).toISOString(), 
+    publishedAt: new Date(Date.now() - 4 * 3600000).toISOString(),
   },
 ];
 
@@ -130,7 +128,7 @@ export const adSlots: AdConfig[] = [
     className: 'mx-auto my-4',
     tradingViewWidgetConfig: {
       symbol: 'NASDAQ:AAPL',
-      theme: 'light', 
-    }
-  }
+      theme: 'light',
+    },
+  },
 ];

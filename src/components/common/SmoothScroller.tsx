@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useEffect, useRef } from 'react';
@@ -16,7 +15,12 @@ export function SmoothScroller() {
     if (prefersReducedMotion) {
       // If reduced motion is preferred, do not initialize Lenis.
       // Ensure any Lenis-specific classes are removed from <html> if they were somehow added.
-      document.documentElement.classList.remove('lenis', 'lenis-smooth', 'lenis-scrolling', 'lenis-stopped');
+      document.documentElement.classList.remove(
+        'lenis',
+        'lenis-smooth',
+        'lenis-scrolling',
+        'lenis-stopped'
+      );
       return; // Exit early, native browser scrolling will be used.
     }
 
@@ -49,7 +53,12 @@ export function SmoothScroller() {
         lenisInstanceRef.current = null;
       }
       // Clean up classes Lenis adds to <html>
-      document.documentElement.classList.remove('lenis', 'lenis-smooth', 'lenis-scrolling', 'lenis-stopped');
+      document.documentElement.classList.remove(
+        'lenis',
+        'lenis-smooth',
+        'lenis-scrolling',
+        'lenis-stopped'
+      );
     };
   }, []); // Empty dependency array ensures this effect runs only once on mount and cleans up on unmount
 

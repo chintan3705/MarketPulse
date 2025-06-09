@@ -8,8 +8,8 @@
  * - SummarizeArticleOutput - The return type for the summarizeArticle function.
  */
 
-import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import { ai } from '@/ai/genkit';
+import { z } from 'genkit';
 
 const SummarizeArticleInputSchema = z.object({
   articleContent: z.string().describe('The full content of the article to summarize.'),
@@ -21,14 +21,16 @@ const SummarizeArticleOutputSchema = z.object({
 });
 export type SummarizeArticleOutput = z.infer<typeof SummarizeArticleOutputSchema>;
 
-export async function summarizeArticle(input: SummarizeArticleInput): Promise<SummarizeArticleOutput> {
+export async function summarizeArticle(
+  input: SummarizeArticleInput
+): Promise<SummarizeArticleOutput> {
   return summarizeArticleFlow(input);
 }
 
 const summarizeArticlePrompt = ai.definePrompt({
   name: 'summarizeArticlePrompt',
-  input: {schema: SummarizeArticleInputSchema},
-  output: {schema: SummarizeArticleOutputSchema},
+  input: { schema: SummarizeArticleInputSchema },
+  output: { schema: SummarizeArticleOutputSchema },
   prompt: `Summarize the following article content in a concise manner suitable for display on a homepage. The summary should be no more than 2 sentences long.\n\nArticle Content:\n{{{articleContent}}}`,
 });
 
@@ -38,8 +40,8 @@ const summarizeArticleFlow = ai.defineFlow(
     inputSchema: SummarizeArticleInputSchema,
     outputSchema: SummarizeArticleOutputSchema,
   },
-  async input => {
-    const {output} = await summarizeArticlePrompt(input);
+  async (input) => {
+    const { output } = await summarizeArticlePrompt(input);
     return output!;
   }
 );

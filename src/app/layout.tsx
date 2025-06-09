@@ -1,6 +1,5 @@
-
 import type { Metadata } from 'next';
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from '@/components/ui/toaster';
 import { SmoothScroller } from '@/components/common/SmoothScroller'; // Import SmoothScroller
 import './globals.css';
 
@@ -13,19 +12,32 @@ export const metadata: Metadata = {
     default: 'MarketPulse – Your Daily Lens on the Share Market',
     template: '%s | MarketPulse',
   },
-  description: 'Real-time Share Market News Blog Platform delivering timely updates, financial insights, and stock analysis.',
-  keywords: ['stock market', 'share market', 'finance', 'investing', 'news', 'analysis', 'IPO', 'Nifty', 'Sensex', 'MarketPulse'],
+  description:
+    'Real-time Share Market News Blog Platform delivering timely updates, financial insights, and stock analysis.',
+  keywords: [
+    'stock market',
+    'share market',
+    'finance',
+    'investing',
+    'news',
+    'analysis',
+    'IPO',
+    'Nifty',
+    'Sensex',
+    'MarketPulse',
+  ],
   authors: [{ name: 'MarketPulse Team', url: `${SITE_URL}/about` }],
   creator: 'MarketPulse Team',
   publisher: 'MarketPulse',
   openGraph: {
     title: 'MarketPulse – Your Daily Lens on the Share Market',
-    description: 'Real-time Share Market News Blog Platform delivering timely updates, financial insights, and stock analysis.',
+    description:
+      'Real-time Share Market News Blog Platform delivering timely updates, financial insights, and stock analysis.',
     url: SITE_URL,
     siteName: 'MarketPulse',
     images: [
       {
-        url: `${SITE_URL}/og-image.png`, 
+        url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
         alt: 'MarketPulse Logo and Tagline',
@@ -37,11 +49,12 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'MarketPulse – Your Daily Lens on the Share Market',
-    description: 'Real-time Share Market News Blog Platform delivering timely updates, financial insights, and stock analysis.',
-    // siteId: 'YourTwitterSiteId', 
-    creator: '@YourTwitterHandle', 
-    // creatorId: 'YourTwitterCreatorId', 
-    images: [`${SITE_URL}/twitter-image.png`], 
+    description:
+      'Real-time Share Market News Blog Platform delivering timely updates, financial insights, and stock analysis.',
+    // siteId: 'YourTwitterSiteId',
+    creator: '@YourTwitterHandle',
+    // creatorId: 'YourTwitterCreatorId',
+    images: [`${SITE_URL}/twitter-image.png`],
   },
   robots: {
     index: true,
@@ -54,7 +67,7 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  // icons: { 
+  // icons: {
   //   icon: '/favicon.ico',
   //   shortcut: '/favicon-16x16.png',
   //   apple: '/apple-touch-icon.png',
@@ -68,12 +81,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang='en' className='dark' suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+        <link rel='preconnect' href='https://fonts.googleapis.com' />
+        <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='anonymous' />
+        <link
+          href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
+          rel='stylesheet'
+        />
+        <link
+          href='https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap'
+          rel='stylesheet'
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -96,7 +115,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="font-body antialiased flex flex-col min-h-screen bg-background text-foreground">
+      <body className='font-body antialiased flex flex-col min-h-screen bg-background text-foreground'>
         <SmoothScroller /> {/* Initialize Lenis smooth scrolling */}
         {children}
         <Toaster />

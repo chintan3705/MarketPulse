@@ -1,4 +1,3 @@
-
 {
   "parser": "@typescript-eslint/parser",
   "extends": [
@@ -23,13 +22,13 @@
     ],
     "@typescript-eslint/no-explicit-any": "warn",
     "react/prop-types": "off",
-    "prettier/prettier": ["warn", {}, {"usePrettierrc": true}],
+    "prettier/prettier": ["warn", {}, { "usePrettierrc": true }],
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "jsx-a11y/alt-text": [
       "warn",
       {
         "elements": ["img", "Image", "object", "area", "input[type=\"image\"]"],
-        "img": ["Image"], 
+        "img": ["Image"],
         "Image": ["alt"],
         "object": ["aria-label", "aria-labelledby", "title"],
         "area": ["alt"],

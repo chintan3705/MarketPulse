@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState } from 'react';
@@ -22,7 +21,8 @@ import { Loader2, PlusCircle, Wand2, DatabaseZap, AlertTriangle } from 'lucide-r
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import type { BlogPost } from '@/types'; // For type of savedPost
 
-interface SavedPostResponseType { // Type for the API response containing the saved post
+interface SavedPostResponseType {
+  // Type for the API response containing the saved post
   _id: string;
   title: string;
   slug: string;
@@ -67,12 +67,17 @@ export function GenerateBlogDialog() {
         body: JSON.stringify({ topic }),
       });
 
-      const result = await response.json() as { message: string; post?: SavedPostResponseType; error?: string; errors?: unknown };
+      const result = (await response.json()) as {
+        message: string;
+        post?: SavedPostResponseType;
+        error?: string;
+        errors?: unknown;
+      };
 
       if (!response.ok || !result.post) {
         throw new Error(result.message || result.error || 'Failed to generate and save blog post');
       }
-      
+
       setSavedPostData(result.post);
       toast({
         title: 'Blog Post Generated & Saved to DB!',
@@ -96,54 +101,59 @@ export function GenerateBlogDialog() {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => {
-      setIsOpen(open);
-      if (!open) {
-        setSavedPostData(null); 
-        setError(null);
-        // Optionally reset topic: setTopic(''); 
-      }
-    }}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        if (!open) {
+          setSavedPostData(null);
+          setError(null);
+          // Optionally reset topic: setTopic('');
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button>
-          <PlusCircle className="mr-2 h-4 w-4" /> Generate & Save Blog
+          <PlusCircle className='mr-2 h-4 w-4' /> Generate & Save Blog
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className='sm:max-w-[600px]'>
         <DialogHeader>
-          <DialogTitle className="flex items-center">
-            <Wand2 className="mr-2 h-5 w-5 text-primary" />
+          <DialogTitle className='flex items-center'>
+            <Wand2 className='mr-2 h-5 w-5 text-primary' />
             Generate & Save AI Blog Post to Database
           </DialogTitle>
           <DialogDescription>
-            Enter a topic. AI will generate a blog post and save it directly to the database.
-            The new post will then be available on the main website.
+            Enter a topic. AI will generate a blog post and save it directly to the database. The
+            new post will then be available on the main website.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="topic" className="text-right">
+          <div className='grid gap-4 py-4'>
+            <div className='grid grid-cols-4 items-center gap-4'>
+              <Label htmlFor='topic' className='text-right'>
                 Topic
               </Label>
               <Input
-                id="topic"
+                id='topic'
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
-                className="col-span-3"
-                placeholder="e.g., Future of Renewable Energy Stocks"
+                className='col-span-3'
+                placeholder='e.g., Future of Renewable Energy Stocks'
               />
             </div>
           </div>
-          <DialogFooter className="mt-4">
-             <DialogClose asChild>
-                <Button type="button" variant="outline" disabled={isLoading}>Cancel</Button>
-             </DialogClose>
-            <Button type="submit" disabled={isLoading || !topic.trim()}>
+          <DialogFooter className='mt-4'>
+            <DialogClose asChild>
+              <Button type='button' variant='outline' disabled={isLoading}>
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button type='submit' disabled={isLoading || !topic.trim()}>
               {isLoading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className='mr-2 h-4 w-4 animate-spin' />
               ) : (
-                <DatabaseZap className="mr-2 h-4 w-4" />
+                <DatabaseZap className='mr-2 h-4 w-4' />
               )}
               Generate & Save
             </Button>
@@ -151,39 +161,56 @@ export function GenerateBlogDialog() {
         </form>
 
         {error && !isLoading && (
-          <Card className="mt-6 border-destructive bg-destructive/10">
+          <Card className='mt-6 border-destructive bg-destructive/10'>
             <CardHeader>
-              <div className="flex items-center gap-2 text-destructive">
+              <div className='flex items-center gap-2 text-destructive'>
                 <AlertTriangle size={20} />
-                <CardTitle className="text-lg">Generation/Save Failed</CardTitle>
+                <CardTitle className='text-lg'>Generation/Save Failed</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-destructive-foreground">{error}</p>
+              <p className='text-sm text-destructive-foreground'>{error}</p>
             </CardContent>
           </Card>
         )}
 
         {savedPostData && !isLoading && !error && (
-          <Card className="mt-6 border-green-500 bg-green-500/10">
+          <Card className='mt-6 border-green-500 bg-green-500/10'>
             <CardHeader>
-               <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
+              <div className='flex items-center gap-2 text-green-700 dark:text-green-400'>
                 <DatabaseZap size={20} />
-                <CardTitle className="text-lg">Successfully Saved to Database!</CardTitle>
+                <CardTitle className='text-lg'>Successfully Saved to Database!</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              <p><strong>Title:</strong> {savedPostData.title}</p>
-              <p><strong>Slug:</strong> <code>{savedPostData.slug}</code></p>
+            <CardContent className='space-y-2 text-sm'>
               <p>
-                The post is now in the database. You can view it at: 
-                <Link href={`/blog/${savedPostData.slug}`} target="_blank" rel="noopener noreferrer" className="ml-1 text-primary hover:underline">
+                <strong>Title:</strong> {savedPostData.title}
+              </p>
+              <p>
+                <strong>Slug:</strong> <code>{savedPostData.slug}</code>
+              </p>
+              <p>
+                The post is now in the database. You can view it at:
+                <Link
+                  href={`/blog/${savedPostData.slug}`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='ml-1 text-primary hover:underline'
+                >
                   /blog/{savedPostData.slug}
                 </Link>
               </p>
-               <Button variant="outline" size="sm" className="mt-2" onClick={() => {setSavedPostData(null); setTopic('');}}>
-                 Generate Another
-               </Button>
+              <Button
+                variant='outline'
+                size='sm'
+                className='mt-2'
+                onClick={() => {
+                  setSavedPostData(null);
+                  setTopic('');
+                }}
+              >
+                Generate Another
+              </Button>
             </CardContent>
           </Card>
         )}
