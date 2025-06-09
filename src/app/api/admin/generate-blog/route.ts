@@ -1,30 +1,28 @@
+
 import { NextResponse, type NextRequest } from "next/server";
 import { generateBlogPost } from "@/ai/flows/generate-blog-post-flow";
-import { z } from "genkit";
+import { z } from "genkit"; // Corrected import
 import connectDB from "@/lib/mongodb";
 import BlogPostModel, { type IMongoBlogPost } from "@/models/BlogPost";
-import { categories } from "@/lib/data"; // To find category name
+import { categories } from "@/lib/data";
 import type { GenerateBlogPostInput } from "@/ai/schemas/blog-post-schemas";
 
-// Input schema for this API route
 const ApiInputSchema = z.object({
   topic: z
     .string()
     .min(3, { message: "Topic must be at least 3 characters long." }),
 });
-// type ApiInput = z.infer<typeof ApiInputSchema>; // Not directly used as validationResult.data is typed
 
-// Interface for the expected successful response structure from this API
-// This matches what GenerateBlogDialog expects for `result.post`
 interface GenerateBlogSuccessResponse {
   message: string;
-  post: IMongoBlogPost; // Using IMongoBlogPost as it's what's saved and returned
+  post: IMongoBlogPost;
 }
 
 interface GenerateBlogErrorResponse {
   message: string;
   error?: string;
-  errors?: unknown; // For Zod error formatting
+  detail?: string; // For more detailed error info
+  errors?: unknown;
 }
 
 export async function POST(
@@ -32,11 +30,18 @@ export async function POST(
 ): Promise<
   NextResponse<GenerateBlogSuccessResponse | GenerateBlogErrorResponse>
 > {
+  console.log("[API /admin/generate-blog] Received POST request.");
   try {
-    const body: unknown = await request.json(); // Parse as unknown, Zod will validate
+    const body: unknown = await request.json();
+    console.log("[API /admin/generate-blog] Request body parsed:", body);
+
     const validationResult = ApiInputSchema.safeParse(body);
 
     if (!validationResult.success) {
+      console.error(
+        "[API /admin/generate-blog] Input validation failed:",
+        validationResult.error.format(),
+      );
       return NextResponse.json(
         { message: "Invalid input.", errors: validationResult.error.format() },
         { status: 400 },
@@ -44,21 +49,33 @@ export async function POST(
     }
 
     const { topic } = validationResult.data;
+    console.log(
+      `[API /admin/generate-blog] Validated topic: "${topic}". Calling Genkit flow...`,
+    );
 
     // 1. Call the Genkit flow to generate content
     const generatedData = await generateBlogPost({
       topic,
-    } as GenerateBlogPostInput); // Cast to ensure type match
+    } as GenerateBlogPostInput);
+    console.log(
+      "[API /admin/generate-blog] Genkit flow completed. Generated data:",
+      generatedData ? "Data received" : "No data received",
+    );
 
     if (!generatedData) {
+      console.error(
+        "[API /admin/generate-blog] AI failed to generate blog post content (generatedData is null/undefined).",
+      );
       return NextResponse.json(
         { message: "AI failed to generate blog post content." },
         { status: 500 },
       );
     }
 
+    console.log("[API /admin/generate-blog] Connecting to MongoDB...");
     // 2. Connect to MongoDB
     await connectDB();
+    console.log("[API /admin/generate-blog] Connected to MongoDB.");
 
     // 3. Prepare data for MongoDB
     const categoryDetails = categories.find(
@@ -74,7 +91,6 @@ export async function POST(
       categories.find((c) => c.slug === "general")?.slug ||
       "general";
 
-    // Simple slug generation
     let slug = generatedData.title
       .toLowerCase()
       .replace(/\s+/g, "-")
@@ -87,6 +103,7 @@ export async function POST(
     if (existingPostWithSlug) {
       slug = `${slug}-${Date.now()}`;
     }
+    console.log(`[API /admin/generate-blog] Generated slug: ${slug}`);
 
     const newPostData: Omit<IMongoBlogPost, "_id" | "createdAt" | "updatedAt"> =
       {
@@ -105,9 +122,13 @@ export async function POST(
       };
 
     const newPost = new BlogPostModel(newPostData);
-
+    console.log("[API /admin/generate-blog] Saving post to MongoDB...");
     // 4. Save to MongoDB
     const savedPost = (await newPost.save()) as IMongoBlogPost;
+    console.log(
+      "[API /admin/generate-blog] Post saved successfully. ID:",
+      savedPost._id,
+    );
 
     return NextResponse.json(
       {
@@ -117,27 +138,40 @@ export async function POST(
       { status: 201 },
     );
   } catch (error: unknown) {
-    console.error("API Error generating and saving blog post:", error);
+    console.error(
+      "[API /admin/generate-blog] CRITICAL ERROR in POST handler:",
+      error,
+    );
 
-    if (
+    let errorMessage = "An unexpected error occurred.";
+    let errorDetail: string | undefined;
+
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      errorDetail = error.stack; // Include stack trace for debugging
+    } else if (typeof error === "string") {
+      errorMessage = error;
+    } else if (
       error &&
       typeof error === "object" &&
-      "code" in error &&
-      (error as { code: unknown }).code === 11000
+      "message" in error &&
+      typeof (error as { message: unknown }).message === "string"
     ) {
-      return NextResponse.json(
-        {
-          message:
-            "Error saving blog post. A post with a similar title (slug) might already exist. Try a different topic.",
-          error: "Duplicate slug error",
-        },
-        { status: 409 },
-      );
+      errorMessage = (error as { message: string }).message;
     }
-    const errorMessage =
-      error instanceof Error ? error.message : "An unexpected error occurred.";
+
+
+    if (errorMessage.toLowerCase().includes("api key") || errorMessage.toLowerCase().includes("permission denied")) {
+        errorMessage = "Error with AI service: Potentially an API key or permission issue. Please verify your GOOGLE_API_KEY and ensure the Gemini API is enabled for your project.";
+    }
+
+
     return NextResponse.json(
-      { message: "Error generating or saving blog post.", error: errorMessage },
+      {
+        message: "Error processing your request on the server.",
+        error: errorMessage,
+        detail: errorDetail,
+      },
       { status: 500 },
     );
   }
