@@ -1,4 +1,3 @@
-
 "use server";
 /**
  * @fileOverview A Genkit flow to generate a blog post based on a topic, including an AI-generated image uploaded to Cloudinary.
@@ -13,8 +12,8 @@ import { ai } from "@/ai/genkit";
 import { categories } from "@/lib/data";
 import {
   GenerateBlogPostInputSchema,
-  type GenerateBlogPostInput,
   GenerateBlogPostOutputSchema,
+  type GenerateBlogPostInput,
   type GenerateBlogPostOutput,
 } from "../schemas/blog-post-schemas";
 import { v2 as cloudinary } from "cloudinary";
@@ -207,8 +206,9 @@ const generateBlogPostFlow = ai.defineFlow(
         : input.topic.substring(0, 50) || "financial news article";
 
     try {
-      const categoryForImage =
-        categories.find((c) => c.slug === textOutput.categorySlug) ||
+      const categoryForImage = categories.find(
+        (c) => c.slug === textOutput.categorySlug,
+      ) ||
         categories.find((c) => c.slug === "general") || {
           name: "Financial",
           slug: "general",
@@ -227,7 +227,7 @@ const generateBlogPostFlow = ai.defineFlow(
           responseModalities: ["IMAGE", "TEXT"],
         },
       });
-
+      console.log("media", media);
       if (media && media.url) {
         const imageDataUri = media.url;
         console.log(
@@ -237,18 +237,27 @@ const generateBlogPostFlow = ai.defineFlow(
         try {
           const uploadedPublicUrl = await uploadImageToCloudinary(
             imageDataUri,
-            textOutput.title.toLowerCase().replace(/\s+/g, "-").substring(0,30) // pass a sanitized title as part of filename
+            textOutput.title
+              .toLowerCase()
+              .replace(/\s+/g, "-")
+              .substring(0, 30), // pass a sanitized title as part of filename
           );
           if (uploadedPublicUrl) {
             imageUrl = uploadedPublicUrl;
-            console.log(`[generateBlogPostFlow] Image successfully uploaded to Cloudinary. URL: ${imageUrl}`);
+            console.log(
+              `[generateBlogPostFlow] Image successfully uploaded to Cloudinary. URL: ${imageUrl}`,
+            );
           } else {
-            console.warn("[generateBlogPostFlow] Cloudinary upload failed or was skipped (e.g., missing credentials). No image URL will be saved.");
+            console.warn(
+              "[generateBlogPostFlow] Cloudinary upload failed or was skipped (e.g., missing credentials). No image URL will be saved.",
+            );
           }
         } catch (uploadError) {
-          console.error("[generateBlogPostFlow] Error calling uploadImageToCloudinary:", uploadError);
+          console.error(
+            "[generateBlogPostFlow] Error calling uploadImageToCloudinary:",
+            uploadError,
+          );
         }
-
       } else {
         console.warn(
           "[generateBlogPostFlow] Image generation by Genkit did not return a media URL. No image will be used.",
@@ -273,7 +282,7 @@ const generateBlogPostFlow = ai.defineFlow(
           "[generateBlogPostFlow] Potentially a Google AI API key issue or Gemini API not enabled for project. Please check GOOGLE_API_KEY and API enablement in Google Cloud Console.",
         );
       }
-       if (errorMessage.toLowerCase().includes("cloudinary")) {
+      if (errorMessage.toLowerCase().includes("cloudinary")) {
         console.error(
           "[generateBlogPostFlow] Potentially a Cloudinary API key issue. Please check CLOUDINARY environment variables.",
         );

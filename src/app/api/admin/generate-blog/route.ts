@@ -1,4 +1,3 @@
-
 import { NextResponse, type NextRequest } from "next/server";
 import { generateBlogPost } from "@/ai/flows/generate-blog-post-flow";
 import { z } from "genkit";
@@ -161,8 +160,12 @@ export async function POST(
       errorMessage = (error as { message: string }).message;
     }
 
-    if (errorMessage.toLowerCase().includes("api key") || errorMessage.toLowerCase().includes("permission denied")) {
-        errorMessage = "Error with AI service: Potentially an API key or permission issue. Please verify your GOOGLE_API_KEY and ensure the Gemini API is enabled for your project.";
+    if (
+      errorMessage.toLowerCase().includes("api key") ||
+      errorMessage.toLowerCase().includes("permission denied")
+    ) {
+      errorMessage =
+        "Error with AI service: Potentially an API key or permission issue. Please verify your GOOGLE_API_KEY and ensure the Gemini API is enabled for your project.";
     }
 
     return NextResponse.json(
