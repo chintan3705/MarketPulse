@@ -7,10 +7,8 @@ import { CalendarDays, UserCircle, ArrowLeft, Headphones, Bot } from 'lucide-rea
 import { Button } from '@/components/ui/button';
 import { notFound } from 'next/navigation';
 import type { Metadata, ResolvingMetadata } from 'next';
-import { generateBlogPost } from '@/ai/flows/generate-blog-post-flow';
 import type { BlogPost } from '@/types';
-import { getPost as getCachedPost, setPost as cacheSetPost } from '@/lib/aiPostCache';
-
+// AI generation and cache imports removed: generateBlogPost, getCachedPost, cacheSetPost
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.marketpulse.example.com';
 
@@ -21,57 +19,12 @@ interface BlogPostPageProps {
 }
 
 async function getPostData(slug: string): Promise<BlogPost | null> {
-  // 1. Check static posts
-  let post = latestBlogPosts.find((p) => p.slug === slug);
+  // Only fetch from static posts in data.ts
+  const post = latestBlogPosts.find((p) => p.slug === slug);
   if (post) {
     return post;
   }
-
-  // 2. Check server-side cache for AI-generated posts
-  const cachedPost = getCachedPost(slug);
-  if (cachedPost) {
-    // console.log(`Post "${slug}" found in cache.`);
-    return cachedPost;
-  }
-
-  // 3. If not found in static or cache, generate on-demand
-  // This typically happens if user directly accesses an AI post URL or cache expired.
-  // console.log(`Post "${slug}" not in static data or cache. Attempting AI generation.`);
-  try {
-    const generatedPostData = await generateBlogPost({ topic: slug.replace(/-/g, ' ').replace(/-ai-\d+-\d+$/, '') }); 
-    
-    const chosenCategory = categories.find(c => c.slug === generatedPostData.categorySlug) || 
-                           (categories.length > 0 ? categories[0] : { id: 'unknown', name: 'General', slug: 'general' });
-    
-    if (!chosenCategory && categories.length > 0) {
-      console.warn(`Category not found for slug: ${generatedPostData.categorySlug}. Defaulting to first category.`);
-    } else if (categories.length === 0 && !chosenCategory) {
-       console.warn(`No categories defined. Defaulting AI post category to general.`);
-    }
-
-    const aiPost: BlogPost = {
-      id: `ai-generated-${slug}-${Date.now()}`, // Ensure a unique ID if generating on demand
-      slug: slug, // Use the slug from the URL
-      title: generatedPostData.title,
-      summary: generatedPostData.summary,
-      content: generatedPostData.content,
-      category: chosenCategory,
-      author: 'MarketPulse AI',
-      publishedAt: new Date().toISOString(),
-      tags: generatedPostData.tags,
-      isAiGenerated: true,
-      imageUrl: generatedPostData.imageUrl,
-      imageAiHint: generatedPostData.imageAiHint || generatedPostData.tags.slice(0,2).join(' ') || "financial news",
-    };
-    
-    // Cache this newly generated post as well, so subsequent reloads (within TTL) don't re-generate
-    cacheSetPost(slug, aiPost, 15); // Cache for 15 minutes
-    return aiPost;
-
-  } catch (error) {
-    console.error(`Error generating blog post for slug "${slug}" on detail page:`, error);
-    return null; // This will lead to a notFound() call later
-  }
+  return null; // Post not found
 }
 
 export async function generateMetadata(
@@ -122,16 +75,15 @@ export async function generateMetadata(
   };
 }
 
-// export const revalidate = 86400; // Revalidate static posts daily
-export const revalidate = 0; // AI generated posts need to be dynamic if not in cache
+// Revalidate static posts (e.g., daily). Adjust as needed.
+export const revalidate = 86400; 
+// Removed: export const revalidate = 0;
 
 export async function generateStaticParams() {
-  // Only generate static params for non-AI generated posts from latestBlogPosts
-  return latestBlogPosts
-    .filter(post => !post.isAiGenerated) // Ensure we only pre-render truly static posts
-    .map((post) => ({
-      slug: post.slug,
-    }));
+  // Generate static params from latestBlogPosts in data.ts
+  return latestBlogPosts.map((post) => ({
+    slug: post.slug,
+  }));
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
@@ -221,3 +173,5 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     </div>
   );
 }
+
+    

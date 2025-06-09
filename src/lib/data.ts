@@ -1,3 +1,4 @@
+
 import type { BlogPost, TrendingHeadline, Category, AdConfig } from '@/types';
 
 export const categories: Category[] = [
@@ -8,7 +9,17 @@ export const categories: Category[] = [
   { id: '5', name: 'Global Markets', slug: 'global-markets' },
   { id: '6', name: 'Crypto', slug: 'crypto' },
   { id: '7', name: 'Personal Finance', slug: 'personal-finance' },
+  // Add more categories as needed
+  { id: '8', name: 'General', slug: 'general'} // A general category often useful as a default
 ];
+
+// IMPORTANT FOR ADMINS:
+// To add new AI-generated blog posts, generate them via the Admin Panel.
+// Then, manually copy the generated data object and add it to this 'latestBlogPosts' array.
+// Ensure the 'category' field is correctly assigned by finding the category object from the 'categories' array
+// using the 'categorySlugForLookup' provided in the generated data.
+// Example: category: categories.find(c => c.slug === 'your-generated-category-slug') || categories.find(c => c.slug === 'general'),
+// Also ensure 'isAiGenerated: true' is set for these posts.
 
 export const latestBlogPosts: BlogPost[] = [
   {
@@ -22,6 +33,7 @@ export const latestBlogPosts: BlogPost[] = [
     author: 'Priya Sharma',
     publishedAt: new Date(Date.now() - 86400000).toISOString(), // Yesterday
     tags: ['Nifty', 'Stock Market', 'Bull Run', 'Investing'],
+    isAiGenerated: false,
     content: `
       <p>The Indian equity markets continued their upward trajectory on Tuesday, with the Nifty 50 index scaling a fresh record high of 2X,XXX.XX, surpassing its previous lifetime peak. The Sensex also traded firmly in the green, nearing its all-time high. This bullish momentum is attributed to a confluence of positive factors, including sustained foreign institutional investor (FII) inflows, encouraging domestic macroeconomic data, and favorable global market sentiment.</p>
       <h3 class="text-xl font-semibold mt-4 mb-2">Key Drivers of the Rally:</h3>
@@ -46,6 +58,7 @@ export const latestBlogPosts: BlogPost[] = [
     author: 'Rohan Mehra',
     publishedAt: new Date(Date.now() - 2 * 86400000).toISOString(), // 2 days ago
     tags: ['IPO', 'Investing', 'Beginners Guide', 'Finance'],
+    isAiGenerated: false,
     content: `
       <p>Initial Public Offerings (IPOs) often generate significant buzz in the investment world. The prospect of getting in on the ground floor of a promising company can be alluring. However, IPO investing is not without its complexities and risks. This guide aims to demystify IPOs for beginner investors.</p>
       <h3 class="text-xl font-semibold mt-4 mb-2">What is an IPO?</h3>
@@ -72,6 +85,7 @@ export const latestBlogPosts: BlogPost[] = [
     author: 'Anita Desai',
     publishedAt: new Date(Date.now() - 3 * 86400000).toISOString(), // 3 days ago
     tags: ['RBI', 'Monetary Policy', 'Interest Rates', 'Economy'],
+    isAiGenerated: false,
     content: `
       <p>All eyes are on the Reserve Bank of India (RBI) as its Monetary Policy Committee (MPC) convenes for its bi-monthly review. The decisions made by the MPC regarding key interest rates, such as the repo rate, have far-reaching implications for the economy, financial markets, and individual finances.</p>
       <h3 class="text-xl font-semibold mt-4 mb-2">Factors Influencing the Policy Decision:</h3>
@@ -101,6 +115,7 @@ export const latestBlogPosts: BlogPost[] = [
     author: 'Vikram Singh',
     publishedAt: new Date(Date.now() - 4 * 86400000).toISOString(), // 4 days ago
     tags: ['Mutual Funds', 'Investment', 'Top Picks', 'Finance'],
+    isAiGenerated: false,
     content: `
       <p>Choosing the right mutual fund can be a daunting task given the plethora of options available. This article highlights some of the top-performing mutual funds that investors could consider watching or adding to their portfolio in the third quarter of 2024, based on expert analysis and past performance. Remember, past performance is not indicative of future returns, and it's crucial to align investments with your financial goals and risk appetite.</p>
       <h3 class="text-xl font-semibold mt-4 mb-2">Key Categories to Consider:</h3>
@@ -125,6 +140,7 @@ export const latestBlogPosts: BlogPost[] = [
     author: 'Alex Chen',
     publishedAt: new Date(Date.now() - 5 * 86400000).toISOString(), // 5 days ago
     tags: ['Crypto', 'Bitcoin', 'Ethereum', 'Blockchain', 'Altcoins'],
+    isAiGenerated: false,
     content: `
       <p>The cryptocurrency market continues to be a focal point for investors seeking high growth, albeit with significant risk. As we head into the third quarter of 2024, several key trends and predictions are shaping the landscape. Regulatory discussions worldwide, adoption by institutional investors, and technological advancements within blockchain projects are major factors to watch.</p>
       <h3 class="text-xl font-semibold mt-4 mb-2">Major Coin Performance:</h3>
