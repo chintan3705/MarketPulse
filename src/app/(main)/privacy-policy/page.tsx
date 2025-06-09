@@ -1,18 +1,18 @@
-import type { Metadata } from 'next';
-import { ShieldCheck } from 'lucide-react';
+import type { Metadata } from "next";
+import { ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | MarketPulse',
+  title: "Privacy Policy | MarketPulse",
   description:
-    'Read the MarketPulse Privacy Policy to understand how we collect, use, and protect your personal data when you use our financial news service.',
+    "Read the MarketPulse Privacy Policy to understand how we collect, use, and protect your personal data when you use our financial news service.",
   alternates: {
-    canonical: '/privacy-policy',
+    canonical: "/privacy-policy",
   },
   openGraph: {
-    title: 'Privacy Policy | MarketPulse',
+    title: "Privacy Policy | MarketPulse",
     description:
-      'Understand how MarketPulse collects, uses, and protects your personal data.',
-    url: '/privacy-policy',
+      "Understand how MarketPulse collects, uses, and protects your personal data.",
+    url: "/privacy-policy",
   },
 };
 
@@ -30,16 +30,16 @@ const SectionTitle = ({
 );
 
 export default function PrivacyPolicyPage() {
-  const lastUpdatedDate = new Date().toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+  const lastUpdatedDate = new Date().toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 
   return (
     <div
       className="container py-8 md:py-12 animate-slide-in"
-      style={{ animationDelay: '0.1s', animationFillMode: 'backwards' }}
+      style={{ animationDelay: "0.1s", animationFillMode: "backwards" }}
     >
       <SectionTitle title="Privacy Policy" icon={ShieldCheck} />
       <div className="prose prose-sm dark:prose-invert max-w-none space-y-4">
@@ -48,10 +48,11 @@ export default function PrivacyPolicyPage() {
         </p>
 
         <p>
-          MarketPulse (&quot;us&quot;, &quot;we&quot;, or &quot;our&quot;) operates the MarketPulse website
-          (the &quot;Service&quot;). This page informs you of our policies regarding the
-          collection, use, and disclosure of personal data when you use our
-          Service and the choices you have associated with that data.
+          MarketPulse (&quot;us&quot;, &quot;we&quot;, or &quot;our&quot;)
+          operates the MarketPulse website (the &quot;Service&quot;). This page
+          informs you of our policies regarding the collection, use, and
+          disclosure of personal data when you use our Service and the choices
+          you have associated with that data.
         </p>
         <p>
           We use your data to provide and improve the Service. By using the
@@ -71,30 +72,30 @@ export default function PrivacyPolicyPage() {
         <p>
           <strong>Personal Data:</strong> While using our Service, we may ask
           you to provide us with certain personally identifiable information
-          that can be used to contact or identify you (&quot;Personal Data&quot;).
-          Currently, MarketPulse does not require user registration or directly
-          collect personal data like names or email addresses for general
-          browsing. If we introduce features like newsletters or user comments
-          in the future, this policy will be updated to reflect the data
-          collected (e.g., email address, name).
+          that can be used to contact or identify you (&quot;Personal
+          Data&quot;). Currently, MarketPulse does not require user registration
+          or directly collect personal data like names or email addresses for
+          general browsing. If we introduce features like newsletters or user
+          comments in the future, this policy will be updated to reflect the
+          data collected (e.g., email address, name).
         </p>
         <p>
           <strong>Usage Data:</strong> We may also collect information on how
-          the Service is accessed and used (&quot;Usage Data&quot;). This Usage Data may
-          include information such as your computer&apos;s Internet Protocol address
-          (e.g., IP address), browser type, browser version, the pages of our
-          Service that you visit, the time and date of your visit, the time
-          spent on those pages, unique device identifiers, and other diagnostic
-          data.
+          the Service is accessed and used (&quot;Usage Data&quot;). This Usage
+          Data may include information such as your computer&apos;s Internet
+          Protocol address (e.g., IP address), browser type, browser version,
+          the pages of our Service that you visit, the time and date of your
+          visit, the time spent on those pages, unique device identifiers, and
+          other diagnostic data.
         </p>
         <p>
-          <strong>Tracking &amp; Cookies Data:</strong> We use cookies and similar
-          tracking technologies to track the activity on our Service and hold
-          certain information. Cookies are files with a small amount of data
-          which may include an anonymous unique identifier. You can instruct
-          your browser to refuse all cookies or to indicate when a cookie is
-          being sent. However, if you do not accept cookies, you may not be able
-          to use some portions of our Service.
+          <strong>Tracking &amp; Cookies Data:</strong> We use cookies and
+          similar tracking technologies to track the activity on our Service and
+          hold certain information. Cookies are files with a small amount of
+          data which may include an anonymous unique identifier. You can
+          instruct your browser to refuse all cookies or to indicate when a
+          cookie is being sent. However, if you do not accept cookies, you may
+          not be able to use some portions of our Service.
         </p>
 
         <h3 className="font-semibold text-lg mt-5">2. Use of Data</h3>
@@ -172,11 +173,11 @@ export default function PrivacyPolicyPage() {
         <h3 className="font-semibold text-lg mt-5">6. Service Providers</h3>
         <p>
           We may employ third-party companies and individuals to facilitate our
-          Service (&quot;Service Providers&quot;), to provide the Service on our behalf,
-          to perform Service-related services or to assist us in analyzing how
-          our Service is used. These third parties have access to your Personal
-          Data only to perform these tasks on our behalf and are obligated not
-          to disclose or use it for any other purpose.
+          Service (&quot;Service Providers&quot;), to provide the Service on our
+          behalf, to perform Service-related services or to assist us in
+          analyzing how our Service is used. These third parties have access to
+          your Personal Data only to perform these tasks on our behalf and are
+          obligated not to disclose or use it for any other purpose.
         </p>
 
         <h3 className="font-semibold text-lg mt-5">7. Links to Other Sites</h3>
@@ -189,15 +190,18 @@ export default function PrivacyPolicyPage() {
           third-party sites or services.
         </p>
 
-        <h3 className="font-semibold text-lg mt-5">8. Children&apos;s Privacy</h3>
+        <h3 className="font-semibold text-lg mt-5">
+          8. Children&apos;s Privacy
+        </h3>
         <p>
-          Our Service does not address anyone under the age of 13 (&quot;Children&quot;).
-          We do not knowingly collect personally identifiable information from
-          anyone under the age of 13. If you are a parent or guardian and you
-          are aware that your Children has provided us with Personal Data,
-          please contact us. If we become aware that we have collected Personal
-          Data from children without verification of parental consent, we take
-          steps to remove that information from our servers.
+          Our Service does not address anyone under the age of 13
+          (&quot;Children&quot;). We do not knowingly collect personally
+          identifiable information from anyone under the age of 13. If you are a
+          parent or guardian and you are aware that your Children has provided
+          us with Personal Data, please contact us. If we become aware that we
+          have collected Personal Data from children without verification of
+          parental consent, we take steps to remove that information from our
+          servers.
         </p>
 
         <h3 className="font-semibold text-lg mt-5">
@@ -207,8 +211,8 @@ export default function PrivacyPolicyPage() {
           We may update our Privacy Policy from time to time. We will notify you
           of any changes by posting the new Privacy Policy on this page. We will
           let you know via email and/or a prominent notice on our Service, prior
-          to the change becoming effective and update the &quot;last updated&quot; date at
-          the top of this Privacy Policy.
+          to the change becoming effective and update the &quot;last
+          updated&quot; date at the top of this Privacy Policy.
         </p>
         <p>
           You are advised to review this Privacy Policy periodically for any
@@ -219,7 +223,7 @@ export default function PrivacyPolicyPage() {
         <h3 className="font-semibold text-lg mt-5">10. Contact Us</h3>
         <p>
           If you have any questions about this Privacy Policy, please contact us
-          by email:{' '}
+          by email:{" "}
           <a
             href="mailto:privacy@marketpulse.example.com"
             className="text-primary hover:underline"

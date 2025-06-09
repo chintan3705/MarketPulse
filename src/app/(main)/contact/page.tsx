@@ -1,19 +1,19 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { Mail } from 'lucide-react';
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Mail } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: 'Contact MarketPulse',
+  title: "Contact MarketPulse",
   description:
-    'Get in touch with MarketPulse for inquiries, feedback, or news tips. Find our contact email addresses for general, editorial, and advertising queries.',
+    "Get in touch with MarketPulse for inquiries, feedback, or news tips. Find our contact email addresses for general, editorial, and advertising queries.",
   alternates: {
-    canonical: '/contact',
+    canonical: "/contact",
   },
   openGraph: {
-    title: 'Contact MarketPulse',
+    title: "Contact MarketPulse",
     description:
-      'Get in touch with MarketPulse for inquiries, feedback, or news tips.',
-    url: '/contact',
+      "Get in touch with MarketPulse for inquiries, feedback, or news tips.",
+    url: "/contact",
   },
 };
 
@@ -34,18 +34,18 @@ export default function ContactPage() {
   return (
     <div
       className="container py-8 md:py-12 animate-slide-in"
-      style={{ animationDelay: '0.1s', animationFillMode: 'backwards' }}
+      style={{ animationDelay: "0.1s", animationFillMode: "backwards" }}
     >
       <SectionTitle title="Contact Us" icon={Mail} />
       <div className="prose prose-lg dark:prose-invert max-w-none space-y-4">
         <p>
-          We&apos;d love to hear from you! Whether you have a question, feedback, or
-          a news tip, please feel free to reach out to us.
+          We&apos;d love to hear from you! Whether you have a question,
+          feedback, or a news tip, please feel free to reach out to us.
         </p>
 
         <h3 className="font-semibold text-xl">General Inquiries</h3>
         <p>
-          For general questions or information, please email us at:{' '}
+          For general questions or information, please email us at:{" "}
           <a
             href="mailto:info@marketpulse.example.com"
             className="text-primary hover:underline"
@@ -56,7 +56,7 @@ export default function ContactPage() {
 
         <h3 className="font-semibold text-xl">Editorial Team</h3>
         <p>
-          If you have a story idea or want to reach our editorial team, contact:{' '}
+          If you have a story idea or want to reach our editorial team, contact:{" "}
           <a
             href="mailto:editor@marketpulse.example.com"
             className="text-primary hover:underline"
@@ -67,11 +67,11 @@ export default function ContactPage() {
 
         <h3 className="font-semibold text-xl">Advertising</h3>
         <p>
-          For advertising opportunities, please visit our{' '}
+          For advertising opportunities, please visit our{" "}
           <Link href="/advertise" className="text-primary hover:underline">
             Advertise page
-          </Link>{' '}
-          or email:{' '}
+          </Link>{" "}
+          or email:{" "}
           <a
             href="mailto:ads@marketpulse.example.com"
             className="text-primary hover:underline"

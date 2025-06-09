@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link'; // Added missing import
-import { Button } from '@/components/ui/button';
+import React, { useState } from "react";
+import Link from "next/link"; // Added missing import
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,42 +11,42 @@ import {
   DialogTitle,
   DialogDescription,
   DialogClose,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import {
   Loader2,
   PlusCircle,
   Wand2,
   DatabaseZap,
   AlertTriangle,
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import type { IMongoBlogPost } from '@/models/BlogPost';
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import type { IMongoBlogPost } from "@/models/BlogPost";
 
 // Using IMongoBlogPost fields that are relevant for the dialog after save.
 // This type matches the 'post' object structure returned by the API on success.
 type SavedPostData = Pick<
   IMongoBlogPost,
-  | '_id'
-  | 'title'
-  | 'slug'
-  | 'summary'
-  | 'content'
-  | 'imageUrl'
-  | 'imageAiHint'
-  | 'categorySlug'
-  | 'tags'
-  | 'categoryName'
-  | 'author'
-  | 'publishedAt'
-  | 'isAiGenerated'
+  | "_id"
+  | "title"
+  | "slug"
+  | "summary"
+  | "content"
+  | "imageUrl"
+  | "imageAiHint"
+  | "categorySlug"
+  | "tags"
+  | "categoryName"
+  | "author"
+  | "publishedAt"
+  | "isAiGenerated"
 >;
 
 export function GenerateBlogDialog() {
   const [isOpen, setIsOpen] = useState(false);
-  const [topic, setTopic] = useState('');
+  const [topic, setTopic] = useState("");
   const [savedPostData, setSavedPostData] = useState<SavedPostData | null>(
     null,
   );
@@ -58,9 +58,9 @@ export function GenerateBlogDialog() {
     e.preventDefault();
     if (!topic.trim()) {
       toast({
-        title: 'Error',
-        description: 'Please enter a topic for the blog post.',
-        variant: 'destructive',
+        title: "Error",
+        description: "Please enter a topic for the blog post.",
+        variant: "destructive",
       });
       return;
     }
@@ -70,10 +70,10 @@ export function GenerateBlogDialog() {
     setError(null);
 
     try {
-      const response = await fetch('/api/admin/generate-blog', {
-        method: 'POST',
+      const response = await fetch("/api/admin/generate-blog", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ topic }),
       });
@@ -95,26 +95,26 @@ export function GenerateBlogDialog() {
         throw new Error(
           result.message ||
             result.error ||
-            'Failed to generate and save blog post',
+            "Failed to generate and save blog post",
         );
       }
 
       setSavedPostData(result.post);
       toast({
-        title: 'Blog Post Generated & Saved to DB!',
+        title: "Blog Post Generated & Saved to DB!",
         description: `"${result.post.title}" has been saved to the database. It will appear on the site.`,
         duration: 7000,
       });
     } catch (err) {
       const catchedError = err as Error;
-      console.error('Error generating blog post:', catchedError);
+      console.error("Error generating blog post:", catchedError);
       const errorMessage =
-        catchedError.message || 'An unexpected error occurred.';
+        catchedError.message || "An unexpected error occurred.";
       setError(errorMessage);
       toast({
-        title: 'Error Generating Blog Post',
+        title: "Error Generating Blog Post",
         description: errorMessage,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -233,7 +233,7 @@ export function GenerateBlogDialog() {
                 className="mt-2"
                 onClick={() => {
                   setSavedPostData(null);
-                  setTopic('');
+                  setTopic("");
                 }}
               >
                 Generate Another

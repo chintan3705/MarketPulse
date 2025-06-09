@@ -1,18 +1,18 @@
-import type { Metadata } from 'next';
-import { AlertTriangle } from 'lucide-react';
+import type { Metadata } from "next";
+import { AlertTriangle } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: 'Disclaimer | MarketPulse',
+  title: "Disclaimer | MarketPulse",
   description:
-    'Important disclaimer for MarketPulse. Information provided is for general purposes only and not financial advice. Understand investment risks and the nature of AI-generated content.',
+    "Important disclaimer for MarketPulse. Information provided is for general purposes only and not financial advice. Understand investment risks and the nature of AI-generated content.",
   alternates: {
-    canonical: '/disclaimer',
+    canonical: "/disclaimer",
   },
   openGraph: {
-    title: 'Disclaimer | MarketPulse',
+    title: "Disclaimer | MarketPulse",
     description:
-      'Information provided is for general purposes only and not financial advice. Understand investment risks and the nature of AI-generated content.',
-    url: '/disclaimer',
+      "Information provided is for general purposes only and not financial advice. Understand investment risks and the nature of AI-generated content.",
+    url: "/disclaimer",
   },
 };
 
@@ -33,18 +33,18 @@ export default function DisclaimerPage() {
   return (
     <div
       className="container py-8 md:py-12 animate-slide-in"
-      style={{ animationDelay: '0.1s', animationFillMode: 'backwards' }}
+      style={{ animationDelay: "0.1s", animationFillMode: "backwards" }}
     >
       <SectionTitle title="Disclaimer" icon={AlertTriangle} />
       <div className="prose prose-lg dark:prose-invert max-w-none space-y-4">
         <p>
           The information provided by MarketPulse on our website, including
           articles, analysis, news, and any other content (collectively,
-          &quot;Content&quot;), is for general informational and educational purposes
-          only. All Content on the site is provided in good faith; however, we
-          make no representation or warranty of any kind, express or implied,
-          regarding the accuracy, adequacy, validity, reliability, availability,
-          or completeness of any information on the site.
+          &quot;Content&quot;), is for general informational and educational
+          purposes only. All Content on the site is provided in good faith;
+          however, we make no representation or warranty of any kind, express or
+          implied, regarding the accuracy, adequacy, validity, reliability,
+          availability, or completeness of any information on the site.
         </p>
 
         <h3 className="font-semibold text-xl mt-5">Not Financial Advice</h3>
@@ -54,7 +54,7 @@ export default function DisclaimerPage() {
             constitute financial advice, investment advice, trading advice, or
             any other sort of advice, and you should not treat any of the
             website&apos;s content as such.
-          </strong>{' '}
+          </strong>{" "}
           MarketPulse does not recommend that any specific cryptocurrency,
           security, portfolio of securities, transaction, or investment strategy
           is suitable for any specific person. You should not take, or refrain
@@ -145,7 +145,7 @@ export default function DisclaimerPage() {
         </p>
         <p>
           If you require any more information or have any questions about our
-          site&apos;s disclaimer, please feel free to contact us by email at{' '}
+          site&apos;s disclaimer, please feel free to contact us by email at{" "}
           <a
             href="mailto:legal@marketpulse.example.com"
             className="text-primary hover:underline"
