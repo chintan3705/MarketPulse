@@ -1,4 +1,3 @@
-
 "use server";
 /**
  * @fileOverview A Genkit flow to generate a blog post based on a topic, including an AI-generated image uploaded to Cloudinary.
@@ -164,7 +163,10 @@ const generateBlogPostFlow = ai.defineFlow(
     outputSchema: GenerateBlogPostOutputSchema,
   },
   async (input) => {
-    console.log("🔄 [generateBlogPostFlow] Inside flow execution. Input:", input);
+    console.log(
+      "🔄 [generateBlogPostFlow] Inside flow execution. Input:",
+      input,
+    );
     let textOutput;
     try {
       console.log(
@@ -240,7 +242,10 @@ const generateBlogPostFlow = ai.defineFlow(
         );
 
         // Upload to Cloudinary
-        imageUrl = await uploadImageToCloudinary(imageDataUri, textOutput.title);
+        imageUrl = await uploadImageToCloudinary(
+          imageDataUri,
+          textOutput.title,
+        );
         if (imageUrl) {
           console.log(
             `✅ [generateBlogPostFlow] Image successfully uploaded. Cloudinary URL: ${imageUrl}`,

@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import { Activity } from "lucide-react";
 

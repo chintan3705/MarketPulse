@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import type { AdConfig } from "@/types";
 import { cn } from "@/lib/utils";

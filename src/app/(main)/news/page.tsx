@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { Newspaper } from "lucide-react";
@@ -63,9 +62,7 @@ async function fetchPosts(): Promise<BlogPost[]> {
       cache: "no-store",
     }); // Fetch recent 12 posts
     if (!res.ok) {
-      console.error(
-        `Failed to fetch posts: ${res.status} ${await res.text()}`,
-      );
+      console.error(`Failed to fetch posts: ${res.status} ${await res.text()}`);
       return [];
     }
     const data = (await res.json()) as { posts: BlogPost[] };

@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,9 +29,7 @@ async function fetchAdminPosts(): Promise<BlogPost[]> {
     const res = await fetch(`${SITE_URL}/api/posts`, { cache: "no-store" });
     if (!res.ok) {
       const errorText = await res.text();
-      console.error(
-        `Admin: Failed to fetch posts: ${res.status} ${errorText}`,
-      );
+      console.error(`Admin: Failed to fetch posts: ${res.status} ${errorText}`);
       return [];
     }
     const data = (await res.json()) as { posts: BlogPost[] };
@@ -63,7 +60,8 @@ export default async function AdminBlogsPage() {
           <CardTitle>Blog Posts from Database</CardTitle>
           <CardDescription>
             A list of all blog posts fetched from the database. Editing and
-            Deleting are placeholders. Use &quot;Generate &amp; Save Blog&quot; to create new content.
+            Deleting are placeholders. Use &quot;Generate &amp; Save Blog&quot;
+            to create new content.
           </CardDescription>
         </CardHeader>
         <CardContent>

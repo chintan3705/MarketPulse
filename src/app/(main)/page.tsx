@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { TrendingHeadlineCard } from "@/components/blog/TrendingHeadlineCard";
@@ -241,10 +240,7 @@ export default async function HomePage() {
             />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {moreNewsPosts.map((post, index) => (
-                <BlogPostCard
-                  key={post._id || post.id || index}
-                  post={post}
-                />
+                <BlogPostCard key={post._id || post.id || index} post={post} />
               ))}
             </div>
           </section>
