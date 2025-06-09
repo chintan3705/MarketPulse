@@ -5,13 +5,13 @@ import Link from 'next/link';
 import { Logo } from '@/components/common/Logo';
 import { SearchInput } from '@/components/common/SearchInput';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetClose } from '@/components/ui/sheet';
 import { Menu, X, UserCog } from 'lucide-react';
 import type { NavItem } from '@/types';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { ThemeToggle } from '@/components/common/ThemeToggle'; // Import ThemeToggle
+import { ThemeToggle } from '@/components/common/ThemeToggle';
 
 const mainNavItems: NavItem[] = [
   { label: 'Home', href: '/' },
@@ -45,11 +45,11 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex-1 flex justify-end items-center space-x-2"> {/* Reduced space-x-4 to space-x-2 */}
+        <div className="flex-1 flex justify-end items-center space-x-2">
           <div className="hidden md:block">
             <SearchInput />
           </div>
-          <ThemeToggle /> {/* Add ThemeToggle here */}
+          <ThemeToggle />
           <Button variant="outline" size="sm" asChild className="hidden md:inline-flex">
             <Link href="/admin">
               <span className="inline-flex items-center">
@@ -61,13 +61,13 @@ export function Header() {
         </div>
 
 
-        <div className="md:hidden flex items-center ml-auto space-x-1"> {/* Added space-x-1 for mobile */}
-           <ThemeToggle /> {/* Add ThemeToggle for mobile */}
-           <Button variant="ghost" size="icon" asChild className="mr-0">
-             <Link href="/admin" aria-label="Admin Panel">
+        <div className="md:hidden flex items-center ml-auto space-x-1">
+           <ThemeToggle />
+           <Link href="/admin" passHref legacyBehavior={false}> {/* Removed legacyBehavior, passHref remains useful if Button were not asChild */}
+             <Button variant="ghost" size="icon" className="mr-0" aria-label="Admin Panel">
                <UserCog className="h-5 w-5" />
-             </Link>
-           </Button>
+             </Button>
+           </Link>
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" aria-label="Open menu">
@@ -76,14 +76,19 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[340px] p-0">
               <div className="flex flex-col h-full">
-                <div className="flex items-center justify-between p-4 border-b">
-                  <Logo />
-                  <SheetTrigger asChild>
-                     <Button variant="ghost" size="icon" aria-label="Close menu">
-                       <X className="h-6 w-6" />
-                     </Button>
-                  </SheetTrigger>
-                </div>
+                <SheetHeader className="p-4 border-b">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Logo />
+                      <SheetTitle>Menu</SheetTitle>
+                    </div>
+                    <SheetClose asChild>
+                       <Button variant="ghost" size="icon" aria-label="Close menu">
+                         <X className="h-6 w-6" />
+                       </Button>
+                    </SheetClose>
+                  </div>
+                </SheetHeader>
                 <div className="p-4">
                   <SearchInput className="mb-4" />
                 </div>
