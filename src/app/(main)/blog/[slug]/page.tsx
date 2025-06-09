@@ -24,30 +24,36 @@ async function getPostData(slug: string): Promise<BlogPost | null> {
   if (!post) {
     try {
       console.log(`Static post for slug "${slug}" not found, attempting AI generation.`);
-      const generatedPostData = await generateBlogPost({ topic: slug.replace(/-/g, ' ') }); // Use de-slugified topic
+      // generateBlogPost now returns imageUrl and imageAiHint
+      const generatedPostData = await generateBlogPost({ topic: slug.replace(/-/g, ' ') }); 
       
-      const chosenCategory = categories.find(c => c.slug === generatedPostData.categorySlug) || categories[0];
-      if (!chosenCategory) {
-        console.error(`Category not found for slug: ${generatedPostData.categorySlug}. Defaulting might occur.`);
+      const chosenCategory = categories.find(c => c.slug === generatedPostData.categorySlug) || 
+                             (categories.length > 0 ? categories[0] : { id: 'unknown', name: 'General', slug: 'general' });
+      
+      if (!chosenCategory && categories.length > 0) {
+        console.warn(`Category not found for slug: ${generatedPostData.categorySlug}. Defaulting to first category.`);
+      } else if (categories.length === 0 && !chosenCategory) {
+         console.warn(`No categories defined. Defaulting AI post category to general.`);
       }
 
+
       post = {
-        id: `ai-generated-${slug}`, // Use slug as part of a unique ID
+        id: `ai-generated-${slug}`,
         slug: slug,
         title: generatedPostData.title,
         summary: generatedPostData.summary,
         content: generatedPostData.content,
-        category: chosenCategory || { id: 'unknown', name: 'General', slug: 'general' }, // Fallback category
+        category: chosenCategory,
         author: 'MarketPulse AI',
         publishedAt: new Date().toISOString(),
         tags: generatedPostData.tags,
         isAiGenerated: true,
-        imageUrl: `https://placehold.co/800x450.png`, // Placeholder image for AI posts
-        imageAiHint: generatedPostData.tags.length > 0 ? generatedPostData.tags.slice(0,2).join(' ') : "financial news",
+        imageUrl: generatedPostData.imageUrl, // Use AI generated image
+        imageAiHint: generatedPostData.imageAiHint || generatedPostData.tags.slice(0,2).join(' ') || "financial news",
       };
     } catch (error) {
       console.error(`Error generating blog post for slug "${slug}" on detail page:`, error);
-      return null; // Post cannot be found or generated
+      return null;
     }
   }
   return post;
@@ -67,7 +73,11 @@ export async function generateMetadata(
   }
 
   const previousImages = (await parent).openGraph?.images || [];
-  const postImage = post.imageUrl ? [{ url: post.imageUrl, alt: post.title, width: 800, height: 450 }] : previousImages;
+  // Use post.imageUrl which could be a data URI or a placeholder if generation failed/skipped
+  const postImage = post.imageUrl ? [{ url: post.imageUrl, alt: post.title }] : previousImages;
+   // For data URIs, width/height might not be easily determined or necessary for OpenGraph like this
+   // but if they were normal URLs, you'd specify them:
+   // width: 800, height: 450
 
   return {
     title: post.title,
@@ -96,11 +106,9 @@ export async function generateMetadata(
   };
 }
 
-// Revalidate static posts every 24 hours, AI generated posts will be dynamic
 export const revalidate = 86400; 
 
 export async function generateStaticParams() {
-  // Only generate static params for posts in latestBlogPosts
   return latestBlogPosts.map((post) => ({
     slug: post.slug,
   }));
@@ -157,12 +165,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {post.imageUrl && (
           <div className="relative aspect-video mb-8 rounded-lg overflow-hidden shadow-lg">
             <Image
-              src={post.imageUrl}
+              src={post.imageUrl} // This can now be a data URI
               alt={post.title}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 80vw, 768px"
               className="object-cover"
-              priority
+              priority={!post.isAiGenerated} // Only prioritize for non-AI (static) posts initially
               data-ai-hint={post.imageAiHint || "financial news article"}
             />
           </div>

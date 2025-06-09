@@ -1,9 +1,9 @@
 
 'use server';
 /**
- * @fileOverview A Genkit flow to generate a blog post based on a topic.
+ * @fileOverview A Genkit flow to generate a blog post based on a topic, including an AI-generated image.
  *
- * - generateBlogPost - A function that handles the blog post generation.
+ * - generateBlogPost - A function that handles the blog post generation with image.
  * - GenerateBlogPostInput - The input type for the generateBlogPost function.
  * - GenerateBlogPostOutput - The return type for the generateBlogPost function.
  */
@@ -23,6 +23,8 @@ const GenerateBlogPostOutputSchema = z.object({
   content: z.string().describe('The full blog post content in HTML format. Should include multiple paragraphs, <h3> for subheadings, and <ul>/<li> for lists where appropriate. Aim for 300-500 words.'),
   categorySlug: z.string().describe('The slug of the most relevant category for this blog post from the provided list.'),
   tags: z.array(z.string()).describe('An array of 2-4 relevant tags (keywords) for the blog post.'),
+  imageUrl: z.string().optional().describe('The data URI of the AI-generated image for the blog post, if available. Expected format: "data:image/png;base64,<encoded_data>".'),
+  imageAiHint: z.string().optional().describe('A hint derived from the topic or tags for the AI-generated image.')
 });
 export type GenerateBlogPostOutput = z.infer<typeof GenerateBlogPostOutputSchema>;
 
@@ -46,13 +48,13 @@ Please generate the following:
 4. The slug of the most relevant category from the list provided above.
 5. An array of 2-4 relevant tags (keywords).
 
-Ensure the output strictly follows the JSON schema provided for the output.
+Ensure the output strictly follows the JSON schema provided for the output, excluding imageUrl and imageAiHint which will be handled separately.
 `;
 
-const generateBlogPostPrompt = ai.definePrompt({
-  name: 'generateBlogPostPrompt',
+const generateBlogPostTextPrompt = ai.definePrompt({
+  name: 'generateBlogPostTextPrompt',
   input: { schema: GenerateBlogPostInputSchema },
-  output: { schema: GenerateBlogPostOutputSchema },
+  output: { schema: GenerateBlogPostOutputSchema.omit({ imageUrl: true, imageAiHint: true }) }, // AI generates text part first
   prompt: systemInstruction,
 });
 
@@ -63,18 +65,53 @@ const generateBlogPostFlow = ai.defineFlow(
     outputSchema: GenerateBlogPostOutputSchema,
   },
   async (input) => {
-    const { output } = await generateBlogPostPrompt(input);
-    if (!output) {
-      throw new Error('Failed to generate blog post content.');
+    // 1. Generate Text Content
+    const { output: textOutput } = await generateBlogPostTextPrompt(input);
+    if (!textOutput) {
+      throw new Error('Failed to generate blog post text content.');
     }
+
     // Ensure the category slug is valid
-    const isValidCategory = categories.some(cat => cat.slug === output.categorySlug);
+    const isValidCategory = categories.some(cat => cat.slug === textOutput.categorySlug);
     if (!isValidCategory && categories.length > 0) {
-      // Default to the first category if the AI hallucinates one
-      output.categorySlug = categories[0].slug;
+      textOutput.categorySlug = categories[0].slug;
     } else if (categories.length === 0) {
-      output.categorySlug = 'general'; // Fallback if no categories exist
+      textOutput.categorySlug = 'general';
     }
-    return output;
+
+    // 2. Generate Image (Optional)
+    let imageUrl: string | undefined = undefined;
+    const imageAiHint = textOutput.tags.length > 0 ? textOutput.tags.slice(0,2).join(' ') : input.topic;
+
+    try {
+      // Use a concise prompt for the image based on the generated title and summary
+      const imagePromptText = `A visually appealing blog post illustration for an article titled "${textOutput.title}". The article is about: ${textOutput.summary.substring(0, 100)}... Focus on themes like: ${imageAiHint}. Financial, modern, abstract or conceptual style.`;
+      
+      console.log(`Generating image with prompt: ${imagePromptText.substring(0,100)}...`);
+
+      const { media } = await ai.generate({
+        model: 'googleai/gemini-2.0-flash-exp', // Explicitly use image-capable model
+        prompt: imagePromptText,
+        config: {
+          responseModalities: ['IMAGE', 'TEXT'], // Must request IMAGE
+        },
+      });
+
+      if (media && media.url) {
+        imageUrl = media.url; // This will be a data URI
+        console.log('Image generated successfully.');
+      } else {
+        console.warn('Image generation did not return a media URL.');
+      }
+    } catch (imageError) {
+      console.error('Error generating image for blog post:', imageError);
+      // Proceed without an image if generation fails
+    }
+
+    return {
+      ...textOutput,
+      imageUrl: imageUrl,
+      imageAiHint: imageAiHint,
+    };
   }
 );
