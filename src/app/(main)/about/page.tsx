@@ -1,5 +1,19 @@
 
+import type { Metadata } from 'next';
 import { Info } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: 'About MarketPulse',
+  description: 'Learn more about MarketPulse, our mission, and our dedication to providing timely financial insights and stock analysis to empower investors.',
+  alternates: {
+    canonical: '/about',
+  },
+   openGraph: {
+    title: 'About MarketPulse',
+    description: 'Learn more about MarketPulse, our mission, and our dedication to providing timely financial insights.',
+    url: '/about',
+  },
+};
 
 const SectionTitle = ({ title, icon: Icon }: { title: string; icon?: React.ElementType; }) => (
   <div className="flex items-center gap-2 mb-6">

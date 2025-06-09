@@ -1,5 +1,19 @@
 
+import type { Metadata } from 'next';
 import { ShieldCheck } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy | MarketPulse',
+  description: 'Read the MarketPulse Privacy Policy to understand how we collect, use, and protect your personal data when you use our financial news service.',
+  alternates: {
+    canonical: '/privacy-policy',
+  },
+  openGraph: {
+    title: 'Privacy Policy | MarketPulse',
+    description: 'Understand how MarketPulse collects, uses, and protects your personal data.',
+    url: '/privacy-policy',
+  },
+};
 
 const SectionTitle = ({ title, icon: Icon }: { title: string; icon?: React.ElementType; }) => (
   <div className="flex items-center gap-2 mb-6">

@@ -1,3 +1,4 @@
+
 import { latestBlogPosts } from '@/lib/data';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -5,15 +6,66 @@ import { Badge } from '@/components/ui/badge';
 import { CalendarDays, UserCircle, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { notFound } from 'next/navigation';
+import type { Metadata, ResolvingMetadata } from 'next';
 
-// ISR: Revalidate every 24 hours (86400 seconds)
-export const revalidate = 86400;
+// Define a base URL for your site. Replace with your actual domain.
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.marketpulse.example.com';
 
 interface BlogPostPageProps {
   params: {
     slug: string;
   };
 }
+
+export async function generateMetadata(
+  { params }: BlogPostPageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const slug = params.slug;
+  const post = latestBlogPosts.find((p) => p.slug === slug);
+
+  if (!post) {
+    return {
+      title: 'Post Not Found',
+    };
+  }
+
+  const previousImages = (await parent).openGraph?.images || [];
+  const postImage = post.imageUrl ? [{ url: post.imageUrl, alt: post.title, width: 800, height: 450 }] : previousImages;
+
+
+  return {
+    title: post.title,
+    description: post.summary,
+    keywords: post.tags,
+    alternates: {
+      canonical: `/blog/${post.slug}`,
+    },
+    openGraph: {
+      title: post.title,
+      description: post.summary,
+      url: `${SITE_URL}/blog/${post.slug}`,
+      type: 'article',
+      publishedTime: post.publishedAt,
+      // modifiedTime: post.updatedAt, // Add if you have an updatedAt field
+      authors: [post.author],
+      tags: post.tags,
+      images: postImage,
+      siteName: 'MarketPulse',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.summary,
+      images: postImage.map(img => img.url), // Use the same image as Open Graph
+      // creator: '@YourTwitterHandle', // If you have author-specific handles
+    },
+  };
+}
+
+
+// ISR: Revalidate every 24 hours (86400 seconds)
+export const revalidate = 86400;
 
 export async function generateStaticParams() {
   return latestBlogPosts.map((post) => ({
@@ -104,16 +156,3 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     </div>
   );
 }
-
-// Add some basic prose styling for Tailwind Typography if not already present globally
-// You might want to add this to your globals.css if you use prose frequently
-// @layer components {
-//   .prose { @apply text-foreground; }
-//   .prose h1, .prose h2, .prose h3, .prose h4 { @apply text-foreground font-headline; }
-//   .prose a { @apply text-primary hover:text-primary/80; }
-//   .prose strong { @apply text-foreground; }
-//   .prose blockquote { @apply border-primary; }
-//   .prose code { @apply text-sm; }
-// }
-// We'll assume tailwind typography plugin is configured or some base styles exist.
-// For simplicity here, direct HTML is used.

@@ -1,3 +1,5 @@
+
+import type { Metadata } from 'next';
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { TrendingHeadlineCard } from "@/components/blog/TrendingHeadlineCard";
 import { AdSlot } from "@/components/ads/AdSlot";
@@ -6,6 +8,22 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Newspaper, Zap } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: 'MarketPulse – Your Daily Lens on the Share Market',
+  description: 'Get the latest share market news, stock analysis, IPO updates, and financial insights. MarketPulse helps you stay informed and invest wisely.',
+  openGraph: {
+    title: 'MarketPulse – Your Daily Lens on the Share Market',
+    description: 'Get the latest share market news, stock analysis, IPO updates, and financial insights.',
+    // You can specify a unique image for the homepage if different from the default
+    // images: [{ url: '/homepage-og-image.png' }], 
+  },
+  twitter: {
+    title: 'MarketPulse – Your Daily Lens on the Share Market',
+    description: 'Get the latest share market news, stock analysis, IPO updates, and financial insights.',
+     // images: ['/homepage-twitter-image.png'],
+  }
+};
 
 // Helper component for section titles
 const SectionTitle = ({ title, icon: Icon, viewAllLink }: { title: string; icon?: React.ElementType; viewAllLink?: string }) => (

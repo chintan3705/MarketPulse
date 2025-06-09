@@ -1,5 +1,19 @@
 
+import type { Metadata } from 'next';
 import { BarChart3 } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: 'Market Analysis & Financial Insights',
+  description: 'In-depth market analysis, expert opinions, and detailed financial reports from MarketPulse. Guide your investment decisions with our comprehensive insights.',
+  alternates: {
+    canonical: '/analysis',
+  },
+  openGraph: {
+    title: 'Market Analysis & Financial Insights | MarketPulse',
+    description: 'In-depth market analysis, expert opinions, and detailed financial reports from MarketPulse.',
+    url: '/analysis',
+  },
+};
 
 const SectionTitle = ({ title, icon: Icon }: { title: string; icon?: React.ElementType; }) => (
   <div className="flex items-center gap-2 mb-6">

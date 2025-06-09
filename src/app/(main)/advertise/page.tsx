@@ -1,5 +1,19 @@
 
+import type { Metadata } from 'next';
 import { Megaphone } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: 'Advertise With MarketPulse',
+  description: 'Reach a highly engaged audience of investors and financial enthusiasts by advertising with MarketPulse. Explore our advertising solutions.',
+  alternates: {
+    canonical: '/advertise',
+  },
+   openGraph: {
+    title: 'Advertise With MarketPulse',
+    description: 'Reach a highly engaged audience of investors and financial enthusiasts by advertising with MarketPulse.',
+    url: '/advertise',
+  },
+};
 
 const SectionTitle = ({ title, icon: Icon }: { title: string; icon?: React.ElementType; }) => (
   <div className="flex items-center gap-2 mb-6">

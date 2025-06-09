@@ -1,7 +1,21 @@
 
+import type { Metadata } from 'next';
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { latestBlogPosts, categories } from "@/lib/data";
 import { Rocket } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: 'IPO News, Analysis & Upcoming IPOs',
+  description: 'Stay updated on the latest Initial Public Offerings (IPOs). Get IPO news, analysis, and information on upcoming IPOs with MarketPulse.',
+  alternates: {
+    canonical: '/ipos',
+  },
+  openGraph: {
+    title: 'IPO News, Analysis & Upcoming IPOs | MarketPulse',
+    description: 'Stay updated on the latest Initial Public Offerings (IPOs) with MarketPulse.',
+    url: '/ipos',
+  },
+};
 
 const SectionTitle = ({ title, icon: Icon }: { title: string; icon?: React.ElementType; }) => (
   <div className="flex items-center gap-2 mb-6">

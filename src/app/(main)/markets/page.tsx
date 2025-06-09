@@ -1,5 +1,19 @@
 
+import type { Metadata } from 'next';
 import { Activity } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: 'Stock Market Overview & Trends',
+  description: 'Get a comprehensive overview of current stock market trends, data, and performance indicators. Insights into Nifty, Sensex, global markets, and commodities.',
+  alternates: {
+    canonical: '/markets',
+  },
+  openGraph: {
+    title: 'Stock Market Overview & Trends | MarketPulse',
+    description: 'Comprehensive overview of current stock market trends, data, and performance indicators.',
+    url: '/markets',
+  },
+};
 
 const SectionTitle = ({ title, icon: Icon }: { title: string; icon?: React.ElementType; }) => (
   <div className="flex items-center gap-2 mb-6">

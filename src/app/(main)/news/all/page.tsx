@@ -1,7 +1,22 @@
 
+import type { Metadata } from 'next';
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { latestBlogPosts } from "@/lib/data";
 import { Newspaper } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: 'All News & Analysis',
+  description: 'Browse all news articles and in-depth analysis from MarketPulse. Stay updated with the latest financial insights and market trends.',
+  alternates: {
+    canonical: '/news/all',
+  },
+  openGraph: {
+    title: 'All News & Analysis | MarketPulse',
+    description: 'Browse all news articles and in-depth analysis from MarketPulse.',
+    url: '/news/all',
+  },
+};
+
 
 const SectionTitle = ({ title, icon: Icon }: { title: string; icon?: React.ElementType; }) => (
   <div className="flex items-center gap-2 mb-6">

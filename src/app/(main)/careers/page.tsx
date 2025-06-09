@@ -1,5 +1,19 @@
 
+import type { Metadata } from 'next';
 import { Briefcase } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: 'Careers at MarketPulse',
+  description: 'Join the MarketPulse team! Explore career opportunities in financial journalism, analysis, technology, and design. Help us shape the future of financial news.',
+  alternates: {
+    canonical: '/careers',
+  },
+  openGraph: {
+    title: 'Careers at MarketPulse',
+    description: 'Explore career opportunities at MarketPulse and help us shape the future of financial news.',
+    url: '/careers',
+  },
+};
 
 const SectionTitle = ({ title, icon: Icon }: { title: string; icon?: React.ElementType; }) => (
   <div className="flex items-center gap-2 mb-6">

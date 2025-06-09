@@ -1,5 +1,20 @@
 
+import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Mail } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: 'Contact MarketPulse',
+  description: 'Get in touch with MarketPulse for inquiries, feedback, or news tips. Find our contact email addresses for general, editorial, and advertising queries.',
+  alternates: {
+    canonical: '/contact',
+  },
+  openGraph: {
+    title: 'Contact MarketPulse',
+    description: 'Get in touch with MarketPulse for inquiries, feedback, or news tips.',
+    url: '/contact',
+  },
+};
 
 const SectionTitle = ({ title, icon: Icon }: { title: string; icon?: React.ElementType; }) => (
   <div className="flex items-center gap-2 mb-6">

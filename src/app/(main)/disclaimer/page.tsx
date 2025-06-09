@@ -1,5 +1,19 @@
 
+import type { Metadata } from 'next';
 import { AlertTriangle } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: 'Disclaimer | MarketPulse',
+  description: 'Important disclaimer for MarketPulse. Information provided is for general purposes only and not financial advice. Understand investment risks.',
+  alternates: {
+    canonical: '/disclaimer',
+  },
+  openGraph: {
+    title: 'Disclaimer | MarketPulse',
+    description: 'Information provided is for general purposes only and not financial advice.',
+    url: '/disclaimer',
+  },
+};
 
 const SectionTitle = ({ title, icon: Icon }: { title: string; icon?: React.ElementType; }) => (
   <div className="flex items-center gap-2 mb-6">
