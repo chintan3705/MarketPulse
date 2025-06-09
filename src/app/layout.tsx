@@ -1,6 +1,7 @@
 
 import type { Metadata } from 'next';
 import { Toaster } from "@/components/ui/toaster";
+import { SmoothScroller } from '@/components/common/SmoothScroller'; // Import SmoothScroller
 import './globals.css';
 
 // Define a base URL for your site. Replace with your actual domain.
@@ -96,6 +97,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen bg-background text-foreground">
+        <SmoothScroller /> {/* Initialize Lenis smooth scrolling */}
         {children}
         <Toaster />
       </body>

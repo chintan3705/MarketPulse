@@ -9,7 +9,7 @@ body {
 
 @layer base {
   html {
-    @apply scroll-smooth; /* Added for smooth scrolling */
+    /* Removed scroll-smooth here as Lenis will handle scroll behavior */
   }
   :root {
     /* NeoTrader Dark Theme (Default) */
@@ -121,4 +121,28 @@ body {
   .glass-card {
     @apply bg-card/60 dark:bg-card/70 backdrop-blur-lg border border-card-foreground/10 dark:border-card-foreground/5 shadow-xl;
   }
+}
+
+/* Lenis smooth scroll styles */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+html.lenis {
+  /* Disable native smooth scrolling when Lenis is active */
+  scroll-behavior: auto !important;
+}
+
+html.lenis body {
+  /* This hides the native scrollbar, allowing Lenis to control scrolling */
+  overflow: hidden;
+}
+
+/* Lenis recommended styles for specific states */
+.lenis.lenis-stopped {
+  overflow: hidden !important;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
