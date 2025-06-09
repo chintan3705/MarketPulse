@@ -1,7 +1,8 @@
+
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link"; // Added missing import
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,7 +10,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
+  DialogDescription, // This was unused, keeping it for now as it's a common pattern
   DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -26,8 +27,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import type { IMongoBlogPost } from "@/models/BlogPost";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 
-// Using IMongoBlogPost fields that are relevant for the dialog after save.
-// This type matches the 'post' object structure returned by the API on success.
 type SavedPostData = Pick<
   IMongoBlogPost,
   | "_id"
@@ -75,28 +74,51 @@ export function GenerateBlogDialog() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json", // Explicitly accept JSON
         },
         body: JSON.stringify({ topic }),
       });
 
-      // Explicitly type the expected structure of the JSON response
-      const result: {
-        message: string;
-        post?: SavedPostData; // Align with the actual post structure
-        error?: string;
-        errors?: unknown; // For Zod validation errors
-      } = (await response.json()) as {
+      if (!response.ok) {
+        let serverErrorMessage = `Server error: ${response.status} ${response.statusText}`;
+        const contentType = response.headers.get("content-type");
+
+        if (contentType && contentType.includes("application/json")) {
+          try {
+            // Type assertion for the error result
+            const errorResult = (await response.json()) as {
+              message?: string;
+              error?: string;
+              errors?: unknown;
+            };
+            serverErrorMessage =
+              errorResult.message || errorResult.error || serverErrorMessage;
+          } catch (jsonError) {
+            console.error("Failed to parse error response JSON:", jsonError);
+          }
+        } else {
+          const textResponse = await response.text();
+          console.error(
+            "Server returned non-JSON error response:",
+            textResponse.substring(0, 500), // Log more of the response
+          );
+          serverErrorMessage = `Server returned an unexpected response (not JSON). Check console for details. Status: ${response.status}`;
+        }
+        throw new Error(serverErrorMessage);
+      }
+
+      // If response.ok is true, we expect JSON
+      const result = (await response.json()) as {
         message: string;
         post?: SavedPostData;
         error?: string;
         errors?: unknown;
       };
 
-      if (!response.ok || !result.post) {
+      if (!result.post) {
         throw new Error(
           result.message ||
-            result.error ||
-            "Failed to generate and save blog post",
+            "Failed to generate and save blog post: No post data returned.",
         );
       }
 
@@ -108,7 +130,7 @@ export function GenerateBlogDialog() {
       });
     } catch (err) {
       const catchedError = err as Error;
-      console.error("Error generating blog post:", catchedError);
+      console.error("Error in handleSubmit for blog generation:", catchedError); // More specific console log
       const errorMessage =
         catchedError.message || "An unexpected error occurred.";
       setError(errorMessage);
@@ -130,6 +152,7 @@ export function GenerateBlogDialog() {
         if (!openState) {
           setSavedPostData(null);
           setError(null);
+          // setTopic(""); // Optionally reset topic on close
         }
       }}
     >
