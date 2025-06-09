@@ -1,10 +1,12 @@
+
 import Link from 'next/link';
 import { latestBlogPosts } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { PlusCircle, Edit3, Trash2, Eye } from 'lucide-react';
+import { Edit3, Trash2, Eye } from 'lucide-react';
+import { GenerateBlogDialog } from '@/components/admin/GenerateBlogDialog';
 
 export default async function AdminBlogsPage() {
   const posts = latestBlogPosts; // In a real app, fetch from a database
@@ -13,16 +15,14 @@ export default async function AdminBlogsPage() {
     <div className="animate-slide-in" style={{animationDelay: '0.1s', animationFillMode: 'backwards'}}>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold font-headline">Manage Blogs</h1>
-        <Button disabled> {/* Disabled as functionality is not implemented */}
-          <PlusCircle className="mr-2 h-4 w-4" /> Add New Blog
-        </Button>
+        <GenerateBlogDialog />
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle>Blog Posts</CardTitle>
           <CardDescription>
-            A list of all blog posts. Editing and Deleting are placeholders and not functional.
+            A list of all blog posts. Editing and Deleting are placeholders and not functional. Use "Generate Blog Post" to create new content with AI.
           </CardDescription>
         </CardHeader>
         <CardContent>
