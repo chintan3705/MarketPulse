@@ -1,9 +1,11 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import type { BlogPost as BlogPostType } from '@/types';
+import mongoose, { Schema, Document } from "mongoose";
+import type { BlogPost as BlogPostType } from "@/types";
 
 // We'll store categorySlug and categoryName directly.
 // The full Category object will be reconstructed at the API layer if needed.
-export interface IMongoBlogPost extends Omit<BlogPostType, '_id' | 'id' | 'category'>, Document {}
+export interface IMongoBlogPost
+  extends Omit<BlogPostType, "_id" | "id" | "category">,
+    Document {}
 
 const BlogPostSchema: Schema = new Schema(
   {
@@ -20,8 +22,8 @@ const BlogPostSchema: Schema = new Schema(
     content: { type: String },
     isAiGenerated: { type: Boolean, default: false },
   },
-  { timestamps: true }
+  { timestamps: true },
 ); // Adds createdAt and updatedAt timestamps
 
 export default mongoose.models.BlogPost ||
-  mongoose.model<IMongoBlogPost>('BlogPost', BlogPostSchema);
+  mongoose.model<IMongoBlogPost>("BlogPost", BlogPostSchema);

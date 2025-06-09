@@ -1,15 +1,17 @@
-import { NextResponse, type NextRequest } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import BlogPostModel, { type IMongoBlogPost } from '@/models/BlogPost';
-import type { BlogPost, Category } from '@/types';
-import { categories as staticCategories } from '@/lib/data';
+import { NextResponse, type NextRequest } from "next/server";
+import connectDB from "@/lib/mongodb";
+import BlogPostModel, { type IMongoBlogPost } from "@/models/BlogPost";
+import type { BlogPost, Category } from "@/types";
+import { categories as staticCategories } from "@/lib/data";
 
 // Helper function to transform MongoDB document to BlogPost type
 function transformPost(doc: IMongoBlogPost): BlogPost {
-  const categoryObject: Category = staticCategories.find((c) => c.slug === doc.categorySlug) ||
-    staticCategories.find((c) => c.slug === 'general') || {
+  const categoryObject: Category = staticCategories.find(
+    (c) => c.slug === doc.categorySlug,
+  ) ||
+    staticCategories.find((c) => c.slug === "general") || {
       id: doc.categorySlug,
-      name: doc.categoryName || 'General',
+      name: doc.categoryName || "General",
       slug: doc.categorySlug,
     };
   return {
@@ -32,20 +34,26 @@ function transformPost(doc: IMongoBlogPost): BlogPost {
 
 export async function GET(
   _request: NextRequest, // Renamed to avoid unused var error, as it's not used
-  { params }: { params: { slug: string } }
+  { params }: { params: { slug: string } },
 ): Promise<NextResponse> {
   try {
     await connectDB();
     const slug = params.slug;
 
     if (!slug) {
-      return NextResponse.json({ message: 'Slug parameter is missing.' }, { status: 400 });
+      return NextResponse.json(
+        { message: "Slug parameter is missing." },
+        { status: 400 },
+      );
     }
 
     const postDoc = await BlogPostModel.findOne({ slug: slug });
 
     if (!postDoc) {
-      return NextResponse.json({ message: 'Blog post not found.' }, { status: 404 });
+      return NextResponse.json(
+        { message: "Blog post not found." },
+        { status: 404 },
+      );
     }
 
     const post: BlogPost = transformPost(postDoc);
@@ -53,10 +61,11 @@ export async function GET(
     return NextResponse.json(post, { status: 200 });
   } catch (error) {
     console.error(`API Error fetching post with slug ${params.slug}:`, error);
-    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.';
+    const errorMessage =
+      error instanceof Error ? error.message : "An unexpected error occurred.";
     return NextResponse.json(
-      { message: 'Error fetching blog post.', error: errorMessage },
-      { status: 500 }
+      { message: "Error fetching blog post.", error: errorMessage },
+      { status: 500 },
     );
   }
 }

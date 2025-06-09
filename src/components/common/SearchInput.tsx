@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
-import React, { useState } from 'react';
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
+import React, { useState } from "react";
 // import { useRouter } from 'next/navigation'; // Not used currently
 
 export function SearchInput({ className }: { className?: string }) {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   // const router = useRouter(); // Not used currently
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -15,7 +15,7 @@ export function SearchInput({ className }: { className?: string }) {
     if (searchTerm.trim()) {
       // For now, we'll just log. A real implementation would navigate to a search results page.
       // router.push(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
-      console.log('Searching for:', searchTerm.trim());
+      console.log("Searching for:", searchTerm.trim());
       // toast({ title: "Search", description: `Searching for: ${searchTerm.trim()}` });
     }
   };
@@ -23,24 +23,24 @@ export function SearchInput({ className }: { className?: string }) {
   return (
     <form
       onSubmit={handleSearch}
-      className={`relative flex items-center w-full max-w-sm ${className || ''}`}
+      className={`relative flex items-center w-full max-w-sm ${className || ""}`}
     >
       <Input
-        type='search'
-        placeholder='Search market insights (e.g. Nifty)'
-        className='pr-10 h-10 rounded-md border-input focus:border-primary'
+        type="search"
+        placeholder="Search market insights (e.g. Nifty)"
+        className="pr-10 h-10 rounded-md border-input focus:border-primary"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        aria-label='Search market insights'
+        aria-label="Search market insights"
       />
       <Button
-        type='submit'
-        variant='ghost'
-        size='icon'
-        className='absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-muted-foreground hover:text-primary'
+        type="submit"
+        variant="ghost"
+        size="icon"
+        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-muted-foreground hover:text-primary"
       >
-        <Search className='h-5 w-5' />
-        <span className='sr-only'>Search</span>
+        <Search className="h-5 w-5" />
+        <span className="sr-only">Search</span>
       </Button>
     </form>
   );

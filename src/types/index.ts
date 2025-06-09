@@ -1,4 +1,3 @@
-
 export interface NavItem {
   label: string;
   href: string;
@@ -40,7 +39,7 @@ export interface TrendingHeadline {
 
 export interface TradingViewWidgetConfig {
   symbol?: string;
-  theme?: 'light' | 'dark';
+  theme?: "light" | "dark";
   interval?: string;
   // Allow any other string/number/boolean properties
   [key: string]: string | number | boolean | undefined;
@@ -48,7 +47,7 @@ export interface TradingViewWidgetConfig {
 
 export interface AdConfig {
   id: string;
-  type: 'image' | 'script' | 'tradingview-widget';
+  type: "image" | "script" | "tradingview-widget";
   src?: string;
   tradingViewWidgetConfig?: TradingViewWidgetConfig;
   altText?: string;

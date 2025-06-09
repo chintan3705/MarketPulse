@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
-import Lenis from '@studio-freight/lenis';
+import { useEffect, useRef } from "react";
+import Lenis from "@studio-freight/lenis";
 
 // This component initializes Lenis for smooth scrolling effects.
 // It does not render any visible UI itself.
@@ -10,16 +10,18 @@ export function SmoothScroller() {
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
 
     if (prefersReducedMotion) {
       // If reduced motion is preferred, do not initialize Lenis.
       // Ensure any Lenis-specific classes are removed from <html> if they were somehow added.
       document.documentElement.classList.remove(
-        'lenis',
-        'lenis-smooth',
-        'lenis-scrolling',
-        'lenis-stopped'
+        "lenis",
+        "lenis-smooth",
+        "lenis-scrolling",
+        "lenis-stopped",
       );
       return; // Exit early, native browser scrolling will be used.
     }
@@ -54,10 +56,10 @@ export function SmoothScroller() {
       }
       // Clean up classes Lenis adds to <html>
       document.documentElement.classList.remove(
-        'lenis',
-        'lenis-smooth',
-        'lenis-scrolling',
-        'lenis-stopped'
+        "lenis",
+        "lenis-smooth",
+        "lenis-scrolling",
+        "lenis-stopped",
       );
     };
   }, []); // Empty dependency array ensures this effect runs only once on mount and cleans up on unmount
