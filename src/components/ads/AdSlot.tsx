@@ -1,7 +1,8 @@
+
 import Image from 'next/image';
 import type { AdConfig } from '@/types';
 import { cn } from '@/lib/utils';
-import { AreaChart } from 'lucide-react'; // Removed BarChartBig as it's not used
+import { AreaChart } from 'lucide-react';
 
 interface AdSlotProps {
   config: AdConfig;
@@ -23,8 +24,8 @@ export function AdSlot({ config }: AdSlotProps) {
         <Image
           src={src}
           alt={altText || 'Advertisement'}
-          width={typeof width === 'number' ? width : 300}
-          height={typeof height === 'number' ? height : 250}
+          width={typeof width === 'number' ? width : 300} // Provide default if width is string
+          height={typeof height === 'number' ? height : 250} // Provide default if height is string
           className='object-contain'
           data-ai-hint={imageAiHint || 'advertisement'}
         />
@@ -46,7 +47,7 @@ export function AdSlot({ config }: AdSlotProps) {
     );
   }
 
-  if (type === 'tradingview-widget') {
+  if (type === 'tradingview-widget' && tradingViewWidgetConfig) {
     return (
       <div
         className={cn(
@@ -57,7 +58,7 @@ export function AdSlot({ config }: AdSlotProps) {
       >
         <AreaChart className='w-16 h-16 text-primary mb-2' />
         <p className='font-semibold text-foreground'>TradingView Chart</p>
-        <p className='text-xs'>Symbol: {tradingViewWidgetConfig?.symbol || 'N/A'}</p>
+        <p className='text-xs'>Symbol: {tradingViewWidgetConfig.symbol || 'N/A'}</p>
         <p className='text-xs mt-2'>(Live chart will be embedded here)</p>
       </div>
     );
@@ -69,7 +70,7 @@ export function AdSlot({ config }: AdSlotProps) {
         'bg-muted/50 flex items-center justify-center text-sm text-muted-foreground p-4 rounded-md shadow',
         className
       )}
-      style={{ width: '100%', height: 90 }}
+      style={{ width: '100%', height: 90 }} // Default fallback size
     >
       Advertisement Placeholder
     </div>

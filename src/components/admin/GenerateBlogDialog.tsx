@@ -1,44 +1,48 @@
+
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogDescription, // Added DialogDescription back for consistency
   DialogClose,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-// import type { GenerateBlogPostOutput } from '@/ai/schemas/blog-post-schemas'; // No longer directly used for output display
 import { Loader2, PlusCircle, Wand2, DatabaseZap, AlertTriangle } from 'lucide-react';
-// import { ScrollArea } from '../ui/scroll-area'; // Not used
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import type { BlogPost } from '@/types'; // For type of savedPost
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import type { IMongoBlogPost } from '@/models/BlogPost'; // Use the Mongoose type directly or a DTO
 
-interface SavedPostResponseType {
-  // Type for the API response containing the saved post
-  _id: string;
-  title: string;
-  slug: string;
-  summary: string;
-  content: string;
-  imageUrl?: string;
-  imageAiHint?: string;
-  categorySlug: string;
-  tags: string[];
-  // Add other fields if you want to display them
-}
+// Using IMongoBlogPost fields that are relevant for the dialog after save.
+// This type matches the 'post' object structure returned by the API on success.
+type SavedPostData = Pick<
+  IMongoBlogPost,
+  | '_id'
+  | 'title'
+  | 'slug'
+  | 'summary'
+  | 'content'
+  | 'imageUrl'
+  | 'imageAiHint'
+  | 'categorySlug'
+  | 'tags'
+  | 'categoryName'
+  | 'author'
+  | 'publishedAt'
+  | 'isAiGenerated'
+>;
 
 export function GenerateBlogDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [topic, setTopic] = useState('');
-  const [savedPostData, setSavedPostData] = useState<SavedPostResponseType | null>(null);
+  const [savedPostData, setSavedPostData] = useState<SavedPostData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
@@ -67,9 +71,15 @@ export function GenerateBlogDialog() {
         body: JSON.stringify({ topic }),
       });
 
-      const result = (await response.json()) as {
+      // Explicitly type the expected structure of the JSON response
+      const result: {
         message: string;
-        post?: SavedPostResponseType;
+        post?: SavedPostData; // Align with the actual post structure
+        error?: string;
+        errors?: unknown; // For Zod validation errors
+      } = (await response.json()) as {
+        message: string;
+        post?: SavedPostData;
         error?: string;
         errors?: unknown;
       };
@@ -81,10 +91,9 @@ export function GenerateBlogDialog() {
       setSavedPostData(result.post);
       toast({
         title: 'Blog Post Generated & Saved to DB!',
-        description: `"${result.post.title}" has been saved to the database. It will appear on the site after next data fetch/rebuild.`,
+        description: `"${result.post.title}" has been saved to the database. It will appear on the site.`,
         duration: 7000,
       });
-      // setTopic(''); // Clear topic on success, or keep it for minor edits
     } catch (err) {
       const catchedError = err as Error;
       console.error('Error generating blog post:', catchedError);
@@ -103,12 +112,11 @@ export function GenerateBlogDialog() {
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={(open) => {
-        setIsOpen(open);
-        if (!open) {
+      onOpenChange={(openState) => {
+        setIsOpen(openState);
+        if (!openState) {
           setSavedPostData(null);
           setError(null);
-          // Optionally reset topic: setTopic('');
         }
       }}
     >
@@ -137,7 +145,7 @@ export function GenerateBlogDialog() {
               <Input
                 id='topic'
                 value={topic}
-                onChange={(e) => setTopic(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTopic(e.target.value)}
                 className='col-span-3'
                 placeholder='e.g., Future of Renewable Energy Stocks'
               />

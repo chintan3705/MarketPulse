@@ -1,7 +1,7 @@
+
 'use client';
 
-import React, { useEffect } from 'react'; // Removed useState as it's handled by SWR
-// import type { ElementType } from 'react'; // Not used
+import React, { useEffect } from 'react';
 import useSWR from 'swr';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -66,10 +66,10 @@ const fetcher = async (url: string): Promise<YahooFinanceApiResponse> => {
   });
 
   if (!res.ok) {
-    const errorData = (await res.json().catch(() => ({ message: res.statusText }))) as {
-      message: string;
-    };
-    throw new Error(`Failed to fetch data: ${res.status} ${errorData.message || res.statusText}`);
+    const errorBody: { message?: string } = await res.json().catch(() => ({}));
+    throw new Error(
+      `Failed to fetch data: ${res.status} ${errorBody.message || res.statusText}`
+    );
   }
   return res.json() as Promise<YahooFinanceApiResponse>;
 };
@@ -142,13 +142,13 @@ export function HeroSection() {
     error,
     isLoading,
   } = useSWR<YahooFinanceApiResponse, Error>(API_URL, fetcher, {
-    refreshInterval: 30000, // 30 seconds
-    dedupingInterval: 25000, // Avoid duplicate requests close together
+    refreshInterval: 30000,
+    dedupingInterval: 25000,
     revalidateOnFocus: true,
   });
 
-  const marketData = apiData ? transformApiData(apiData) : [];
-  const initialLoad = isLoading && !apiData && !error;
+  const marketData: MarketTickerData[] = apiData ? transformApiData(apiData) : [];
+  const initialLoad: boolean = isLoading && !apiData && !error;
 
   useEffect(() => {
     if (error) {
@@ -159,7 +159,11 @@ export function HeroSection() {
       apiData.marketSummaryAndSparkResponse &&
       apiData.marketSummaryAndSparkResponse.error
     ) {
-      console.error('Yahoo Finance API Error:', apiData.marketSummaryAndSparkResponse.error);
+      console.error(
+        'Yahoo Finance API Error:',
+        apiData.marketSummaryAndSparkResponse.error.code,
+        apiData.marketSummaryAndSparkResponse.error.description
+      );
     }
   }, [apiData, error]);
 
@@ -184,41 +188,58 @@ export function HeroSection() {
           className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 max-w-4xl mx-auto mb-10 animate-slide-in'
           style={{ animationDelay: '0.4s', minHeight: '100px' }}
         >
-          {initialLoad && API_KEY ? ( // Only show loader if API_KEY is present
+          {initialLoad && API_KEY && (
             <div className='col-span-full flex flex-col justify-center items-center min-h-[100px]'>
               <Loader2 className='h-10 w-10 text-primary animate-spin' />
               <span className='mt-2 text-muted-foreground'>Loading market data...</span>
             </div>
-          ) : error ||
+          )}
+          {(error ||
             (apiData &&
               apiData.marketSummaryAndSparkResponse &&
-              apiData.marketSummaryAndSparkResponse.error) ? (
-            <div className='col-span-full flex flex-col justify-center items-center min-h-[100px] p-4 bg-destructive/10 border border-destructive rounded-md'>
-              <AlertTriangle className='h-8 w-8 text-destructive mb-2' />
-              <p className='text-sm text-destructive-foreground font-semibold'>
-                Failed to load market data
-              </p>
-              <p className='text-xs text-destructive-foreground/80'>
-                {error?.message ||
-                  apiData?.marketSummaryAndSparkResponse?.error?.description ||
-                  'An unknown error occurred.'}
-                {!API_KEY && ' NEXT_PUBLIC_RAPIDAPI_KEY is not set.'}
-              </p>
-            </div>
-          ) : marketData.length > 0 ? (
-            marketData.map((item) => <MarketTickerItem key={item.id} {...item} />)
-          ) : (
-            <div className='col-span-full flex flex-col justify-center items-center min-h-[100px]'>
-              <AlertTriangle className='h-8 w-8 text-muted-foreground mb-2' />
-              <p className='text-sm text-muted-foreground'>Market data currently unavailable.</p>
-              {!API_KEY && (
-                <p className='text-xs text-muted-foreground/80 mt-1'>
-                  API key (NEXT_PUBLIC_RAPIDAPI_KEY) is not configured. Market data cannot be
-                  fetched.
+              apiData.marketSummaryAndSparkResponse.error)) &&
+          !initialLoad && ( // Only show error if not initial load or API key is present
+              <div className='col-span-full flex flex-col justify-center items-center min-h-[100px] p-4 bg-destructive/10 border border-destructive rounded-md'>
+                <AlertTriangle className='h-8 w-8 text-destructive mb-2' />
+                <p className='text-sm text-destructive-foreground font-semibold'>
+                  Failed to load market data
                 </p>
-              )}
-            </div>
-          )}
+                <p className='text-xs text-destructive-foreground/80'>
+                  {error?.message ||
+                    apiData?.marketSummaryAndSparkResponse?.error?.description ||
+                    'An unknown error occurred.'}
+                  {!API_KEY && ' NEXT_PUBLIC_RAPIDAPI_KEY is not set.'}
+                </p>
+              </div>
+            )}
+          {!initialLoad &&
+            !error &&
+            !(
+              apiData &&
+              apiData.marketSummaryAndSparkResponse &&
+              apiData.marketSummaryAndSparkResponse.error
+            ) &&
+            marketData.length > 0 &&
+            marketData.map((item) => <MarketTickerItem key={item.id} {...item} />)}
+          {!initialLoad &&
+            !error &&
+            !(
+              apiData &&
+              apiData.marketSummaryAndSparkResponse &&
+              apiData.marketSummaryAndSparkResponse.error
+            ) &&
+            marketData.length === 0 && ( // Case for successful fetch but no data, or API_KEY missing after initial load
+              <div className='col-span-full flex flex-col justify-center items-center min-h-[100px]'>
+                <AlertTriangle className='h-8 w-8 text-muted-foreground mb-2' />
+                <p className='text-sm text-muted-foreground'>Market data currently unavailable.</p>
+                {!API_KEY && (
+                  <p className='text-xs text-muted-foreground/80 mt-1'>
+                    API key (NEXT_PUBLIC_RAPIDAPI_KEY) is not configured. Market data cannot be
+                    fetched.
+                  </p>
+                )}
+              </div>
+            )}
         </div>
 
         <div className='animate-slide-in' style={{ animationDelay: '0.5s' }}>

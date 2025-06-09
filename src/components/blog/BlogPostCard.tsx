@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import Image from 'next/image';
 import type { BlogPost } from '@/types';
@@ -13,13 +14,13 @@ interface BlogPostCardProps {
 }
 
 export function BlogPostCard({ post, className, orientation = 'vertical' }: BlogPostCardProps) {
-  const formattedDate = new Date(post.publishedAt).toLocaleDateString('en-US', {
+  const formattedDate: string = new Date(post.publishedAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
 
-  const createTagSlug = (tag: string) => tag.toLowerCase().replace(/\s+/g, '-');
+  const createTagSlug = (tag: string): string => tag.toLowerCase().replace(/\s+/g, '-');
 
   return (
     <Card

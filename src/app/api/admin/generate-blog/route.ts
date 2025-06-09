@@ -4,15 +4,32 @@ import { z } from 'genkit';
 import connectDB from '@/lib/mongodb';
 import BlogPostModel, { type IMongoBlogPost } from '@/models/BlogPost';
 import { categories } from '@/lib/data'; // To find category name
+import type { GenerateBlogPostInput } from '@/ai/schemas/blog-post-schemas';
 
 // Input schema for this API route
 const ApiInputSchema = z.object({
   topic: z.string().min(3, { message: 'Topic must be at least 3 characters long.' }),
 });
+// type ApiInput = z.infer<typeof ApiInputSchema>; // Not directly used as validationResult.data is typed
 
-export async function POST(request: NextRequest): Promise<NextResponse> {
+// Interface for the expected successful response structure from this API
+// This matches what GenerateBlogDialog expects for `result.post`
+interface GenerateBlogSuccessResponse {
+  message: string;
+  post: IMongoBlogPost; // Using IMongoBlogPost as it's what's saved and returned
+}
+
+interface GenerateBlogErrorResponse {
+  message: string;
+  error?: string;
+  errors?: unknown; // For Zod error formatting
+}
+
+export async function POST(
+  request: NextRequest
+): Promise<NextResponse<GenerateBlogSuccessResponse | GenerateBlogErrorResponse>> {
   try {
-    const body = (await request.json()) as { topic: string };
+    const body: unknown = await request.json(); // Parse as unknown, Zod will validate
     const validationResult = ApiInputSchema.safeParse(body);
 
     if (!validationResult.success) {
@@ -25,7 +42,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const { topic } = validationResult.data;
 
     // 1. Call the Genkit flow to generate content
-    const generatedData = await generateBlogPost({ topic });
+    const generatedData = await generateBlogPost({ topic } as GenerateBlogPostInput); // Cast to ensure type match
 
     if (!generatedData) {
       return NextResponse.json(
@@ -39,27 +56,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // 3. Prepare data for MongoDB
     const categoryDetails = categories.find((c) => c.slug === generatedData.categorySlug);
-    // if (!categoryDetails) { // This check is handled by the fallback logic below
-    // Fallback or error if category slug from AI is not in our static list
-    // console.warn(`Category slug "${generatedData.categorySlug}" not found in static categories. Falling back to 'general'.`);
-    // const generalCategory = categories.find(c => c.slug === 'general') || { id: 'error', name: 'Unknown', slug: 'unknown'};
-    // generatedData.categorySlug = generalCategory.slug;
-    // categoryName will be derived from the found category or fallback
-    // }
 
     const categoryName =
       categoryDetails?.name || categories.find((c) => c.slug === 'general')?.name || 'General';
     const finalCategorySlug =
       categoryDetails?.slug || categories.find((c) => c.slug === 'general')?.slug || 'general';
 
-    // Simple slug generation (consider a more robust slugify library for production)
+    // Simple slug generation
     let slug = generatedData.title
       .toLowerCase()
-      .replace(/\s+/g, '-') // Replace spaces with -
-      .replace(/[^\w-]+/g, '') // Remove all non-word chars
-      .replace(/--+/g, '-') // Replace multiple - with single -
-      .replace(/^-+/, '') // Trim - from start of text
-      .replace(/-+$/, ''); // Trim - from end of text
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]+/g, '')
+      .replace(/--+/g, '-')
+      .replace(/^-+/, '')
+      .replace(/-+$/, '');
 
     const existingPostWithSlug = await BlogPostModel.findOne({ slug });
     if (existingPostWithSlug) {
@@ -71,11 +81,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       title: generatedData.title,
       summary: generatedData.summary,
       content: generatedData.content,
-      imageUrl: generatedData.imageUrl, // This will be the placeholder URL
+      imageUrl: generatedData.imageUrl,
       imageAiHint: generatedData.imageAiHint,
       categorySlug: finalCategorySlug,
       categoryName: categoryName,
-      author: 'MarketPulse AI', // Or make this configurable
+      author: 'MarketPulse AI',
       publishedAt: new Date(),
       tags: generatedData.tags,
       isAiGenerated: true,
@@ -90,11 +100,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { message: 'Blog post generated and saved successfully!', post: savedPost.toObject() },
       { status: 201 }
     );
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('API Error generating and saving blog post:', error);
 
-    // Check for MongoDB duplicate key error (slug)
-    if (error && typeof error === 'object' && 'code' in error && error.code === 11000) {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      (error as { code: unknown }).code === 11000
+    ) {
       return NextResponse.json(
         {
           message:

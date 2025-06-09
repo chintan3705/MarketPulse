@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import type { TrendingHeadline } from '@/types';
 import { TrendingUp, TrendingDown, ExternalLink } from 'lucide-react';
@@ -13,16 +14,16 @@ export function TrendingHeadlineCard({ headline, className }: TrendingHeadlineCa
     const date = new Date(dateString);
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
     let interval = seconds / 31536000; // years
-    if (interval > 1) return Math.floor(interval) + 'y ago';
+    if (interval > 1) return `${Math.floor(interval)}y ago`;
     interval = seconds / 2592000; // months
-    if (interval > 1) return Math.floor(interval) + 'm ago';
+    if (interval > 1) return `${Math.floor(interval)}m ago`;
     interval = seconds / 86400; // days
-    if (interval > 1) return Math.floor(interval) + 'd ago';
+    if (interval > 1) return `${Math.floor(interval)}d ago`;
     interval = seconds / 3600; // hours
-    if (interval > 1) return Math.floor(interval) + 'h ago';
+    if (interval > 1) return `${Math.floor(interval)}h ago`;
     interval = seconds / 60; // minutes
-    if (interval > 1) return Math.floor(interval) + 'm ago';
-    return Math.floor(seconds) + 's ago';
+    if (interval > 1) return `${Math.floor(interval)}m ago`;
+    return `${Math.floor(seconds)}s ago`;
   };
 
   return (
