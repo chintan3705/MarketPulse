@@ -1,3 +1,4 @@
+
 {
   "parser": "@typescript-eslint/parser",
   "extends": [
@@ -27,9 +28,7 @@
     "jsx-a11y/alt-text": [
       "warn",
       {
-        "elements": ["img", "Image", "object", "area", "input[type=\"image\"]"],
-        "img": ["Image"],
-        "Image": ["alt"],
+        "img": ["Image"], // Treat custom Image component (next/image) like an <img> tag
         "object": ["aria-label", "aria-labelledby", "title"],
         "area": ["alt"],
         "input[type=\"image\"]": ["alt"]
