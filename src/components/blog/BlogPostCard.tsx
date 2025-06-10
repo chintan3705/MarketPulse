@@ -92,7 +92,7 @@ export function BlogPostCard({
           <CardTitle className="font-headline text-lg sm:text-xl md:text-xl leading-tight">
             <Link
               href={`/blog/${post.slug}`}
-              className="hover:text-primary transition-colors duration-200 ease-in-out"
+              className="hover:text-primary/80 transition-colors duration-200 ease-in-out"
             >
               {post.title}
             </Link>
@@ -126,7 +126,7 @@ export function BlogPostCard({
                 <Link key={tag} href={`/tags/${createTagSlug(tag)}`}>
                   <Badge
                     variant="outline"
-                    className="text-xs px-1.5 py-0.5" // Transition inherited from base
+                    className="text-xs px-1.5 py-0.5" 
                   >
                     # {tag}
                   </Badge>

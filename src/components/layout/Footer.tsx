@@ -5,6 +5,9 @@ import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
+  const linkClasses =
+    "text-muted-foreground hover:text-primary/80 transition-colors duration-200 ease-in-out";
+
   return (
     <footer className="border-t bg-card text-card-foreground mt-auto">
       <div className="container py-10 md:py-16 px-4 sm:px-6 lg:px-8">
@@ -16,32 +19,16 @@ export function Footer() {
               insights, and stock analysis.
             </p>
             <div className="flex space-x-4">
-              <Link
-                href="#"
-                aria-label="Facebook"
-                className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
-              >
+              <Link href="#" aria-label="Facebook" className={linkClasses}>
                 <Facebook size={20} />
               </Link>
-              <Link
-                href="#"
-                aria-label="Twitter"
-                className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
-              >
+              <Link href="#" aria-label="Twitter" className={linkClasses}>
                 <Twitter size={20} />
               </Link>
-              <Link
-                href="#"
-                aria-label="LinkedIn"
-                className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
-              >
+              <Link href="#" aria-label="LinkedIn" className={linkClasses}>
                 <Linkedin size={20} />
               </Link>
-              <Link
-                href="#"
-                aria-label="Instagram"
-                className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
-              >
+              <Link href="#" aria-label="Instagram" className={linkClasses}>
                 <Instagram size={20} />
               </Link>
             </div>
@@ -53,34 +40,22 @@ export function Footer() {
             </h4>
             <ul className="space-y-1.5 text-sm">
               <li>
-                <Link
-                  href="/about"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
-                >
+                <Link href="/about" className={linkClasses}>
                   About Us
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/contact"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
-                >
+                <Link href="/contact" className={linkClasses}>
                   Contact
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/advertise"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
-                >
+                <Link href="/advertise" className={linkClasses}>
                   Advertise
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/careers"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
-                >
+                <Link href="/careers" className={linkClasses}>
                   Careers
                 </Link>
               </li>
@@ -93,34 +68,22 @@ export function Footer() {
             </h4>
             <ul className="space-y-1.5 text-sm">
               <li>
-                <Link
-                  href="/category/stocks"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
-                >
+                <Link href="/category/stocks" className={linkClasses}>
                   Stocks
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/category/ipos"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
-                >
+                <Link href="/category/ipos" className={linkClasses}>
                   IPOs
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/category/mutual-funds"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
-                >
+                <Link href="/category/mutual-funds" className={linkClasses}>
                   Mutual Funds
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/category/economy"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
-                >
+                <Link href="/category/economy" className={linkClasses}>
                   Economy
                 </Link>
               </li>
@@ -131,26 +94,17 @@ export function Footer() {
             <h4 className="font-headline text-md font-semibold mb-3">Legal</h4>
             <ul className="space-y-1.5 text-sm">
               <li>
-                <Link
-                  href="/privacy-policy"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
-                >
+                <Link href="/privacy-policy" className={linkClasses}>
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/terms-of-service"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
-                >
+                <Link href="/terms-of-service" className={linkClasses}>
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/disclaimer"
-                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
-                >
+                <Link href="/disclaimer" className={linkClasses}>
                   Disclaimer
                 </Link>
               </li>

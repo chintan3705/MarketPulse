@@ -48,6 +48,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({ title, icon: Icon }) => (
 );
 
 export default function DisclaimerPage() {
+  const linkClasses = "text-primary hover:text-primary/80 hover:underline transition-colors duration-200 ease-in-out";
   return (
     <div
       className="container py-8 md:py-12 animate-slide-in"
@@ -166,7 +167,7 @@ export default function DisclaimerPage() {
           site&apos;s disclaimer, please feel free to contact us by email at{" "}
           <a
             href="mailto:legal@marketpulse.example.com"
-            className="text-primary hover:underline"
+            className={linkClasses}
           >
             legal@marketpulse.example.com
           </a>

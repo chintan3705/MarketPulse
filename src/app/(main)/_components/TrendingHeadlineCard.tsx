@@ -56,7 +56,7 @@ export const TrendingHeadlineCard: React.FC<TrendingHeadlineCardProps> = ({
         <div className="flex-grow min-w-0">
           {" "}
           {/* Added min-w-0 for better flex handling */}
-          <h3 className="font-headline text-sm sm:text-base font-medium leading-snug group-hover:text-primary transition-colors duration-200 ease-in-out line-clamp-2">
+          <h3 className="font-headline text-sm sm:text-base font-medium leading-snug group-hover:text-primary/80 transition-colors duration-200 ease-in-out line-clamp-2">
             {headline.title}
           </h3>
           <div className="flex items-center justify-between text-xs text-muted-foreground mt-1">
@@ -69,7 +69,7 @@ export const TrendingHeadlineCard: React.FC<TrendingHeadlineCardProps> = ({
             </time>
           </div>
         </div>
-        <ExternalLink className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-primary transition-all duration-200 ease-in-out flex-shrink-0 mt-0.5 sm:mt-1" />
+        <ExternalLink className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-primary/80 transition-all duration-200 ease-in-out flex-shrink-0 mt-0.5 sm:mt-1" />
       </Link>
     </div>
   );

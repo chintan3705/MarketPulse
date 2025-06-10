@@ -27,6 +27,8 @@ export default function TermsOfServiceClientContent() {
       }),
     );
   }, []);
+  
+  const linkClasses = "text-primary hover:text-primary/80 hover:underline transition-colors duration-200 ease-in-out";
 
   return (
     <div
@@ -319,7 +321,7 @@ export default function TermsOfServiceClientContent() {
           email:{" "}
           <a
             href="mailto:legal@marketpulse.example.com"
-            className="text-primary hover:underline"
+            className={linkClasses}
           >
             legal@marketpulse.example.com
           </a>

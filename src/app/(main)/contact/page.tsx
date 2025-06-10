@@ -49,6 +49,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({ title, icon: Icon }) => (
 );
 
 export default function ContactPage() {
+  const linkClasses = "text-primary hover:text-primary/80 hover:underline transition-colors duration-200 ease-in-out";
   return (
     <div
       className="container py-8 md:py-12 animate-slide-in"
@@ -66,7 +67,7 @@ export default function ContactPage() {
           For general questions or information, please email us at:{" "}
           <a
             href="mailto:info@marketpulse.example.com"
-            className="text-primary hover:underline"
+            className={linkClasses}
           >
             info@marketpulse.example.com
           </a>
@@ -77,7 +78,7 @@ export default function ContactPage() {
           If you have a story idea or want to reach our editorial team, contact:{" "}
           <a
             href="mailto:editor@marketpulse.example.com"
-            className="text-primary hover:underline"
+            className={linkClasses}
           >
             editor@marketpulse.example.com
           </a>
@@ -86,13 +87,13 @@ export default function ContactPage() {
         <h3 className="font-semibold text-xl">Advertising</h3>
         <p>
           For advertising opportunities, please visit our{" "}
-          <Link href="/advertise" className="text-primary hover:underline">
+          <Link href="/advertise" className={linkClasses}>
             Advertise page
           </Link>{" "}
           or email:{" "}
           <a
             href="mailto:ads@marketpulse.example.com"
-            className="text-primary hover:underline"
+            className={linkClasses}
           >
             ads@marketpulse.example.com
           </a>
