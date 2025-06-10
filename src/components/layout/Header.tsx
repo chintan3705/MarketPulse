@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -103,7 +104,9 @@ export function Header() {
                 <SheetHeader className="p-4 border-b">
                   <div className="flex items-center justify-between">
                     <Logo textSize="text-lg" iconSize="h-6 w-6" />
-                    {/* <SheetTitle className="sr-only">Menu</SheetTitle> */}
+                    <SheetTitle className="sr-only">
+                      Navigation Menu
+                    </SheetTitle>
                     <SheetClose asChild>
                       <Button
                         variant="ghost"
