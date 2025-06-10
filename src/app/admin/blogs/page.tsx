@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,8 +17,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Edit3, Trash2, Eye } from "lucide-react";
+import { Edit3, Trash2, Eye, PlusCircle, CopyPlus } from "lucide-react";
 import { GenerateBlogDialog } from "@/app/admin/blogs/_components/GenerateBlogDialog";
+import { GenerateMultipleBlogsDialog } from "@/app/admin/blogs/_components/GenerateMultipleBlogsDialog"; // New import
 import type { BlogPost } from "@/types";
 import { unstable_noStore as noStore } from "next/cache";
 
@@ -32,7 +34,7 @@ async function fetchAdminPosts(): Promise<BlogPost[]> {
       console.error(`Admin: Failed to fetch posts: ${res.status} ${errorText}`);
       return [];
     }
-    const data = (await res.json()) as { posts: BlogPost[] }; // Ensure posts is properly typed
+    const data = (await res.json()) as { posts: BlogPost[] };
     return data.posts || [];
   } catch (error) {
     console.error("Admin: Error fetching posts from API:", error);
@@ -52,16 +54,20 @@ export default async function AdminBlogsPage() {
         <h1 className="text-2xl sm:text-3xl font-bold font-headline text-center sm:text-left">
           Manage Blogs
         </h1>
-        <GenerateBlogDialog />
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <GenerateBlogDialog />
+          <GenerateMultipleBlogsDialog /> {/* Added new dialog trigger */}
+        </div>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg sm:text-xl md:text-2xl">Blog Posts from Database</CardTitle>
+          <CardTitle className="text-lg sm:text-xl md:text-2xl">
+            Blog Posts from Database
+          </CardTitle>
           <CardDescription className="text-xs sm:text-sm">
-            A list of all blog posts fetched from the database. Editing and
-            Deleting are placeholders. Use &quot;Generate &amp; Save Blog&quot;
-            to create new content.
+            A list of all blog posts. Editing and Deleting are placeholders. Use
+            generation buttons to create new content.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -69,7 +75,9 @@ export default async function AdminBlogsPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Title</TableHead>
-                <TableHead className="hidden sm:table-cell">Category</TableHead>
+                <TableHead className="hidden sm:table-cell">
+                  Category
+                </TableHead>
                 <TableHead className="hidden md:table-cell">Author</TableHead>
                 <TableHead className="hidden lg:table-cell">
                   Published At
@@ -85,7 +93,7 @@ export default async function AdminBlogsPage() {
                       href={`/blog/${post.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:underline line-clamp-2"
+                      className="hover:text-primary/80 transition-colors duration-200 ease-in-out line-clamp-2"
                       title={post.title}
                     >
                       {post.title}

@@ -5,31 +5,38 @@
  * - GenerateMultipleBlogPostsInput - TypeScript type for the input.
  */
 import { z } from "genkit";
-import { GenerateBlogPostOutputSchema } from "./blog-post-schemas";
+import {
+  GenerateBlogPostOutputSchema,
+  type GenerateBlogPostOutput,
+} from "./blog-post-schemas";
 
 export const GenerateMultipleBlogPostsInputSchema = z.object({
   count: z
     .number()
     .min(1)
-    .max(2)
+    .max(10) // Increased max count
     .describe(
-      "The number of blog posts to generate (max 2 due to performance with images).",
+      "The number of blog posts to generate (min 1, max 10). Image generation for many posts can be slow.",
     ),
   topics: z
-    .array(z.string())
+    .array(z.string().min(3)) // Ensure topics are somewhat meaningful
     .optional()
     .describe(
-      "Optional list of specific topics. If not provided, diverse financial topics will be chosen.",
+      "Optional list of specific topics. If not provided, or if fewer topics than count, diverse financial topics will be chosen for the remainder.",
+    ),
+  categorySlug: z
+    .string()
+    .optional()
+    .describe(
+      "Optional global category slug for all generated posts. If not provided or set to 'ai-choose-per-post', AI will choose a category for each post individually.",
     ),
 });
 export type GenerateMultipleBlogPostsInput = z.infer<
   typeof GenerateMultipleBlogPostsInputSchema
 >;
 
-// This schema is used internally by the flow, but the function output type is BlogPost[]
+// This schema is used internally by the flow, and the API will map its output.
 export const GenerateMultipleBlogPostsFlowOutputSchema = z.array(
   GenerateBlogPostOutputSchema,
 );
-export type GenerateMultipleBlogPostsFlowOutput = z.infer<
-  typeof GenerateMultipleBlogPostsFlowOutputSchema
->;
+export type GenerateMultipleBlogPostsFlowOutput = GenerateBlogPostOutput[];

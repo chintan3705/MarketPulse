@@ -1,3 +1,4 @@
+
 export interface NavItem {
   label: string;
   href: string;
@@ -11,21 +12,24 @@ export interface Category {
 }
 
 export interface BlogPost {
-  _id?: string; // From MongoDB
-  id?: string; // Kept for potential frontend compatibility, maps to _id
+  _id?: string;
+  id?: string;
   slug: string;
   title: string;
   summary: string;
+  content: string; // Made content non-optional as it's a core part
   imageUrl?: string;
   imageAiHint?: string;
-  category: Category; // Populated by API based on categorySlug
-  categorySlug: string; // Stored in DB
-  categoryName: string; // Stored in DB for convenience
+  category: Category;
+  categorySlug: string;
+  categoryName: string;
   author: string;
   publishedAt: string; // ISO date string
   tags: string[];
-  content?: string; // Full HTML content
   isAiGenerated?: boolean;
+  chartType?: "bar" | "line" | "pie" | "table"; // Added
+  chartDataJson?: string; // Added
+  detailedInformation?: string; // Added
 }
 
 export interface TrendingHeadline {
@@ -41,18 +45,17 @@ export interface TradingViewWidgetConfig {
   symbol?: string;
   theme?: "light" | "dark";
   interval?: string;
-  // Allow any other string/number/boolean properties
   [key: string]: string | number | boolean | undefined;
 }
 
 export interface AdConfig {
   id: string;
   type: "image" | "script" | "tradingview-widget";
-  src?: string; // For image type
-  tradingViewWidgetConfig?: TradingViewWidgetConfig; // For TradingView widget type
+  src?: string;
+  tradingViewWidgetConfig?: TradingViewWidgetConfig;
   altText?: string;
   width?: number | string;
   height?: number | string;
   className?: string;
-  imageAiHint?: string; // For image type, used in data-ai-hint
+  imageAiHint?: string;
 }

@@ -1,3 +1,4 @@
+
 "use server";
 /**
  * @fileOverview A Genkit flow to generate a blog post based on a topic, including an AI-generated image uploaded to Cloudinary.
@@ -57,9 +58,9 @@ const generateSystemInstruction = (userCategorySlug?: string) => {
     }
   }
 
-  return `You are an expert financial news writer for a blog called MarketPulse. Your task is to generate a blog post based on the provided topic.
+  return `You are an expert financial news writer for a blog called MarketPulse. Your task is to generate a comprehensive and engaging blog post based on the provided topic.
 
-The blog post should be engaging, informative, and suitable for an audience interested in stock markets, finance, and investments.
+The blog post should be well-researched, informative, and suitable for an audience interested in stock markets, finance, and investments. Aim for a word count of approximately 700-1000 words for the main content.
 
 ${categoryInstruction}
 
@@ -69,11 +70,13 @@ ${categories.map((cat) => `- Name: ${cat.name}, Slug: ${cat.slug}`).join("\n")}
 Topic: {{{topic}}}
 
 Please generate the following:
-1. A catchy title.
-2. A concise summary (2-3 sentences).
-3. The full blog post content in HTML format. The content should be well-structured with multiple paragraphs. You can use <h3> for subheadings, and <ul>/<li> for lists where appropriate. Aim for around 300-500 words for the main content.
-4. The slug of the most relevant category (must be one from the 'Available Categories' list or the user-specified one if valid).
-5. An array of 2-4 relevant tags (keywords).
+1.  A catchy title.
+2.  A concise summary (2-3 sentences).
+3.  The full blog post content in HTML format. The content should be well-structured with multiple paragraphs. Use <h3> for subheadings, and <ul>/<li> for lists where appropriate.
+4.  Provide in-depth information, interesting facts, detailed explanations, and statistical data where relevant to make the post highly informative. Include this in the 'detailedInformation' field.
+5.  If you can identify data points from your generated content or the 'detailedInformation' that would be suitable for a simple visual representation (like a bar chart, line chart, pie chart, or a small data table), please provide this data in the 'chartDataJson' field as a valid JSON string. Also, suggest a 'chartType' (bar, line, pie, table). In the HTML content, insert a placeholder like "[CHART: A brief description of what the chart will show, e.g., 'Market Growth Over Past 5 Years']" where the chart would be thematically appropriate.
+6.  The slug of the most relevant category (must be one from the 'Available Categories' list or the user-specified one if valid).
+7.  An array of 2-5 relevant tags (keywords).
 
 Ensure the output strictly follows the JSON schema provided for the output, excluding imageUrl and imageAiHint which will be handled separately.
 `;
@@ -83,6 +86,7 @@ const generateBlogPostTextPrompt = ai.definePrompt({
   name: "generateBlogPostTextPrompt",
   input: { schema: GenerateBlogPostInputSchema },
   output: {
+    // Output schema includes new fields like chartDataJson, chartType, detailedInformation
     schema: GenerateBlogPostOutputSchema.omit({
       imageUrl: true,
       imageAiHint: true,
@@ -127,7 +131,7 @@ async function uploadImageToCloudinary(
         folder: "marketpulse_blog_images",
         overwrite: true,
         // Example transformation for optimization:
-        // transformation: [{ width: 1200, height: 675, crop: "limit", quality: "auto:good" }]
+        transformation: [{ width: 1200, quality: "auto:good" }], // Limit width and auto quality
       },
     );
     console.log(
@@ -142,7 +146,6 @@ async function uploadImageToCloudinary(
       errorMessage,
       uploadError,
     );
-    // Check for common Cloudinary errors
     if (errorMessage.includes("Must supply api_key")) {
       console.error(
         "❌ [uploadImageToCloudinary] Cloudinary Error Detail: API Key is likely missing or invalid.",
@@ -167,24 +170,32 @@ const generateBlogPostFlow = ai.defineFlow(
       "🔄 [generateBlogPostFlow] Inside flow execution. Input:",
       input,
     );
-    let textOutput;
+    let textOutput: GenerateBlogPostOutput; // Ensure textOutput matches the full schema for clarity internally
     try {
       console.log(
         `📝 [generateBlogPostFlow] Calling generateBlogPostTextPrompt for topic: "${input.topic}", userCategorySlug: "${input.categorySlug || "AI choice"}"`,
       );
       const systemInstruction = generateSystemInstruction(input.categorySlug);
+      // The prompt's output schema is already set up to produce all fields except image-related ones
       const { output } = await generateBlogPostTextPrompt(input, {
         prompt: systemInstruction,
       });
 
-      textOutput = output;
-      if (!textOutput) {
+      if (!output) {
         throw new Error(
           "generateBlogPostTextPrompt returned null or undefined output.",
         );
       }
+      // Cast the output to the full GenerateBlogPostOutput type.
+      // This is safe because the omit was only for the prompt definition, not the actual data structure returned if AI follows instructions.
+      textOutput = output as GenerateBlogPostOutput;
       console.log(
-        "✅ [generateBlogPostFlow] Successfully received textOutput from AI.",
+        "✅ [generateBlogPostFlow] Successfully received textOutput from AI. Chart Type:",
+        textOutput.chartType,
+        "Chart Data JSON provided:",
+        !!textOutput.chartDataJson,
+        "Detailed Info provided:",
+        !!textOutput.detailedInformation,
       );
     } catch (flowError: unknown) {
       const errorMessage =
@@ -199,7 +210,6 @@ const generateBlogPostFlow = ai.defineFlow(
       );
     }
 
-    // Validate and set category
     const isValidCategory = categories.some(
       (cat) => cat.slug === textOutput.categorySlug,
     );
@@ -211,17 +221,22 @@ const generateBlogPostFlow = ai.defineFlow(
     }
 
     let imageUrl: string | undefined = undefined;
-    const imageAiHint =
-      textOutput.tags && textOutput.tags.length > 0
+    // Use title or detailedInformation for better image prompt, fallback to tags or topic
+    const imageHintBase =
+      textOutput.detailedInformation?.substring(0, 100) ||
+      textOutput.title ||
+      (textOutput.tags && textOutput.tags.length > 0
         ? textOutput.tags.slice(0, 2).join(" ")
-        : input.topic.substring(0, 50) || "financial news article";
+        : input.topic.substring(0, 50));
+
+    const imageAiHint = imageHintBase || "financial news article";
 
     try {
       const categoryForImage = categories.find(
         (c) => c.slug === textOutput.categorySlug,
-      ) || { name: "Financial News", slug: "general" }; // Fallback category for image prompt
+      ) || { name: "Financial News", slug: "general" };
 
-      const imagePromptText = `Generate a visually appealing, modern, professional, financial-style image primarily themed around "${imageAiHint}". This image is for a blog post in the "${categoryForImage.name}" category, titled "${textOutput.title}", which discusses "${textOutput.summary.substring(0, 120)}...". Avoid text in the image. Focus on conceptual or abstract representations if direct depiction is complex.`;
+      const imagePromptText = `Generate a visually appealing, modern, professional, financial-style image primarily themed around "${imageAiHint}". This image is for a blog post in the "${categoryForImage.name}" category, titled "${textOutput.title}", which discusses "${textOutput.summary.substring(0, 120)}...". Avoid text in the image. Focus on conceptual or abstract representations if direct depiction is complex. The overall tone should be informative and professional.`;
 
       console.log(
         `🖼️ [generateBlogPostFlow] Attempting to generate image with prompt (first 150 chars): ${imagePromptText.substring(0, 150)}...`,
@@ -241,7 +256,6 @@ const generateBlogPostFlow = ai.defineFlow(
           `🖼️ [generateBlogPostFlow] Image data URI generated by Genkit. Length: ${imageDataUri.length}. Hint: "${imageAiHint}"`,
         );
 
-        // Upload to Cloudinary
         imageUrl = await uploadImageToCloudinary(
           imageDataUri,
           textOutput.title,
@@ -270,7 +284,6 @@ const generateBlogPostFlow = ai.defineFlow(
         errorMessage,
         imageGenError,
       );
-      // Specific checks for common API key issues
       if (
         errorMessage.toLowerCase().includes("api key not valid") ||
         errorMessage.toLowerCase().includes("permission denied") ||
@@ -285,10 +298,7 @@ const generateBlogPostFlow = ai.defineFlow(
           "❌ [generateBlogPostFlow] Critical: Cloudinary API issue. Check CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET environment variables.",
         );
       }
-      console.warn(
-        "⚠️ [generateBlogPostFlow] Falling back to no image due to an error during generation/upload.",
-      );
-      imageUrl = undefined; // Ensure imageUrl is undefined on error
+      imageUrl = undefined;
     }
 
     console.log(
@@ -299,6 +309,7 @@ const generateBlogPostFlow = ai.defineFlow(
       ...textOutput,
       imageUrl: imageUrl,
       imageAiHint: imageAiHint,
+      // chartType, chartDataJson, detailedInformation are already part of textOutput from the prompt
     };
   },
 );

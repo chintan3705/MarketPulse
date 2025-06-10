@@ -28,7 +28,7 @@ export const GenerateBlogPostOutputSchema = z.object({
   content: z
     .string()
     .describe(
-      "The full blog post content in HTML format. Should include multiple paragraphs, <h3> for subheadings, and <ul>/<li> for lists where appropriate. Aim for 300-500 words.",
+      "The full blog post content in HTML format. Should include multiple paragraphs, <h3> for subheadings, and <ul>/<li> for lists where appropriate. Aim for 700-1000 words. Include a placeholder like [CHART: Description of chart data] where a chart would be thematically appropriate if chartDataJson is provided.",
     ),
   categorySlug: z
     .string()
@@ -42,13 +42,31 @@ export const GenerateBlogPostOutputSchema = z.object({
     .string()
     .optional()
     .describe(
-      'The URL of the AI-generated image for the blog post, if available. This will be a placeholder if third-party upload is not implemented. Expected format: "https://placehold.co/WIDTHxHEIGHT.png" or actual hosted image URL.',
+      "The URL of the AI-generated image for the blog post, if available. This will be the Cloudinary URL.",
     ),
   imageAiHint: z
     .string()
     .optional()
     .describe(
       "A hint derived from the topic or tags for the AI-generated image.",
+    ),
+  chartType: z
+    .enum(["bar", "line", "pie", "table"])
+    .optional()
+    .describe(
+      "Suggested type of chart if data is provided (bar, line, pie, or table).",
+    ),
+  chartDataJson: z
+    .string()
+    .optional()
+    .describe(
+      "A JSON string representing data suitable for the suggested chartType. E.g., for a bar chart: '[{\"name\": \"Category A\", \"value\": 30}, ...]' or for a table: '[{\"column1\": \"Row1Cell1\", \"column2\": \"Row1Cell2\"}, ...]'. This data should correspond to the [CHART: ...] placeholder in the content.",
+    ),
+  detailedInformation: z
+    .string()
+    .optional()
+    .describe(
+      "Additional detailed information, facts, or statistics related to the topic that could be used to enrich the post or as source for a chart.",
     ),
 });
 export type GenerateBlogPostOutput = z.infer<
