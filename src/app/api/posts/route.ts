@@ -1,8 +1,10 @@
+
 import { NextResponse, type NextRequest } from "next/server";
 import connectDB from "@/lib/mongodb";
 import BlogPostModel, { type IMongoBlogPost } from "@/models/BlogPost";
 import type { BlogPost, Category } from "@/types";
 import { categories as staticCategories } from "@/lib/data";
+import { z } from "zod";
 
 // Helper function to transform MongoDB document to BlogPost type
 function transformPost(doc: IMongoBlogPost): BlogPost {
@@ -16,6 +18,7 @@ function transformPost(doc: IMongoBlogPost): BlogPost {
     };
   return {
     _id: doc._id.toString(),
+    id: doc._id.toString(), // Ensure id is also populated for consistency
     slug: doc.slug,
     title: doc.title,
     summary: doc.summary,
@@ -29,6 +32,9 @@ function transformPost(doc: IMongoBlogPost): BlogPost {
     tags: doc.tags,
     content: doc.content,
     isAiGenerated: doc.isAiGenerated,
+    chartType: doc.chartType,
+    chartDataJson: doc.chartDataJson,
+    detailedInformation: doc.detailedInformation,
   };
 }
 
@@ -95,6 +101,88 @@ export async function GET(
       error instanceof Error ? error.message : "An unexpected error occurred.";
     return NextResponse.json(
       { message: "Error fetching posts.", error: errorMessage },
+      { status: 500 },
+    );
+  }
+}
+
+
+// Schema for manual blog post creation (server-side validation)
+const CreateManualBlogPostAPISchema = z.object({
+  title: z.string().min(5),
+  summary: z.string().min(10),
+  content: z.string().min(50),
+  categorySlug: z.string().min(1),
+  tags: z.array(z.string().min(1)).min(1, "At least one tag is required."),
+  author: z.string().min(2),
+  imageUrl: z.string().url().optional().or(z.literal("")).nullable(),
+  imageAiHint: z.string().optional().nullable(),
+});
+
+
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  try {
+    await connectDB();
+    const body: unknown = await request.json();
+
+    const validationResult = CreateManualBlogPostAPISchema.safeParse(body);
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { message: "Invalid input.", errors: validationResult.error.format() },
+        { status: 400 },
+      );
+    }
+
+    const { title, summary, content, categorySlug, tags, author, imageUrl, imageAiHint } = validationResult.data;
+
+    // Generate slug
+    let slug = title
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^\w-]+/g, "")
+      .replace(/--+/g, "-")
+      .replace(/^-+/, "")
+      .replace(/-+$/, "");
+
+    let counter = 0;
+    let uniqueSlug = slug;
+    // eslint-disable-next-line no-await-in-loop
+    while (await BlogPostModel.findOne({ slug: uniqueSlug })) {
+      counter++;
+      uniqueSlug = `${slug}-${counter}`;
+    }
+    slug = uniqueSlug;
+
+    const categoryDetails = staticCategories.find(c => c.slug === categorySlug);
+    const categoryName = categoryDetails?.name || staticCategories.find(c => c.slug === "general")?.name || "General";
+
+    const newPostData: Omit<IMongoBlogPost, "_id" | "createdAt" | "updatedAt"> = {
+      slug,
+      title,
+      summary,
+      content,
+      categorySlug,
+      categoryName,
+      tags,
+      author,
+      imageUrl: imageUrl || undefined, // Ensure undefined if empty string
+      imageAiHint: imageAiHint || undefined,
+      publishedAt: new Date(),
+      isAiGenerated: false, // Explicitly false for manual creation
+      // chartType, chartDataJson, detailedInformation will be undefined by default
+    };
+
+    const newPost = new BlogPostModel(newPostData);
+    const savedPost = await newPost.save();
+
+    return NextResponse.json(transformPost(savedPost as IMongoBlogPost), { status: 201 });
+
+  } catch (error) {
+    console.error("API Error creating manual post:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "An unexpected error occurred.";
+    return NextResponse.json(
+      { message: "Error creating blog post.", error: errorMessage },
       { status: 500 },
     );
   }

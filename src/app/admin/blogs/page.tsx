@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -18,7 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Edit3, Trash2, Eye, Loader2, AlertTriangle } from "lucide-react";
+import { Edit3, Trash2, Eye, Loader2, AlertTriangle, PlusCircle, FileText } from "lucide-react"; // Added FileText
 import { GenerateBlogDialog } from "@/app/admin/blogs/_components/GenerateBlogDialog";
 import { GenerateMultipleBlogsDialog } from "@/app/admin/blogs/_components/GenerateMultipleBlogsDialog";
 import type { BlogPost } from "@/types";
@@ -34,8 +35,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+} from "@/components/ui/alert-dialog"; // Removed AlertDialogTrigger as it's controlled by state
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
@@ -111,8 +111,6 @@ export default function AdminBlogsPage() {
       });
       setShowDeleteConfirm(false);
       setPostToDelete(null);
-      // Refresh data:
-      // router.refresh(); // Good for server components, for client can also filter state or re-fetch
       setPosts((prevPosts) =>
         prevPosts.filter((p) => p.slug !== postToDelete.slug),
       );
@@ -162,6 +160,11 @@ export default function AdminBlogsPage() {
           Manage Blogs
         </h1>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <Button size="sm" asChild>
+            <Link href="/admin/blogs/create">
+              <FileText className="mr-2 h-4 w-4" /> Create Manual Post
+            </Link>
+          </Button>
           <GenerateBlogDialog />
           <GenerateMultipleBlogsDialog />
         </div>
@@ -177,75 +180,75 @@ export default function AdminBlogsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead className="hidden sm:table-cell">Category</TableHead>
-                <TableHead className="hidden lg:table-cell">Author</TableHead>
-                <TableHead className="hidden lg:table-cell">
-                  Published At
-                </TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {posts.map((post) => (
-                <TableRow key={post._id || post.slug}>
-                  <TableCell className="font-medium text-sm">
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-primary/80 transition-colors duration-200 ease-in-out line-clamp-2"
-                      title={post.title}
-                    >
-                      {post.title}
-                    </Link>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell text-xs">
-                    <Badge variant="outline" className="whitespace-nowrap">
-                      {post.categoryName || post.category?.name || "N/A"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell text-xs">
-                    {post.author}
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell text-xs">
-                    {new Date(post.publishedAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </TableCell>
-                  <TableCell className="text-right space-x-1 sm:space-x-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      asChild
-                      title="View live post"
-                      className="h-8 w-8 sm:h-9 sm:w-9"
-                    >
+          <div className="relative w-full overflow-auto">
+            <Table className="min-w-[700px]">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead className="hidden sm:table-cell">Category</TableHead>
+                  <TableHead className="hidden lg:table-cell">Author</TableHead>
+                  <TableHead className="hidden lg:table-cell">
+                    Published At
+                  </TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {posts.map((post) => (
+                  <TableRow key={post._id || post.slug}>
+                    <TableCell className="font-medium text-sm">
                       <Link
                         href={`/blog/${post.slug}`}
                         target="_blank"
                         rel="noopener noreferrer"
+                        className="hover:text-primary/80 transition-colors duration-200 ease-in-out line-clamp-2"
+                        title={post.title}
                       >
-                        <Eye className="h-4 w-4" />
+                        {post.title}
                       </Link>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      title="Edit Post"
-                      className="hidden sm:inline-flex h-8 w-8 sm:h-9 sm:w-9"
-                      asChild
-                    >
-                      <Link href={`/admin/blogs/edit/${post.slug}`}>
-                        <Edit3 className="h-4 w-4" />
-                      </Link>
-                    </Button>
-                    <AlertDialogTrigger asChild>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell text-xs">
+                      <Badge variant="outline" className="whitespace-nowrap">
+                        {post.categoryName || post.category?.name || "N/A"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="hidden lg:table-cell text-xs">
+                      {post.author}
+                    </TableCell>
+                    <TableCell className="hidden lg:table-cell text-xs">
+                      {new Date(post.publishedAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </TableCell>
+                    <TableCell className="text-right space-x-1 sm:space-x-2">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        asChild
+                        title="View live post"
+                        className="h-8 w-8 sm:h-9 sm:w-9"
+                      >
+                        <Link
+                          href={`/blog/${post.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        title="Edit Post"
+                        className="h-8 w-8 sm:h-9 sm:w-9"
+                        asChild
+                      >
+                        <Link href={`/admin/blogs/edit/${post.slug}`}>
+                          <Edit3 className="h-4 w-4" />
+                        </Link>
+                      </Button>
                       <Button
                         variant="destructive"
                         size="icon"
@@ -262,12 +265,12 @@ export default function AdminBlogsPage() {
                           <Trash2 className="h-4 w-4" />
                         )}
                       </Button>
-                    </AlertDialogTrigger>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
       {posts.length === 0 && !isLoading && (
@@ -287,7 +290,10 @@ export default function AdminBlogsPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel
-              onClick={() => setPostToDelete(null)}
+              onClick={() => {
+                setShowDeleteConfirm(false);
+                setPostToDelete(null);
+              }}
               disabled={isDeleting}
             >
               Cancel
