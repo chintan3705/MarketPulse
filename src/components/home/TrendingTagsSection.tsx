@@ -11,17 +11,20 @@ interface TrendingTagsSectionProps {
 export const TrendingTagsSection: React.FC<TrendingTagsSectionProps> = ({
   posts,
 }) => {
+  const sectionPadding = "py-6 md:py-10";
+  const containerPadding = "container px-4 sm:px-6 lg:px-8";
+  const titleClass = "font-headline text-xl sm:text-2xl md:text-3xl font-bold";
+  const iconClass = "h-5 w-5 md:h-6 md:w-6 text-primary";
+
   if (!posts || posts.length === 0) {
     return (
-      <section className="py-8 md:py-12">
-        <div className="container">
-          <div className="flex items-center gap-2 mb-6">
-            <Flame className="h-6 w-6 text-primary" />
-            <h2 className="font-headline text-2xl sm:text-3xl font-bold">
-              Trending Tags
-            </h2>
+      <section className={sectionPadding}>
+        <div className={containerPadding}>
+          <div className="flex items-center gap-2 mb-4 md:mb-6">
+            <Flame className={iconClass} />
+            <h2 className={titleClass}>Trending Tags</h2>
           </div>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-sm sm:text-base">
             No trending tags to display at the moment.
           </p>
         </div>
@@ -37,20 +40,18 @@ export const TrendingTagsSection: React.FC<TrendingTagsSectionProps> = ({
 
   const trendingTags: string[] = Object.entries(tagCounts)
     .sort(([, countA], [, countB]) => countB - countA)
-    .slice(0, 8)
+    .slice(0, 10) // Show up to 10 tags
     .map(([tag]) => tag);
 
   if (trendingTags.length === 0) {
     return (
-      <section className="py-8 md:py-12">
-        <div className="container">
-          <div className="flex items-center gap-2 mb-6">
-            <Flame className="h-6 w-6 text-primary" />
-            <h2 className="font-headline text-2xl sm:text-3xl font-bold">
-              Trending Tags
-            </h2>
+      <section className={sectionPadding}>
+        <div className={containerPadding}>
+          <div className="flex items-center gap-2 mb-4 md:mb-6">
+            <Flame className={iconClass} />
+            <h2 className={titleClass}>Trending Tags</h2>
           </div>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-sm sm:text-base">
             No trending tags to display at the moment.
           </p>
         </div>
@@ -62,20 +63,18 @@ export const TrendingTagsSection: React.FC<TrendingTagsSectionProps> = ({
     tag.toLowerCase().replace(/\s+/g, "-");
 
   return (
-    <section className="py-8 md:py-12">
-      <div className="container">
-        <div className="flex items-center gap-2 mb-6">
-          <Flame className="h-6 w-6 text-primary" />
-          <h2 className="font-headline text-2xl sm:text-3xl font-bold">
-            Trending Tags
-          </h2>
+    <section className={sectionPadding}>
+      <div className={containerPadding}>
+        <div className="flex items-center gap-2 mb-4 md:mb-6">
+          <Flame className={iconClass} />
+          <h2 className={titleClass}>Trending Tags</h2>
         </div>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2 sm:gap-3">
           {trendingTags.map((tag: string) => (
             <Link key={tag} href={`/tags/${createTagSlug(tag)}`}>
               <Badge
                 variant="secondary"
-                className="text-sm px-4 py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-200 ease-in-out transform hover:scale-105 shadow-sm hover:shadow-lg"
+                className="text-xs sm:text-sm px-3 sm:px-4 py-1 sm:py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-200 ease-in-out transform hover:scale-105 shadow-sm hover:shadow-md"
               >
                 # {tag}
               </Badge>

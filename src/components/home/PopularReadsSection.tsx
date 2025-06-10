@@ -10,17 +10,20 @@ interface PopularReadsSectionProps {
 export const PopularReadsSection: React.FC<PopularReadsSectionProps> = ({
   posts,
 }) => {
+  const sectionPadding = "py-6 md:py-10";
+  const containerPadding = "container px-4 sm:px-6 lg:px-8";
+  const titleClass = "font-headline text-xl sm:text-2xl md:text-3xl font-bold";
+  const iconClass = "h-5 w-5 md:h-6 md:w-6 text-primary";
+
   if (!posts || posts.length === 0) {
     return (
-      <section className="py-8 md:py-12 bg-muted/30">
-        <div className="container">
-          <div className="flex items-center gap-2 mb-6">
-            <Star className="h-6 w-6 text-primary" />
-            <h2 className="font-headline text-2xl sm:text-3xl font-bold">
-              Popular Reads
-            </h2>
+      <section className={`${sectionPadding} bg-muted/20 dark:bg-muted/30`}>
+        <div className={containerPadding}>
+          <div className="flex items-center gap-2 mb-4 md:mb-6">
+            <Star className={iconClass} />
+            <h2 className={titleClass}>Popular Reads</h2>
           </div>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-sm sm:text-base">
             No popular articles to display at the moment.
           </p>
         </div>
@@ -29,21 +32,19 @@ export const PopularReadsSection: React.FC<PopularReadsSectionProps> = ({
   }
 
   return (
-    <section className="py-8 md:py-12 bg-muted/30">
-      <div className="container">
-        <div className="flex items-center gap-2 mb-6">
-          <Star className="h-6 w-6 text-primary" />
-          <h2 className="font-headline text-2xl sm:text-3xl font-bold">
-            Popular Reads
-          </h2>
+    <section className={`${sectionPadding} bg-muted/20 dark:bg-muted/30`}>
+      <div className={containerPadding}>
+        <div className="flex items-center gap-2 mb-4 md:mb-6">
+          <Star className={iconClass} />
+          <h2 className={titleClass}>Popular Reads</h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {posts.map((post) => (
             <BlogPostCard
               key={post._id || post.id}
               post={post}
               orientation="vertical"
-              className="shadow-lg hover:shadow-xl"
+              className="shadow-md hover:shadow-lg"
             />
           ))}
         </div>

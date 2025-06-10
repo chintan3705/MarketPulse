@@ -32,7 +32,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import type { IMongoBlogPost } from "@/models/BlogPost";
 import { DialogTrigger } from "@radix-ui/react-dialog";
-import { categories } from "@/lib/data"; // Import categories for the dropdown
+import { categories } from "@/lib/data";
 
 type SavedPostData = Pick<
   IMongoBlogPost,
@@ -56,7 +56,7 @@ export function GenerateBlogDialog() {
   const [topic, setTopic] = useState("");
   const [selectedCategorySlug, setSelectedCategorySlug] = useState<
     string | undefined
-  >(undefined);
+  >("ai-choose"); // Default to AI choosing
   const [savedPostData, setSavedPostData] = useState<SavedPostData | null>(
     null,
   );
@@ -86,7 +86,7 @@ export function GenerateBlogDialog() {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({ topic, categorySlug: selectedCategorySlug }),
+        body: JSON.stringify({ topic, categorySlug: selectedCategorySlug === "ai-choose" ? undefined : selectedCategorySlug }),
       });
 
       if (!response.ok) {
@@ -104,14 +104,12 @@ export function GenerateBlogDialog() {
               errorResult.message || errorResult.error || serverErrorMessage;
           } catch (jsonError) {
             console.error("Failed to parse error response JSON:", jsonError);
-            // serverErrorMessage will remain as the initial HTTP status error
           }
         } else {
-          // If not JSON, try to get text for more context, but limit its length.
           const textResponse = await response.text();
           console.error(
             "Server returned non-JSON error response:",
-            textResponse.substring(0, 500), // Log more of the response
+            textResponse.substring(0, 500),
           );
           serverErrorMessage = `Server returned an unexpected response (not JSON). Check console for details. Status: ${response.status}`;
         }
@@ -132,8 +130,8 @@ export function GenerateBlogDialog() {
 
       setSavedPostData(result.post);
       toast({
-        title: "Blog Post Generated & Saved to DB!",
-        description: `"${result.post.title}" has been saved. It will appear on the site.`,
+        title: "Blog Post Generated & Saved!",
+        description: `"${result.post.title}" has been saved.`,
         duration: 7000,
       });
     } catch (err) {
@@ -160,31 +158,29 @@ export function GenerateBlogDialog() {
         if (!openState) {
           setSavedPostData(null);
           setError(null);
-          // setTopic(""); // Optionally reset topic on close
-          // setSelectedCategorySlug(undefined); // Optionally reset category
         }
       }}
     >
       <DialogTrigger asChild>
-        <Button>
+        <Button size="sm">
           <PlusCircle className="mr-2 h-4 w-4" /> Generate & Save Blog
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-md md:max-w-lg lg:max-w-xl w-[90vw]">
         <DialogHeader>
-          <DialogTitle className="flex items-center">
+          <DialogTitle className="flex items-center text-lg sm:text-xl">
             <Wand2 className="mr-2 h-5 w-5 text-primary" />
-            Generate &amp; Save AI Blog Post to Database
+            Generate AI Blog Post
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-xs sm:text-sm">
             Enter a topic and optionally select a category. AI will generate a
             blog post and save it to the database.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="topic" className="text-right">
+            <div className="space-y-1.5">
+              <Label htmlFor="topic" className="text-sm">
                 Topic
               </Label>
               <Input
@@ -193,27 +189,27 @@ export function GenerateBlogDialog() {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setTopic(e.target.value)
                 }
-                className="col-span-3"
                 placeholder="e.g., Future of Renewable Energy Stocks"
+                className="text-sm"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="category" className="text-right">
-                Category
+            <div className="space-y-1.5">
+              <Label htmlFor="category" className="text-sm">
+                Category (Optional)
               </Label>
               <Select
                 value={selectedCategorySlug}
                 onValueChange={setSelectedCategorySlug}
               >
-                <SelectTrigger className="col-span-3">
-                  <SelectValue placeholder="Let AI choose category (optional)" />
+                <SelectTrigger className="text-sm">
+                  <SelectValue placeholder="Let AI choose category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ai-choose">
+                  <SelectItem value="ai-choose" className="text-sm">
                     Let AI choose category
                   </SelectItem>
                   {categories.map((category) => (
-                    <SelectItem key={category.slug} value={category.slug}>
+                    <SelectItem key={category.slug} value={category.slug} className="text-sm">
                       {category.name}
                     </SelectItem>
                   ))}
@@ -221,13 +217,13 @@ export function GenerateBlogDialog() {
               </Select>
             </div>
           </div>
-          <DialogFooter className="mt-4">
+          <DialogFooter className="mt-4 sm:mt-6">
             <DialogClose asChild>
-              <Button type="button" variant="outline" disabled={isLoading}>
+              <Button type="button" variant="outline" disabled={isLoading} size="sm">
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={isLoading || !topic.trim()}>
+            <Button type="submit" disabled={isLoading || !topic.trim()} size="sm">
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
@@ -239,32 +235,32 @@ export function GenerateBlogDialog() {
         </form>
 
         {error && !isLoading && (
-          <Card className="mt-6 border-destructive bg-destructive/10">
-            <CardHeader>
+          <Card className="mt-4 sm:mt-6 border-destructive bg-destructive/10">
+            <CardHeader className="p-3 sm:p-4">
               <div className="flex items-center gap-2 text-destructive">
-                <AlertTriangle size={20} />
-                <CardTitle className="text-lg">
+                <AlertTriangle size={18} />
+                <CardTitle className="text-sm sm:text-base">
                   Generation/Save Failed
                 </CardTitle>
               </div>
             </CardHeader>
-            <CardContent>
-              <p className="text-sm text-destructive-foreground">{error}</p>
+            <CardContent className="p-3 sm:p-4 pt-0">
+              <p className="text-xs sm:text-sm text-destructive-foreground">{error}</p>
             </CardContent>
           </Card>
         )}
 
         {savedPostData && !isLoading && !error && (
-          <Card className="mt-6 border-green-500 bg-green-500/10">
-            <CardHeader>
+          <Card className="mt-4 sm:mt-6 border-green-500 bg-green-500/10">
+            <CardHeader className="p-3 sm:p-4">
               <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
-                <DatabaseZap size={20} />
-                <CardTitle className="text-lg">
+                <DatabaseZap size={18} />
+                <CardTitle className="text-sm sm:text-base">
                   Successfully Saved to Database!
                 </CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="space-y-2 text-sm">
+            <CardContent className="space-y-1.5 text-xs sm:text-sm p-3 sm:p-4 pt-0">
               <p>
                 <strong>Title:</strong> {savedPostData.title}
               </p>
@@ -272,7 +268,7 @@ export function GenerateBlogDialog() {
                 <strong>Slug:</strong> <code>{savedPostData.slug}</code>
               </p>
               <p>
-                The post is now in the database. You can view it at:
+                View post:
                 <Link
                   href={`/blog/${savedPostData.slug}`}
                   target="_blank"
@@ -285,11 +281,11 @@ export function GenerateBlogDialog() {
               <Button
                 variant="outline"
                 size="sm"
-                className="mt-2"
+                className="mt-2 text-xs"
                 onClick={() => {
                   setSavedPostData(null);
                   setTopic("");
-                  setSelectedCategorySlug(undefined);
+                  setSelectedCategorySlug("ai-choose");
                 }}
               >
                 Generate Another

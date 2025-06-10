@@ -11,54 +11,7 @@ body {
     /* scroll-smooth is handled by Lenis when active */
   }
   :root {
-    /* NeoTrader Dark Theme (Default) */
-    --background: 212 50% 11%; /* Deep Navy #0e1a2b */
-    --foreground: 210 27% 86%; /* Light Gray #d3dce6 */
-
-    --card: 212 50% 15%; /* Slightly lighter navy for cards */
-    --card-foreground: 210 27% 86%;
-
-    --popover: 212 50% 9%; /* Darker popover */
-    --popover-foreground: 210 27% 86%;
-
-    --primary: 158 74% 50%; /* Mint Green #20df99 */
-    --primary-foreground: 212 50% 11%; /* Deep Navy for contrast on mint */
-
-    --secondary: 210 30% 25%; /* Muted Navy/Blue-Gray */
-    --secondary-foreground: 210 27% 75%;
-
-    --muted: 210 30% 20%; /* Darker Muted Gray */
-    --muted-foreground: 210 27% 65%;
-
-    --accent: 158 74% 55%; /* Slightly brighter Mint for accents */
-    --accent-foreground: 212 50% 11%;
-
-    --destructive: 0 75% 65%; /* Coral Red #f05c5c */
-    --destructive-foreground: 0 0% 100%; /* White text on red */
-
-    --border: 210 30% 30%; /* Muted border for dark theme */
-    --input: 210 30% 20%; /* Dark input background */
-    --ring: 158 74% 50%; /* Mint Green for rings */
-
-    --radius: 0.5rem;
-
-    /* Specific colors for financial theme */
-    --gain: 158 74% 50%; /* Mint Green #20df99 */
-    --loss: 0 75% 65%; /* Coral Red #f05c5c */
-
-    /* Sidebar variables for dark theme */
-    --sidebar-background: 212 50% 9%; /* Very dark navy for sidebar */
-    --sidebar-foreground: 210 27% 75%;
-    --sidebar-primary: 158 74% 50%;
-    --sidebar-primary-foreground: 212 50% 11%;
-    --sidebar-accent: 212 50% 15%;
-    --sidebar-accent-foreground: 158 74% 50%;
-    --sidebar-border: 212 50% 20%;
-    --sidebar-ring: 158 74% 50%;
-  }
-
-  .light {
-    /* NeoTrader Light Theme (When .light class is applied) */
+    /* Light Theme (Default - based on PRD) */
     --background: 220 17% 95%; /* Light Gray #F0F2F5 */
     --foreground: 220 15% 25%; /* Dark Gray for text */
 
@@ -68,41 +21,85 @@ body {
     --popover: 0 0% 100%;
     --popover-foreground: 220 15% 25%;
 
-    --primary: 197 78% 52%; /* Saturated Blue #29ABE2 (Original Primary - can be Mint too) */
-    /* Using Mint Green as primary for light theme too for consistency with NeoTrader */
-    /* --primary: 158 60% 45%; Slightly darker mint for light bg */
+    --primary: 197 78% 52%; /* Saturated Blue #29ABE2 */
     --primary-foreground: 0 0% 100%; /* White */
 
-    --secondary: 220 15% 90%;
+    --secondary: 220 15% 90%; /* Lighter gray for secondary elements */
     --secondary-foreground: 220 10% 30%;
 
-    --muted: 220 15% 88%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 220 15% 88%; /* Muted gray */
+    --muted-foreground: 220 10% 45%; /* Darker muted text */
 
-    /* --accent: 175 78% 52%; Original Cyan */
-    /* Using Mint Green as accent for light theme too */
-    --accent: 158 74% 50%;
-    --accent-foreground: 212 50% 11%;
+    --accent: 175 78% 52%; /* Analogous Cyan #29E2D2 */
+    --accent-foreground: 220 15% 15%; /* Dark text on cyan accent */
 
-    --destructive: 0 84% 60%; /* Original Red */
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%; /* Standard Red for destructive actions */
+    --destructive-foreground: 0 0% 98%; /* Light text on red */
 
-    --border: 220 10% 85%;
-    --input: 220 10% 92%;
-    --ring: 158 60% 45%; /* Mint Green for rings */
+    --border: 220 10% 85%; /* Light border */
+    --input: 220 10% 92%; /* Light input background */
+    --ring: 197 78% 52%; /* Primary blue for rings */
 
-    --gain: 145 63% 42%; /* Original Green */
-    --loss: 0 84% 60%; /* Original Red */
+    --radius: 0.5rem;
+
+    /* Specific colors for financial theme */
+    --gain: 145 63% 42%; /* Green for gains */
+    --loss: 0 75% 60%;  /* Red for losses */
 
     /* Sidebar variables for light theme */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 158 60% 45%;
+    --sidebar-background: 0 0% 98%; /* Slightly off-white for admin sidebar */
+    --sidebar-foreground: 220 15% 25%;
+    --sidebar-primary: 197 78% 52%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 220 15% 92%;
-    --sidebar-accent-foreground: 158 60% 45%;
+    --sidebar-accent-foreground: 197 78% 52%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 158 60% 45%;
+    --sidebar-ring: 197 78% 52%;
+  }
+
+  .dark {
+    /* Dark Theme */
+    --background: 212 50% 11%; /* Deep Navy #0e1a2b */
+    --foreground: 210 27% 86%; /* Light Gray #d3dce6 */
+
+    --card: 212 50% 15%; /* Slightly lighter navy for cards */
+    --card-foreground: 210 27% 86%;
+
+    --popover: 212 50% 9%; /* Darker popover */
+    --popover-foreground: 210 27% 86%;
+
+    --primary: 197 78% 52%; /* Saturated Blue #29ABE2 - same as light */
+    --primary-foreground: 0 0% 100%; /* White for contrast on blue */
+
+    --secondary: 210 30% 25%; /* Muted Navy/Blue-Gray */
+    --secondary-foreground: 210 27% 75%;
+
+    --muted: 210 30% 20%; /* Darker Muted Gray */
+    --muted-foreground: 210 27% 65%;
+
+    --accent: 175 78% 52%; /* Analogous Cyan #29E2D2 - same as light */
+    --accent-foreground: 212 50% 11%; /* Dark text on cyan for dark theme */
+
+    --destructive: 0 75% 65%; /* Coral Red #f05c5c */
+    --destructive-foreground: 0 0% 100%; /* White text on red */
+
+    --border: 210 30% 30%; /* Muted border for dark theme */
+    --input: 210 30% 20%; /* Dark input background */
+    --ring: 197 78% 52%; /* Primary blue for rings */
+
+    /* Specific colors for financial theme */
+    --gain: 145 70% 55%; /* Brighter Green for dark theme */
+    --loss: 0 75% 65%; /* Coral Red #f05c5c */
+
+    /* Sidebar variables for dark theme */
+    --sidebar-background: 212 50% 9%; /* Very dark navy for admin sidebar */
+    --sidebar-foreground: 210 27% 75%;
+    --sidebar-primary: 197 78% 52%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 212 50% 15%;
+    --sidebar-accent-foreground: 175 78% 52%;
+    --sidebar-border: 212 50% 20%;
+    --sidebar-ring: 197 78% 52%;
   }
 }
 
@@ -115,10 +112,10 @@ body {
   }
 }
 
-/* Glassmorphism attempt for cards */
+/* Glassmorphism for cards - adjust opacity and blur for new theme */
 @layer components {
   .glass-card {
-    @apply bg-card/60 dark:bg-card/70 backdrop-blur-lg border border-card-foreground/10 dark:border-card-foreground/5 shadow-xl;
+    @apply bg-card/80 dark:bg-card/75 backdrop-blur-md border border-card-foreground/10 dark:border-card-foreground/5 shadow-lg;
   }
 }
 
@@ -133,11 +130,6 @@ html.lenis {
   scroll-behavior: auto !important;
 }
 
-html.lenis body {
-  /* Native scrollbar will remain visible based on user request */
-  /* overflow: hidden; */ /* This line was removed/commented out */
-}
-
 /* Lenis recommended styles for specific states */
 .lenis.lenis-stopped {
   overflow: hidden !important;
@@ -145,4 +137,9 @@ html.lenis body {
 
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
+}
+
+/* Improve focus visibility globally */
+*:focus-visible {
+  @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
 }

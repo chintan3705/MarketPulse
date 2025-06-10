@@ -2,7 +2,7 @@ import Image from "next/image";
 import type { AdConfig } from "@/types";
 import { cn } from "@/lib/utils";
 import { AreaChart } from "lucide-react";
-import React from "react"; // Import React for useEffect
+import React from "react";
 
 interface AdSlotProps {
   config: AdConfig;
@@ -24,28 +24,32 @@ export function AdSlot({ config }: AdSlotProps) {
   const numericHeight =
     typeof height === "string" ? parseInt(height, 10) : height;
 
-  // Fallback dimensions if parsing fails or not provided
   const finalWidth = !isNaN(numericWidth as number) ? numericWidth : 300;
   const finalHeight = !isNaN(numericHeight as number) ? numericHeight : 250;
+
+  // Ensure width and height for style are strings with 'px' or '%'
+  const styleWidth = typeof width === "string" ? width : (finalWidth ? `${finalWidth}px` : '100%');
+  const styleHeight = typeof height === "string" ? height : (finalHeight ? `${finalHeight}px` : 'auto');
 
   if (type === "image" && src) {
     return (
       <div
         className={cn(
-          "bg-muted/50 flex items-center justify-center overflow-hidden rounded-md shadow",
+          "bg-muted/30 dark:bg-muted/50 flex items-center justify-center overflow-hidden rounded-md shadow-sm mx-auto", // Added mx-auto
           className,
         )}
         style={{
-          width: typeof width === "string" ? width : `${width}px`,
-          height: typeof height === "string" ? height : `${height}px`,
+          width: styleWidth,
+          height: styleHeight,
+          maxWidth: '100%', // Ensure it does not overflow container
         }}
       >
         <Image
           src={src}
           alt={altText || "Advertisement"}
-          width={finalWidth as number}
+          width={finalWidth as number} // next/image width/height must be numbers if not fill
           height={finalHeight as number}
-          className="object-contain"
+          className="object-contain max-w-full max-h-full" // Ensure image scales within its container
           data-ai-hint={imageAiHint || "advertisement"}
         />
       </div>
@@ -53,17 +57,16 @@ export function AdSlot({ config }: AdSlotProps) {
   }
 
   if (type === "script") {
-    // Script based ads usually require direct DOM manipulation or a library.
-    // This placeholder simulates where the ad would load.
     return (
       <div
         className={cn(
-          "bg-muted/50 flex items-center justify-center text-sm text-muted-foreground p-4 rounded-md shadow",
+          "bg-muted/30 dark:bg-muted/50 flex items-center justify-center text-xs sm:text-sm text-muted-foreground p-4 rounded-md shadow-sm mx-auto",
           className,
         )}
         style={{
-          width: typeof width === "string" ? width : `${width}px`,
-          height: typeof height === "string" ? height : `${height}px`,
+          width: styleWidth,
+          height: styleHeight,
+          maxWidth: '100%',
         }}
       >
         Ad Slot (Script Based) - {config.id}
@@ -72,22 +75,21 @@ export function AdSlot({ config }: AdSlotProps) {
   }
 
   if (type === "tradingview-widget" && tradingViewWidgetConfig) {
-    // For actual TradingView widget, you'd use their embedding script.
-    // This is a styled placeholder.
     return (
       <div
         className={cn(
-          "bg-card border border-border flex flex-col items-center justify-center text-sm text-muted-foreground p-4 rounded-lg shadow-lg",
+          "bg-card border border-border flex flex-col items-center justify-center text-xs sm:text-sm text-muted-foreground p-4 rounded-lg shadow-md mx-auto",
           className,
         )}
         style={{
-          width: typeof width === "string" ? width : `${width}px`,
-          height: typeof height === "string" ? height : `${height}px`,
+          width: styleWidth,
+          height: styleHeight,
+          maxWidth: '100%',
         }}
       >
-        <AreaChart className="w-16 h-16 text-primary mb-2" />
-        <p className="font-semibold text-foreground">TradingView Chart</p>
-        <p className="text-xs">
+        <AreaChart className="w-12 h-12 sm:w-16 sm:w-16 text-primary mb-2" />
+        <p className="font-semibold text-foreground text-sm sm:text-base">TradingView Chart</p>
+        <p className="text-xs mt-1">
           Symbol: {tradingViewWidgetConfig.symbol || "N/A"}
         </p>
         <p className="text-xs mt-2">(Live chart will be embedded here)</p>
@@ -95,14 +97,13 @@ export function AdSlot({ config }: AdSlotProps) {
     );
   }
 
-  // Default fallback placeholder
   return (
     <div
       className={cn(
-        "bg-muted/50 flex items-center justify-center text-sm text-muted-foreground p-4 rounded-md shadow",
+        "bg-muted/30 dark:bg-muted/50 flex items-center justify-center text-xs sm:text-sm text-muted-foreground p-4 rounded-md shadow-sm mx-auto",
         className,
       )}
-      style={{ width: "100%", height: 90 }}
+      style={{ width: "100%", height: styleHeight, maxHeight: '90px', maxWidth: '100%' }}
     >
       Advertisement Placeholder
     </div>

@@ -43,7 +43,7 @@ async function fetchPostsByCategory(categorySlug: string): Promise<BlogPost[]> {
 
 export async function generateMetadata(
   { params }: CategoryPageProps,
-  _parent: ResolvingMetadata, // parent can be used to access parent metadata
+  _parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const slug = params.slug;
   const category = categories.find((cat) => cat.slug === slug);
@@ -71,7 +71,7 @@ export async function generateMetadata(
       type: "website",
       images: [
         {
-          url: `${SITE_URL}/og-image.png`, // Generic OG for category pages
+          url: `${SITE_URL}/og-image.png`,
           width: 1200,
           height: 630,
           alt: title,
@@ -82,7 +82,7 @@ export async function generateMetadata(
       card: "summary_large_image",
       title: title,
       description: description,
-      images: [`${SITE_URL}/twitter-image.png`], // Generic Twitter image
+      images: [`${SITE_URL}/twitter-image.png`],
     },
   };
 }
@@ -93,9 +93,9 @@ interface SectionTitleProps {
 }
 
 const SectionTitle: React.FC<SectionTitleProps> = ({ title, icon: Icon }) => (
-  <div className="flex items-center gap-2 mb-6">
-    {Icon && <Icon className="h-7 w-7 text-primary" />}
-    <h1 className="font-headline text-2xl sm:text-3xl font-bold capitalize">
+  <div className="flex items-center gap-2 mb-4 md:mb-6">
+    {Icon && <Icon className="h-6 w-6 md:h-7 md:w-7 text-primary" />}
+    <h1 className="font-headline text-2xl sm:text-3xl md:text-4xl font-bold capitalize">
       {title}
     </h1>
   </div>
@@ -119,7 +119,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   return (
     <div
-      className="container py-8 md:py-12 animate-slide-in"
+      className="container py-6 md:py-10 animate-slide-in px-4 sm:px-6 lg:px-8"
       style={{ animationDelay: "0.1s", animationFillMode: "backwards" }}
     >
       <SectionTitle
@@ -127,17 +127,17 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         icon={LayoutGrid}
       />
       {postsInCategory.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {postsInCategory.map((post, index) => (
             <BlogPostCard
-              key={post._id || post.id || index.toString()} // Ensure key is a string
+              key={post._id || post.id || index.toString()}
               post={post}
               orientation="vertical"
             />
           ))}
         </div>
       ) : (
-        <p className="text-lg text-muted-foreground">
+        <p className="text-base sm:text-lg text-muted-foreground">
           There are no posts in the &quot;{category.name}&quot; category at the
           moment. Please check back later.
         </p>

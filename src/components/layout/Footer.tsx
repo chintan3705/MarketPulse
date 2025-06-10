@@ -7,15 +7,15 @@ export function Footer() {
 
   return (
     <footer className="border-t bg-card text-card-foreground mt-auto">
-      <div className="container py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="space-y-4">
-            <Logo />
+      <div className="container py-10 md:py-16 px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+          <div className="space-y-4 sm:col-span-2 md:col-span-1">
+            <Logo iconSize="h-8 w-8" textSize="text-2xl" />
             <p className="text-sm text-muted-foreground">
               Your daily lens on the share market. Timely updates, financial
               insights, and stock analysis.
             </p>
-            <div className="flex space-x-3">
+            <div className="flex space-x-4">
               <Link
                 href="#"
                 aria-label="Facebook"
@@ -48,10 +48,10 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-headline text-lg font-semibold mb-3">
+            <h4 className="font-headline text-md font-semibold mb-3">
               Quick Links
             </h4>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-1.5 text-sm">
               <li>
                 <Link
                   href="/about"
@@ -88,10 +88,10 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-headline text-lg font-semibold mb-3">
+            <h4 className="font-headline text-md font-semibold mb-3">
               Categories
             </h4>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-1.5 text-sm">
               <li>
                 <Link
                   href="/category/stocks"
@@ -128,8 +128,8 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="font-headline text-lg font-semibold mb-3">Legal</h4>
-            <ul className="space-y-2 text-sm">
+            <h4 className="font-headline text-md font-semibold mb-3">Legal</h4>
+            <ul className="space-y-1.5 text-sm">
               <li>
                 <Link
                   href="/privacy-policy"
@@ -158,7 +158,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 pt-8 border-t text-center text-sm text-muted-foreground">
+        <div className="mt-8 pt-8 border-t text-center text-xs sm:text-sm text-muted-foreground">
           &copy; {currentYear} MarketPulse. All rights reserved. Built with
           passion.
         </div>

@@ -49,12 +49,14 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
   icon: Icon,
   description,
 }) => (
-  <div className="mb-8">
-    <div className="flex items-center gap-2 mb-2">
-      {Icon && <Icon className="h-7 w-7 text-primary" />}
-      <h1 className="font-headline text-2xl sm:text-3xl font-bold">{title}</h1>
+  <div className="mb-6 md:mb-8">
+    <div className="flex items-center gap-2 mb-1 md:mb-2">
+      {Icon && <Icon className="h-6 w-6 md:h-7 md:w-7 text-primary" />}
+      <h1 className="font-headline text-2xl sm:text-3xl md:text-4xl font-bold">
+        {title}
+      </h1>
     </div>
-    {description && <p className="text-muted-foreground">{description}</p>}
+    {description && <p className="text-muted-foreground text-sm md:text-base">{description}</p>}
   </div>
 );
 
@@ -80,15 +82,15 @@ export default async function NewsPage() {
   const recentPosts: BlogPost[] = await fetchPosts();
 
   return (
-    <div className="container py-8 md:py-12">
+    <div className="container py-6 md:py-10 px-4 sm:px-6 lg:px-8">
       <SectionTitle
         title="Latest News & Analysis"
         icon={Newspaper}
-        description="Browse our collection of financial news, stock market updates, and expert analysis from our database."
+        description="Browse our collection of financial news, stock market updates, and expert analysis."
       />
 
       {recentPosts.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {recentPosts.map((post, index) => (
             <BlogPostCard
               key={post._id || post.id || index.toString()}
@@ -98,7 +100,7 @@ export default async function NewsPage() {
           ))}
         </div>
       ) : (
-        <p className="text-lg text-muted-foreground">
+        <p className="text-base sm:text-lg text-muted-foreground">
           No news articles available at the moment. Please use the admin panel
           to generate and save new content.
         </p>

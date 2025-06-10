@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import Image from "next/image";
 import type { BlogPost } from "@/types";
@@ -41,27 +40,31 @@ export function BlogPostCard({
   return (
     <Card
       className={cn(
-        "overflow-hidden hover:shadow-xl transition-shadow duration-300 group",
+        "overflow-hidden hover:shadow-lg transition-shadow duration-300 group flex flex-col", // Always flex-col for consistent structure
         className,
         {
-          "flex flex-col": orientation === "vertical",
-          "md:flex-row": orientation === "horizontal",
+          "md:flex-row": orientation === "horizontal", // Horizontal layout on md+
         },
       )}
     >
       {post.imageUrl && (
         <div
-          className={cn("relative aspect-video shrink-0", {
-            "w-full": orientation === "vertical",
-            "md:w-1/3 lg:w-2/5": orientation === "horizontal",
-          })}
+          className={cn(
+            "relative w-full shrink-0",
+            orientation === "vertical" ? "aspect-video" : "md:aspect-auto md:w-1/3 lg:w-2/5 md:h-full",
+             !post.imageUrl && "hidden" // Hide if no image
+          )}
         >
           <Link href={`/blog/${post.slug}`} aria-label={post.title}>
             <Image
               src={post.imageUrl}
               alt={post.title}
               fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes={
+                orientation === "horizontal"
+                  ? "(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 25vw"
+                  : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              }
               className="object-cover group-hover:scale-105 transition-transform duration-300"
               priority={priority}
               data-ai-hint={post.imageAiHint || "financial news"}
@@ -70,26 +73,21 @@ export function BlogPostCard({
         </div>
       )}
       <div
-        className={cn("flex flex-col flex-grow", {
-          "p-0": orientation === "horizontal", // No padding for div, header/content/footer will have
-          "p-4 md:p-6": orientation === "vertical", // Padding for vertical layout
-        })}
+        className={cn(
+          "flex flex-col flex-grow p-4 md:p-5", // Standardized padding
+          orientation === "horizontal" && post.imageUrl ? "md:pl-5" : "",
+        )}
       >
-        <CardHeader
-          className={cn("pb-2", {
-            "p-4 md:p-6 pb-2": orientation === "horizontal",
-            "p-0": orientation === "vertical", // Remove padding from header for vertical
-          })}
-        >
+        <CardHeader className="p-0 pb-2">
           <Link href={`/category/${post.category.slug}`}>
             <Badge
               variant="secondary"
-              className="mb-2 inline-block hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="mb-2 inline-block hover:bg-accent hover:text-accent-foreground transition-colors text-xs px-2 py-0.5"
             >
               {post.category.name}
             </Badge>
           </Link>
-          <CardTitle className="font-headline text-lg md:text-xl lg:text-2xl leading-tight">
+          <CardTitle className="font-headline text-base sm:text-lg md:text-xl leading-tight">
             <Link
               href={`/blog/${post.slug}`}
               className="hover:text-primary transition-colors"
@@ -98,50 +96,33 @@ export function BlogPostCard({
             </Link>
           </CardTitle>
         </CardHeader>
-        <CardContent
-          className={cn("flex-grow pt-0 pb-2", {
-            "p-4 md:p-6 pt-0 pb-2": orientation === "horizontal",
-            "p-0 pt-2": orientation === "vertical", // Adjust padding for vertical
-          })}
-        >
-          <p className="text-sm text-muted-foreground line-clamp-3">
+        <CardContent className="p-0 flex-grow pt-1 pb-3">
+          <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 sm:line-clamp-3">
             {post.summary}
           </p>
         </CardContent>
-        <CardFooter
-          className={cn(
-            "flex flex-wrap items-center justify-between text-xs text-muted-foreground gap-2 pt-0",
-            {
-              "p-4 md:p-6 pt-0": orientation === "horizontal",
-              "p-0 pt-2": orientation === "vertical", // Adjust padding for vertical
-            },
-          )}
-        >
+        <CardFooter className="p-0 flex flex-wrap items-center justify-between text-xs text-muted-foreground gap-x-3 gap-y-1 pt-2 border-t border-border/60 mt-auto">
           <div className="flex items-center gap-1">
             {post.isAiGenerated ? (
-              <Bot size={14} className="text-primary" />
+              <Bot size={12} className="text-primary" />
             ) : (
-              <UserCircle size={14} />
+              <UserCircle size={12} />
             )}
-            <span>{post.author}</span>
+            <span className="truncate max-w-[100px] sm:max-w-none">{post.author}</span>
           </div>
           <div className="flex items-center gap-1">
-            <CalendarDays size={14} />
+            <CalendarDays size={12} />
             <time dateTime={post.publishedAt}>{formattedDate}</time>
           </div>
         </CardFooter>
         {post.tags && post.tags.length > 0 && orientation === "vertical" && (
-          <div
-            className={cn("pt-2", {
-              "p-0": orientation === "vertical", // Tags within vertical layout
-            })}
-          >
-            <div className="flex flex-wrap gap-2">
+          <div className="p-0 pt-3 mt-auto">
+            <div className="flex flex-wrap gap-1.5">
               {post.tags.slice(0, 3).map((tag: string) => (
                 <Link key={tag} href={`/tags/${createTagSlug(tag)}`}>
                   <Badge
                     variant="outline"
-                    className="text-xs hover:bg-muted transition-colors"
+                    className="text-xs px-1.5 py-0.5 hover:bg-muted transition-colors"
                   >
                     # {tag}
                   </Badge>

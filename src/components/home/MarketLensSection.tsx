@@ -6,15 +6,14 @@ import {
   getMarketLensDigest,
   type MarketLensDigestOutput,
   type MarketLensDigestInput,
-} from "@/ai/flows/market-lens-digest-flow"; // MarketLensDigestInput made explicit
+} from "@/ai/flows/market-lens-digest-flow";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { trendingHeadlines as mockHeadlinesData } from "@/lib/data"; // Renamed for clarity
+import { trendingHeadlines as mockHeadlinesData } from "@/lib/data";
 import {
   TrendingUp,
   TrendingDown,
   MinusCircle,
   ExternalLink,
-  // Loader2, // Unused import
   AlertTriangle,
   Eye,
 } from "lucide-react";
@@ -29,14 +28,15 @@ const TrendIcon = ({
   sentiment: string;
   trendIcon?: "up" | "down";
 }) => {
+  const iconSize = "h-4 w-4 sm:h-5 sm:w-5";
   if (trendIcon === "up" || sentiment === "Bullish") {
-    return <TrendingUp className="h-5 w-5 text-gain mr-2 flex-shrink-0" />;
+    return <TrendingUp className={`${iconSize} text-gain mr-1.5 sm:mr-2 flex-shrink-0`} />;
   }
   if (trendIcon === "down" || sentiment === "Bearish") {
-    return <TrendingDown className="h-5 w-5 text-loss mr-2 flex-shrink-0" />;
+    return <TrendingDown className={`${iconSize} text-loss mr-1.5 sm:mr-2 flex-shrink-0`} />;
   }
   return (
-    <MinusCircle className="h-5 w-5 text-muted-foreground mr-2 flex-shrink-0" />
+    <MinusCircle className={`${iconSize} text-muted-foreground mr-1.5 sm:mr-2 flex-shrink-0`} />
   );
 };
 
@@ -50,13 +50,11 @@ export function MarketLensSection() {
       setIsLoading(true);
       setError(null);
       try {
-        // Using top 3 mock headlines for the digest
-        const headlinesToProcess: TrendingHeadline[] = // Use TrendingHeadline type for mock data
+        const headlinesToProcess: TrendingHeadline[] =
           mockHeadlinesData
             .slice(0, 3)
             .map((h: TrendingHeadline) => ({ ...h }));
 
-        // Adapt to MarketLensDigestInput["headlines"] which expects specific fields
         const marketLensInputHeadlines: MarketLensDigestInput["headlines"] =
           headlinesToProcess.map((h) => ({
             id: h.id,
@@ -80,61 +78,54 @@ export function MarketLensSection() {
         setIsLoading(false);
       }
     }
-    void fetchDigest(); // Call async function
+    void fetchDigest();
   }, []);
 
   return (
-    <section className="py-8 md:py-12">
-      <div className="container">
-        <div className="flex items-center gap-2 mb-6">
-          <Eye className="h-7 w-7 text-primary" />
-          <h2 className="font-headline text-2xl sm:text-3xl font-bold">
+    <section className="py-6 md:py-10">
+      <div className="container px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-2 mb-4 md:mb-6">
+          <Eye className="h-6 w-6 md:h-7 md:w-7 text-primary" />
+          <h2 className="font-headline text-xl sm:text-2xl md:text-3xl font-bold">
             Today&apos;s Market Lens
           </h2>
         </div>
 
         {isLoading && (
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="text-lg sm:text-xl text-primary">
-                  <Skeleton className="h-6 w-3/4" />
+              <CardHeader className="pb-3">
+                <CardTitle className="text-md sm:text-lg text-primary">
+                  <Skeleton className="h-5 w-3/4" />
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-1.5">
                 <Skeleton className="h-4 w-full" />
                 <Skeleton className="h-4 w-5/6" />
               </CardContent>
             </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
               {[1, 2, 3].map((item) => (
-                <Card key={item} className="glass-card flex flex-col">
-                  <CardHeader>
-                    <div className="flex items-start mb-2">
-                      <Skeleton className="h-5 w-5 mr-2 rounded-full" />{" "}
-                      {/* TrendIcon skeleton */}
-                      <div className="flex-grow space-y-1.5">
-                        <Skeleton className="h-4 w-full" />{" "}
-                        {/* Title skeleton line 1 */}
-                        <Skeleton className="h-4 w-4/5" />{" "}
-                        {/* Title skeleton line 2 */}
+                <Card key={item} className="glass-card flex flex-col p-3 sm:p-4">
+                  <CardHeader className="p-0 mb-1.5 sm:mb-2">
+                    <div className="flex items-start mb-1 sm:mb-1.5">
+                      <Skeleton className="h-5 w-5 mr-2 rounded-full" />
+                      <div className="flex-grow space-y-1">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-4/5" />
                       </div>
-                      <Skeleton className="h-4 w-4 ml-2 flex-shrink-0" />{" "}
-                      {/* ExternalLink skeleton */}
+                      <Skeleton className="h-3 w-3 sm:h-4 sm:w-4 ml-2 flex-shrink-0" />
                     </div>
                     <div className="space-y-1 text-xs">
-                      <Skeleton className="h-3 w-1/2" /> {/* Source skeleton */}
-                      <Skeleton className="h-3 w-1/3" /> {/* Date skeleton */}
+                      <Skeleton className="h-3 w-1/2" />
+                      <Skeleton className="h-3 w-1/3" />
                     </div>
                   </CardHeader>
-                  <CardContent className="flex-grow space-y-2">
-                    <Skeleton className="h-3 w-full" />{" "}
-                    {/* Summary skeleton line 1 */}
-                    <Skeleton className="h-3 w-full" />{" "}
-                    {/* Summary skeleton line 2 */}
-                    <Skeleton className="h-3 w-3/4" />{" "}
-                    {/* Summary skeleton line 3 */}
+                  <CardContent className="p-0 flex-grow space-y-1.5 text-xs sm:text-sm">
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-3/4" />
                   </CardContent>
                 </Card>
               ))}
@@ -144,13 +135,13 @@ export function MarketLensSection() {
 
         {error && !isLoading && (
           <Card className="border-destructive bg-destructive/10">
-            <CardContent className="p-6 flex items-center">
-              <AlertTriangle className="h-8 w-8 text-destructive mr-4" />
+            <CardContent className="p-4 sm:p-6 flex items-center">
+              <AlertTriangle className="h-6 w-6 sm:h-8 sm:w-8 text-destructive mr-3 sm:mr-4" />
               <div>
-                <h3 className="font-semibold text-destructive-foreground">
+                <h3 className="font-semibold text-sm sm:text-base text-destructive-foreground">
                   Could not load Market Lens
                 </h3>
-                <p className="text-sm text-destructive-foreground/80">
+                <p className="text-xs sm:text-sm text-destructive-foreground/80">
                   {error}
                 </p>
               </div>
@@ -159,38 +150,38 @@ export function MarketLensSection() {
         )}
 
         {!isLoading && !error && digest && (
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <Card className="glass-card">
-              <CardHeader>
-                <CardTitle className="text-lg sm:text-xl text-primary">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-md sm:text-lg text-primary">
                   Overall Market Sentiment
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-base sm:text-lg text-foreground">
+                <p className="text-sm sm:text-base text-foreground">
                   {digest.overallMarketSentiment}
                 </p>
               </CardContent>
             </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
               {digest.digestedHeadlines.map((item) => (
                 <Card
                   key={item.originalId || item.title}
-                  className="glass-card flex flex-col"
+                  className="glass-card flex flex-col p-3 sm:p-4"
                 >
-                  <CardHeader>
-                    <div className="flex items-start mb-2">
+                  <CardHeader className="p-0 mb-1.5 sm:mb-2">
+                    <div className="flex items-start mb-1 sm:mb-1.5">
                       <TrendIcon
                         sentiment={item.sentiment}
                         trendIcon={item.trendIcon}
                       />
-                      <CardTitle className="text-base sm:text-lg font-headline leading-tight flex-grow">
+                      <CardTitle className="text-sm sm:text-base font-headline leading-snug flex-grow">
                         <Link
                           href={item.originalUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="hover:text-primary transition-colors"
+                          className="hover:text-primary transition-colors line-clamp-3"
                         >
                           {item.title}
                         </Link>
@@ -201,18 +192,18 @@ export function MarketLensSection() {
                         rel="noopener noreferrer"
                         aria-label="Read full article"
                       >
-                        <ExternalLink className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors ml-2 flex-shrink-0" />
+                        <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground hover:text-primary transition-colors ml-2 flex-shrink-0" />
                       </Link>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Source: {item.source} -{" "}
+                      {item.source} -{" "}
                       <time dateTime={item.publishedAt}>
                         {new Date(item.publishedAt).toLocaleDateString()}
                       </time>
                     </p>
                   </CardHeader>
-                  <CardContent className="flex-grow">
-                    <p className="text-sm text-foreground/90">
+                  <CardContent className="p-0 flex-grow">
+                    <p className="text-xs sm:text-sm text-foreground/90 line-clamp-3">
                       {item.aiSummary}
                     </p>
                   </CardContent>
@@ -221,16 +212,15 @@ export function MarketLensSection() {
             </div>
           </div>
         )}
-        {/* Placeholder for Watchlist Feature */}
-        <div className="mt-12 p-6 rounded-lg border border-dashed border-border text-center">
-          <h3 className="font-headline text-lg sm:text-xl font-semibold text-muted-foreground">
+        <div className="mt-8 md:mt-12 p-4 sm:p-6 rounded-lg border border-dashed border-border text-center">
+          <h3 className="font-headline text-md sm:text-lg font-semibold text-muted-foreground">
             My Watchlist
           </h3>
-          <p className="text-sm text-muted-foreground mt-2">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-2">
             Select your favorite sectors or stocks to get a personalized feed.
             (Feature coming soon!)
           </p>
-          <Button variant="outline" className="mt-4" disabled>
+          <Button variant="outline" size="sm" className="mt-3 sm:mt-4 text-xs sm:text-sm" disabled>
             Configure Watchlist
           </Button>
         </div>

@@ -60,16 +60,22 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
   icon: Icon,
   viewAllLink,
 }) => (
-  <div className="flex items-center justify-between mb-6">
+  <div className="flex items-center justify-between mb-4 md:mb-6">
     <div className="flex items-center gap-2">
-      {Icon && <Icon className="h-7 w-7 text-primary" />}
-      <h2 className="font-headline text-2xl sm:text-3xl font-bold">{title}</h2>
+      {Icon && <Icon className="h-6 w-6 md:h-7 md:w-7 text-primary" />}
+      <h2 className="font-headline text-xl sm:text-2xl md:text-3xl font-bold">
+        {title}
+      </h2>
     </div>
     {viewAllLink && (
-      <Button variant="link" asChild className="text-primary hover:underline">
+      <Button
+        variant="link"
+        asChild
+        className="text-primary hover:underline text-sm md:text-base px-1"
+      >
         <Link href={viewAllLink}>
           <span className="inline-flex items-center">
-            View All <ArrowRight className="ml-1 h-4 w-4" />
+            View All <ArrowRight className="ml-1 h-3.5 w-3.5 md:h-4 md:w-4" />
           </span>
         </Link>
       </Button>
@@ -122,16 +128,16 @@ export default async function HomePage() {
       <HomeCategoryTabs />
 
       {topBannerAd && (
-        <section className="py-6 bg-muted/30">
+        <section className="py-4 md:py-6 bg-muted/30">
           <div className="container">
             <AdSlot config={topBannerAd} />
           </div>
         </section>
       )}
 
-      <div className="container py-8 md:py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
+      <div className="container py-6 md:py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="lg:col-span-2 space-y-6 md:space-y-8">
             {featuredPost && (
               <section aria-labelledby="featured-post-title">
                 <h2 id="featured-post-title" className="sr-only">
@@ -147,13 +153,13 @@ export default async function HomePage() {
             )}
 
             {otherPosts.length > 0 && (
-              <section aria-labelledby="latest-posts-title" className="mt-10">
+              <section aria-labelledby="latest-posts-title" className="mt-6 md:mt-8">
                 <SectionTitle
                   title="Latest Insights"
                   icon={Newspaper}
                   viewAllLink="/news"
                 />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                   {otherPosts.map((post, index) => (
                     <BlogPostCard
                       key={post._id || post.id || index.toString()}
@@ -166,15 +172,15 @@ export default async function HomePage() {
             )}
           </div>
 
-          <aside className="lg:col-span-1 space-y-8">
+          <aside className="lg:col-span-1 space-y-6 md:space-y-8">
             <section aria-labelledby="trending-headlines-title">
               <Card className="shadow-lg">
-                <CardHeader>
+                <CardHeader className="pb-3">
                   <div className="flex items-center gap-2">
-                    <Zap className="h-6 w-6 text-primary" />
+                    <Zap className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                     <CardTitle
                       id="trending-headlines-title"
-                      className="font-headline text-xl sm:text-2xl"
+                      className="font-headline text-lg sm:text-xl"
                     >
                       Trending Now
                     </CardTitle>
@@ -194,7 +200,7 @@ export default async function HomePage() {
             {sidebarAd && (
               <section
                 aria-label="Sidebar Advertisement"
-                className="sticky top-28"
+                className="sticky top-20" // Adjust top to account for sticky header + nav
               >
                 <AdSlot config={sidebarAd} />
               </section>
@@ -204,7 +210,7 @@ export default async function HomePage() {
 
         {tradingViewAd && (
           <section className="mt-8 md:mt-12" aria-label="TradingView Chart">
-            <h2 className="font-headline text-xl sm:text-2xl md:text-3xl font-bold text-center mb-6">
+            <h2 className="font-headline text-xl sm:text-2xl md:text-3xl font-bold text-center mb-4 md:mb-6">
               Market Spotlight
             </h2>
             <AdSlot config={tradingViewAd} />
@@ -212,14 +218,14 @@ export default async function HomePage() {
         )}
 
         <section
-          className="animate-slide-in"
+          className="mt-8 md:mt-12 animate-slide-in"
           style={{ animationDelay: "0.5s", animationFillMode: "backwards" }}
         >
           <TrendingTagsSection posts={latestBlogPosts} />
         </section>
 
         <section
-          className="animate-slide-in"
+          className="mt-8 md:mt-12 animate-slide-in"
           style={{ animationDelay: "0.7s", animationFillMode: "backwards" }}
         >
           <PopularReadsSection posts={latestBlogPosts.slice(0, 3)} />
@@ -241,7 +247,7 @@ export default async function HomePage() {
               title="More News & Analysis"
               viewAllLink="/news/all"
             />
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {moreNewsPosts.map((post, index) => (
                 <BlogPostCard
                   key={post._id || post.id || index.toString()}

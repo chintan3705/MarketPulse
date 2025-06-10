@@ -16,7 +16,7 @@ const inter = Inter({
 const spaceGrotesk = SpaceGroteskFont({
   // Renamed import
   subsets: ["latin"],
-  weight: ["500", "700"], // Specify desired weights
+  weight: ["400", "500", "700"], // Added 400 for more flexibility
   display: "swap",
   variable: "--font-space-grotesk", // CSS variable for Tailwind
 });
@@ -66,9 +66,6 @@ export const metadata: Metadata = {
     title: "MarketPulse – Your Daily Lens on the Share Market",
     description:
       "Real-time Share Market News Blog Platform delivering timely updates, financial insights, and stock analysis.",
-    // siteId: 'YourTwitterSiteId', // Optional: Your Twitter Site ID
-    // creator: '@YourTwitterHandle', // Optional: Your Twitter Handle
-    // creatorId: 'YourTwitterCreatorId', // Optional: Your Twitter Creator ID
     images: [`${SITE_URL}/twitter-image.png`], // Needs to be absolute for Twitter
   },
   robots: {
@@ -82,13 +79,12 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  // Add icons and manifest if you have them in /public
-  // icons: {
+  // icons: { // Example, ensure these files exist in /public if uncommented
   //   icon: '/favicon.ico',
   //   shortcut: '/favicon-16x16.png',
   //   apple: '/apple-touch-icon.png',
   // },
-  // manifest: '/site.webmanifest',
+  // manifest: '/site.webmanifest', // Ensure this file exists in /public if uncommented
 };
 
 interface RootLayoutProps {
@@ -99,7 +95,7 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${spaceGrotesk.variable} dark`} // Apply font variables and default to dark
+      className={`${inter.variable} ${spaceGrotesk.variable} light`} // Default to light theme
       suppressHydrationWarning // Suppress warning for theme toggle script
     >
       <head>
@@ -110,24 +106,24 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
               (function() {
                 try {
                   const preference = localStorage.getItem('theme');
-                  if (preference === 'light') {
-                    document.documentElement.classList.remove('dark');
-                    document.documentElement.classList.add('light');
-                  } else {
-                    // Default to dark if no preference or preference is 'dark'
+                  if (preference === 'dark') {
                     document.documentElement.classList.add('dark');
                     document.documentElement.classList.remove('light');
+                  } else {
+                    // Default to light if no preference or preference is 'light'
+                    document.documentElement.classList.add('light');
+                    document.documentElement.classList.remove('dark');
                   }
                 } catch (e) {
-                  // If localStorage is not available (e.g., SSR or restricted environment), default to dark
-                  document.documentElement.classList.add('dark');
+                  // If localStorage is not available, default to light
+                  document.documentElement.classList.add('light');
                 }
               })();
             `,
           }}
         />
       </head>
-      <body className="font-body antialiased flex flex-col min-h-screen bg-background text-foreground">
+      <body className="font-body antialiased flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
         <SmoothScroller />
         {children}
         <Toaster />

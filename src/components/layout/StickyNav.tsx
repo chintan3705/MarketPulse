@@ -13,23 +13,26 @@ interface StickyNavProps {
 export function StickyNav({ categories }: StickyNavProps) {
   const pathname = usePathname();
 
-  // In a real app, this might come from a global state or context if category pages exist
   const currentCategorySlug = pathname.split("/category/")[1]?.split("/")[0];
 
+  if (!categories || categories.length === 0) {
+    return null;
+  }
+
   return (
-    <nav className="sticky top-16 z-30 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/50 shadow-sm">
-      <div className="container px-0 sm:px-auto">
+    <nav className="sticky top-14 z-30 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 shadow-sm">
+      <div className="container px-0 sm:px-4">
         <ScrollArea className="whitespace-nowrap">
-          <div className="flex items-center h-12 space-x-2 sm:space-x-4 px-4">
+          <div className="flex items-center h-11 space-x-1 sm:space-x-2 px-2 sm:px-0">
             {categories.map((category) => (
               <Link
                 key={category.id}
-                href={`/category/${category.slug}`} // Assuming category pages exist at this path
+                href={`/category/${category.slug}`}
                 className={cn(
-                  "px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground whitespace-nowrap",
+                  "px-2.5 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground whitespace-nowrap",
                   currentCategorySlug === category.slug
                     ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
-                    : "text-foreground/80 hover:text-foreground",
+                    : "text-foreground/70 hover:text-foreground/90",
                 )}
               >
                 {category.name}

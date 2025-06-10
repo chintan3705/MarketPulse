@@ -10,22 +10,23 @@ export function HomeCategoryTabs() {
   }
 
   return (
-    <section className="py-8 md:py-12 bg-card border-y">
-      <div className="container">
-        <div className="flex items-center gap-2 mb-6">
-          <Tag className="h-6 w-6 text-primary" />
-          <h2 className="font-headline text-xl sm:text-2xl md:text-3xl font-bold">
+    <section className="py-6 md:py-10 bg-card border-y">
+      <div className="container px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-2 mb-4 md:mb-6">
+          <Tag className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+          <h2 className="font-headline text-lg sm:text-xl md:text-2xl font-bold">
             Browse by Category
           </h2>
         </div>
-        <ScrollArea className="whitespace-nowrap rounded-md">
-          <div className="flex space-x-3 pb-3">
+        <ScrollArea className="whitespace-nowrap rounded-md -mx-4 sm:-mx-0">
+          <div className="flex space-x-2 sm:space-x-3 px-4 sm:px-0 pb-3">
             {categories.map((category) => (
               <Button
                 key={category.id}
                 variant="outline"
+                size="sm"
                 asChild
-                className="shadow-sm hover:shadow-md transition-shadow"
+                className="shadow-sm hover:shadow-md transition-shadow text-xs sm:text-sm"
               >
                 <Link href={`/category/${category.slug}`}>{category.name}</Link>
               </Button>

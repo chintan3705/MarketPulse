@@ -62,10 +62,10 @@ export async function generateMetadata(
   const postOgImage = post.imageUrl
     ? [
         {
-          url: post.imageUrl, // Assuming Cloudinary URL is absolute
+          url: post.imageUrl,
           alt: post.title,
-          width: 800, // Adjust if your Cloudinary images have specific dimensions
-          height: 450,
+          width: 1200, // Standard OG width
+          height: 630, // Standard OG height
         },
       ]
     : previousImages;
@@ -92,14 +92,12 @@ export async function generateMetadata(
       card: "summary_large_image",
       title: post.title,
       description: post.summary,
-      images: postOgImage.map((img) => img.url), // Use the same image URL
+      images: postOgImage.map((img) => img.url),
     },
   };
 }
 
 export async function generateStaticParams() {
-  // For truly static generation, you'd fetch all slugs here.
-  // Returning an empty array means all pages are dynamically rendered or ISR.
   return [];
 }
 
@@ -119,15 +117,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <div
-      className="container py-8 md:py-12 animate-slide-in"
+      className="container py-6 md:py-10 animate-slide-in px-4 sm:px-6 lg:px-8"
       style={{ animationDelay: "0.1s", animationFillMode: "backwards" }}
     >
       <article className="max-w-3xl mx-auto">
-        <header className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <Button variant="outline" asChild size="sm">
-              <Link href="/news" className="text-sm">
-                <ArrowLeft size={16} className="mr-2" />
+        <header className="mb-6 md:mb-8">
+          <div className="flex justify-between items-center mb-3 sm:mb-4">
+            <Button variant="outline" asChild size="sm" className="text-xs sm:text-sm">
+              <Link href="/news">
+                <ArrowLeft size={14} className="mr-1.5" />
                 Back to News
               </Link>
             </Button>
@@ -136,23 +134,24 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               size="sm"
               disabled
               title="Listen to article (Feature coming soon)"
+              className="text-xs sm:text-sm"
             >
-              <Headphones size={16} className="mr-2" />
+              <Headphones size={14} className="mr-1.5" />
               Listen
             </Button>
           </div>
           <Link href={`/category/${post.category.slug}`}>
             <Badge
               variant="secondary"
-              className="mb-2 inline-block hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="mb-2 inline-block hover:bg-accent hover:text-accent-foreground transition-colors text-xs px-2 py-0.5"
             >
               {post.category.name}
             </Badge>
           </Link>
-          <h1 className="font-headline text-3xl md:text-4xl font-bold mb-3 leading-tight">
+          <h1 className="font-headline text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 leading-tight">
             {post.title}
           </h1>
-          <div className="flex flex-wrap items-center text-sm text-muted-foreground gap-x-4 gap-y-1">
+          <div className="flex flex-wrap items-center text-xs sm:text-sm text-muted-foreground gap-x-3 sm:gap-x-4 gap-y-1">
             <div className="flex items-center gap-1">
               {post.isAiGenerated ? (
                 <Bot size={14} className="text-primary" />
@@ -169,14 +168,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </header>
 
         {post.imageUrl && (
-          <div className="relative aspect-video mb-8 rounded-lg overflow-hidden shadow-lg">
+          <div className="relative aspect-video mb-6 md:mb-8 rounded-lg overflow-hidden shadow-lg">
             <Image
               src={post.imageUrl}
               alt={post.title}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 80vw, 768px"
               className="object-cover"
-              priority={true} // Main image on the page, good candidate for LCP
+              priority={true}
               data-ai-hint={post.imageAiHint || "financial news article"}
             />
           </div>
@@ -184,17 +183,17 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {post.content ? (
           <div
-            className="prose prose-lg dark:prose-invert max-w-none"
+            className="prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert max-w-none [&_h3]:font-headline [&_h3]:text-xl [&_h3]:sm:text-2xl [&_h3]:mb-2 [&_h3]:mt-6 [&_p]:mb-4 [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:ml-5"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
         ) : (
-          <p className="text-lg text-muted-foreground">{post.summary}</p>
+          <p className="text-base sm:text-lg text-muted-foreground">{post.summary}</p>
         )}
 
         {post.tags && post.tags.length > 0 && (
-          <div className="mt-8 pt-6 border-t">
-            <h3 className="text-sm font-semibold text-muted-foreground mb-2">
-              TAGS:
+          <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t">
+            <h3 className="text-xs sm:text-sm font-semibold text-muted-foreground mb-2 uppercase tracking-wider">
+              Tags:
             </h3>
             <div className="flex flex-wrap gap-2">
               {post.tags.map((tag) => (
@@ -204,7 +203,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 >
                   <Badge
                     variant="outline"
-                    className="text-xs hover:bg-muted transition-colors"
+                    className="text-xs px-2 py-0.5 hover:bg-muted transition-colors"
                   >
                     # {tag}
                   </Badge>
