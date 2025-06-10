@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -71,9 +72,9 @@ export default function CreateManualBlogPage() {
       title: "",
       summary: "",
       content: "",
-      categorySlug: categories[0]?.slug || "", // Default to first category or empty
+      categorySlug: categories[0]?.slug || "", 
       tags: "",
-      author: "Admin", // Default author
+      author: "Admin", 
       imageUrl: "",
       imageAiHint: "",
     },
@@ -94,7 +95,6 @@ export default function CreateManualBlogPage() {
       };
 
       const response = await fetch(`${SITE_URL}/api/posts`, {
-        // Targeting the general /api/posts for POST
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -117,8 +117,8 @@ export default function CreateManualBlogPage() {
         description: `"${createdPost.title}" has been successfully created.`,
       });
       router.push("/admin/blogs");
-      router.refresh(); // Ensure the admin blogs list is up-to-date
-    } catch (error) {
+      router.refresh(); 
+    } catch (error: unknown) {
       const catchedError = error as Error;
       toast({
         title: "Error creating post",

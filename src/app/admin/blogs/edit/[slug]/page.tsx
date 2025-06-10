@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -27,12 +28,10 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
 import type { BlogPost, Category } from "@/types";
-import { categories } from "@/lib/data"; // Assuming categories are available here
+import { categories } from "@/lib/data"; 
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
-// Schema for editing a blog post
-// Most fields are similar to creation, but some might be treated differently or made optional
 const EditBlogPostSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters long."),
   summary: z.string().min(10, "Summary must be at least 10 characters long."),
@@ -49,9 +48,8 @@ const EditBlogPostSchema = z.object({
     .string()
     .url("Please enter a valid URL.")
     .optional()
-    .or(z.literal("")),
-  imageAiHint: z.string().optional(),
-  // chartType, chartDataJson, detailedInformation could be added here if directly editable
+    .or(z.literal("")).nullable(),
+  imageAiHint: z.string().optional().nullable(),
 });
 
 type EditBlogPostFormValues = z.infer<typeof EditBlogPostSchema>;
@@ -100,7 +98,7 @@ export default function EditBlogPage() {
             imageUrl: postData.imageUrl || "",
             imageAiHint: postData.imageAiHint || "",
           });
-        } catch (error) {
+        } catch (error: unknown) {
           const catchedError = error as Error;
           toast({
             title: "Error fetching post",
@@ -119,10 +117,12 @@ export default function EditBlogPage() {
   const onSubmit: SubmitHandler<EditBlogPostFormValues> = async (data) => {
     setIsSubmitting(true);
     try {
-      const tagsArray = data.tags.split(",").map((tag) => tag.trim());
+      const tagsArray = data.tags.split(",").map((tag) => tag.trim()).filter(tag => tag.length > 0);
       const payload = {
         ...data,
         tags: tagsArray,
+        imageUrl: data.imageUrl || null, // Ensure empty string becomes null if API expects that
+        imageAiHint: data.imageAiHint || null,
       };
 
       const response = await fetch(`${SITE_URL}/api/posts/${slug}`, {
@@ -147,9 +147,9 @@ export default function EditBlogPage() {
         title: "Post Updated!",
         description: `"${updatedPost.title}" has been successfully updated.`,
       });
-      router.push("/admin/blogs"); // Or redirect to the updated post view page
-      router.refresh(); // To ensure the admin blogs list is up-to-date
-    } catch (error) {
+      router.push("/admin/blogs"); 
+      router.refresh(); 
+    } catch (error: unknown) {
       const catchedError = error as Error;
       toast({
         title: "Error updating post",
@@ -293,7 +293,7 @@ export default function EditBlogPage() {
                       Image Preview:
                     </Label>
                     <img
-                      src={form.watch("imageUrl")}
+                      src={form.watch("imageUrl")!}
                       alt="Preview"
                       className="mt-1 rounded-md border max-h-40 object-contain"
                     />

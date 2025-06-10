@@ -1,3 +1,4 @@
+
 import { NextResponse, type NextRequest } from "next/server";
 import connectDB from "@/lib/mongodb";
 import BlogPostModel, { type IMongoBlogPost } from "@/models/BlogPost";
@@ -36,6 +37,7 @@ function transformPost(doc: IMongoBlogPost): BlogPost {
     };
   return {
     _id: doc._id.toString(),
+    id: doc._id.toString(),
     slug: doc.slug,
     title: doc.title,
     summary: doc.summary,
@@ -48,7 +50,7 @@ function transformPost(doc: IMongoBlogPost): BlogPost {
     publishedAt: doc.publishedAt.toISOString(),
     updatedAt: doc.updatedAt
       ? doc.updatedAt.toISOString()
-      : doc.publishedAt.toISOString(), // ADDED updatedAt
+      : doc.publishedAt.toISOString(),
     tags: doc.tags,
     content: doc.content,
     isAiGenerated: doc.isAiGenerated,
@@ -64,9 +66,8 @@ const UpdateBlogPostSchema = z.object({
   content: z.string().min(50).optional(),
   categorySlug: z.string().min(1).optional(),
   tags: z.array(z.string().min(1)).optional(),
-  imageUrl: z.string().url().optional().or(z.literal("")),
-  imageAiHint: z.string().optional(),
-  // chartType, chartDataJson, detailedInformation could be part of an update schema if needed
+  imageUrl: z.string().url().optional().or(z.literal("")).nullable(), // Allow null or empty string
+  imageAiHint: z.string().optional().nullable(),
 });
 
 export async function GET(
@@ -96,12 +97,11 @@ export async function GET(
     const post: BlogPost = transformPost(postDoc);
 
     return NextResponse.json(post, { status: 200 });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(`API Error fetching post with slug ${params.slug}:`, error);
-    const errorMessage =
-      error instanceof Error ? error.message : "An unexpected error occurred.";
+    const catchedError = error as Error;
     return NextResponse.json(
-      { message: "Error fetching blog post.", error: errorMessage },
+      { message: "Error fetching blog post.", error: catchedError.message },
       { status: 500 },
     );
   }
@@ -148,10 +148,11 @@ export async function DELETE(
               `[API DELETE /posts/${slug}] Successfully deleted image from Cloudinary: ${publicId}`,
             );
           }
-        } catch (cloudinaryError) {
+        } catch (cloudinaryError: unknown) {
+          const catchedCloudinaryError = cloudinaryError as Error;
           console.error(
             `[API DELETE /posts/${slug}] Error deleting image from Cloudinary: `,
-            cloudinaryError,
+            catchedCloudinaryError.message,
           );
         }
       } else {
@@ -167,12 +168,11 @@ export async function DELETE(
       { message: `Blog post "${postToDelete.title}" deleted successfully.` },
       { status: 200 },
     );
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(`API Error deleting post with slug ${params.slug}:`, error);
-    const errorMessage =
-      error instanceof Error ? error.message : "An unexpected error occurred.";
+    const catchedError = error as Error;
     return NextResponse.json(
-      { message: "Error deleting blog post.", error: errorMessage },
+      { message: "Error deleting blog post.", error: catchedError.message },
       { status: 500 },
     );
   }
@@ -197,19 +197,21 @@ export async function PUT(
 
     const updateData = validationResult.data;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const finalUpdateData: any = { ...updateData };
-
-    // Handle categoryName update
-    if (updateData.categorySlug) {
-      const categoryDetails = staticCategories.find(
-        (c) => c.slug === updateData.categorySlug,
+    const postBeingUpdated = await BlogPostModel.findOne({ slug: currentSlug });
+    if (!postBeingUpdated) {
+      return NextResponse.json(
+        { message: "Blog post not found for update." },
+        { status: 404 },
       );
-      finalUpdateData.categoryName = categoryDetails?.name || "General";
     }
 
-    // Handle slug regeneration if title changes
-    if (updateData.title) {
+    // Use a type that reflects the fields allowed for $set
+    const updateFields: Partial<Omit<IMongoBlogPost, "_id" | "createdAt">> = {};
+    let hasChanges = false;
+
+    if (updateData.title && updateData.title !== postBeingUpdated.title) {
+      updateFields.title = updateData.title;
+      hasChanges = true;
       let newSlug = updateData.title
         .toLowerCase()
         .replace(/\s+/g, "-")
@@ -219,43 +221,76 @@ export async function PUT(
         .replace(/-+$/, "");
 
       if (newSlug !== currentSlug) {
-        // Check for uniqueness if slug has changed
-        const existingPostWithNewSlug = await BlogPostModel.findOne({
+        const conflictingPost = await BlogPostModel.findOne({
           slug: newSlug,
+          _id: { $ne: postBeingUpdated._id },
         });
-        if (existingPostWithNewSlug) {
-          newSlug = `${newSlug}-${Date.now().toString().slice(-5)}`; // Append a short timestamp hash
+        if (conflictingPost) {
+          newSlug = `${newSlug}-${Date.now().toString().slice(-5)}`;
         }
-        finalUpdateData.slug = newSlug;
+        updateFields.slug = newSlug;
       }
     }
 
-    // Remove undefined fields from finalUpdateData to avoid overriding with null/undefined in MongoDB
-    Object.keys(finalUpdateData).forEach(
-      (key) =>
-        finalUpdateData[key] === undefined && delete finalUpdateData[key],
-    );
+    if (updateData.summary && updateData.summary !== postBeingUpdated.summary) {
+      updateFields.summary = updateData.summary;
+      hasChanges = true;
+    }
+    if (updateData.content && updateData.content !== postBeingUpdated.content) {
+      updateFields.content = updateData.content;
+      hasChanges = true;
+    }
 
-    const updatedPostDoc = await BlogPostModel.findOneAndUpdate(
-      { slug: currentSlug },
-      { $set: finalUpdateData },
+    if (updateData.categorySlug && updateData.categorySlug !== postBeingUpdated.categorySlug) {
+      updateFields.categorySlug = updateData.categorySlug;
+      const categoryDetails = staticCategories.find(
+        (c) => c.slug === updateData.categorySlug,
+      );
+      updateFields.categoryName = categoryDetails?.name || "General";
+      hasChanges = true;
+    }
+
+    if (updateData.tags) {
+      // Simple assignment, or could implement deep array comparison if needed
+      updateFields.tags = updateData.tags;
+      hasChanges = true; // Assume change if tags field is present in payload
+    }
+
+    if (updateData.imageUrl !== undefined && updateData.imageUrl !== postBeingUpdated.imageUrl) {
+      updateFields.imageUrl = updateData.imageUrl === "" || updateData.imageUrl === null ? undefined : updateData.imageUrl;
+      hasChanges = true;
+    }
+    if (updateData.imageAiHint !== undefined && updateData.imageAiHint !== postBeingUpdated.imageAiHint) {
+      updateFields.imageAiHint = updateData.imageAiHint === "" || updateData.imageAiHint === null ? undefined : updateData.imageAiHint;
+      hasChanges = true;
+    }
+
+    if (!hasChanges) {
+      return NextResponse.json(transformPost(postBeingUpdated), { status: 200 });
+    }
+    
+    updateFields.updatedAt = new Date();
+
+    const updatedPostDoc = await BlogPostModel.findByIdAndUpdate(
+      postBeingUpdated._id,
+      { $set: updateFields },
       { new: true, runValidators: true },
     );
 
     if (!updatedPostDoc) {
+      // Should not happen if postBeingUpdated was found, but as a safeguard
       return NextResponse.json(
-        { message: "Blog post not found for update." },
-        { status: 404 },
+        { message: "Failed to update post after finding it." },
+        { status: 500 },
       );
     }
 
     return NextResponse.json(transformPost(updatedPostDoc), { status: 200 });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(`API Error updating post with slug ${params.slug}:`, error);
-    const errorMessage =
-      error instanceof Error ? error.message : "An unexpected error occurred.";
+    const catchedError = error as Error;
     return NextResponse.json(
-      { message: "Error updating blog post.", error: errorMessage },
+      { message: "Error updating blog post.", error: catchedError.message },
       { status: 500 },
     );
   }

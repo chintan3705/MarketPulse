@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -26,7 +27,7 @@ import {
   AlertTriangle,
   PlusCircle,
   FileText,
-} from "lucide-react"; // Added FileText
+} from "lucide-react";
 import { GenerateBlogDialog } from "@/app/admin/blogs/_components/GenerateBlogDialog";
 import { GenerateMultipleBlogsDialog } from "@/app/admin/blogs/_components/GenerateMultipleBlogsDialog";
 import type { BlogPost } from "@/types";
@@ -42,12 +43,11 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"; // Removed AlertDialogTrigger as it's controlled by state
+} from "@/components/ui/alert-dialog";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
 async function fetchAdminPosts(): Promise<BlogPost[]> {
-  // noStore() is not needed for client-side fetch
   try {
     const res = await fetch(`${SITE_URL}/api/posts`, { cache: "no-store" });
     if (!res.ok) {
@@ -57,8 +57,9 @@ async function fetchAdminPosts(): Promise<BlogPost[]> {
     }
     const data = (await res.json()) as { posts: BlogPost[] };
     return data.posts || [];
-  } catch (error) {
-    console.error("Admin: Error fetching posts from API:", error);
+  } catch (error: unknown) {
+    const catchedError = error as Error;
+    console.error("Admin: Error fetching posts from API:", catchedError.message);
     return [];
   }
 }
@@ -80,9 +81,10 @@ export default function AdminBlogsPage() {
     try {
       const fetchedPosts = await fetchAdminPosts();
       setPosts(fetchedPosts);
-    } catch (err) {
-      setError("Failed to load posts. Please try again.");
-      console.error(err);
+    } catch (err: unknown) {
+      const catchedError = err as Error;
+      setError(catchedError.message || "Failed to load posts. Please try again.");
+      console.error(catchedError);
     } finally {
       setIsLoading(false);
     }
@@ -121,7 +123,7 @@ export default function AdminBlogsPage() {
       setPosts((prevPosts) =>
         prevPosts.filter((p) => p.slug !== postToDelete.slug),
       );
-    } catch (err) {
+    } catch (err: unknown) {
       const catchedError = err as Error;
       toast({
         title: "Error Deleting Post",
