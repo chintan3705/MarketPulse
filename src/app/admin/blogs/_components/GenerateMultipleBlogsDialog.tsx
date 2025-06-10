@@ -117,15 +117,11 @@ export function GenerateMultipleBlogsDialog() {
         if (!openState) {
           setSavedPosts([]);
           setError(null);
-          // Reset form fields if needed
-          // setCount(3);
-          // setTopics("");
-          // setSelectedCategorySlug("ai-choose-per-post");
         }
       }}
     >
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline">
+        <Button size="sm" variant="outline" className="w-full sm:w-auto">
           <CopyPlus className="mr-2 h-4 w-4" /> Generate Multiple
         </Button>
       </DialogTrigger>
@@ -136,8 +132,7 @@ export function GenerateMultipleBlogsDialog() {
             Generate Multiple AI Blog Posts
           </DialogTitle>
           <DialogDescription className="text-xs sm:text-sm">
-            Specify the number of posts, optional topics (one per line), and an optional global category.
-            AI will generate posts and save them to the database. Max 10 posts.
+            Specify count, optional topics (one per line), and an optional global category. Max 10 posts.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -160,7 +155,7 @@ export function GenerateMultipleBlogsDialog() {
                 id="topics"
                 value={topics}
                 onChange={(e) => setTopics(e.target.value)}
-                placeholder="e.g., Future of AI in Finance\nImpact of Interest Rates on Stocks"
+                placeholder="e.g., Future of AI in Finance&#x0a;Impact of Interest Rates on Stocks"
                 className="text-sm h-24"
               />
               <p className="text-xs text-muted-foreground">If empty, AI will generate diverse financial topics.</p>
@@ -230,24 +225,26 @@ export function GenerateMultipleBlogsDialog() {
                 <CardTitle className="text-sm sm:text-base">Successfully Generated Posts!</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="space-y-1 text-xs sm:text-sm p-3 sm:p-4 pt-0 max-h-48 overflow-y-auto">
+            <CardContent className="space-y-1.5 text-xs sm:text-sm p-3 sm:p-4 pt-0">
               <p className="mb-2">{savedPosts.length} post(s) processed:</p>
-              <ul className="list-disc list-inside space-y-0.5">
-                {savedPosts.map((post) => (
-                  <li key={post.slug}>
-                    <strong>{post.title}</strong> (
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary hover:underline"
-                    >
-                      View
-                    </Link>
-                    )
-                  </li>
-                ))}
-              </ul>
+              <div className="max-h-48 overflow-y-auto pr-2"> {/* Added scrollable container */}
+                <ul className="list-disc list-inside space-y-0.5">
+                  {savedPosts.map((post) => (
+                    <li key={post.slug}>
+                      <strong>{post.title}</strong> (
+                      <Link
+                        href={`/blog/${post.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        View
+                      </Link>
+                      )
+                    </li>
+                  ))}
+                </ul>
+              </div>
                <Button
                 variant="outline"
                 size="sm"
@@ -255,8 +252,6 @@ export function GenerateMultipleBlogsDialog() {
                 onClick={() => {
                   setSavedPosts([]);
                   setTopics("");
-                  // Optionally reset other fields or close dialog
-                  // setIsOpen(false);
                 }}
               >
                 Generate More
