@@ -71,7 +71,7 @@ export default async function AdminBlogsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
+          <Table className="min-w-[700px]"> {/* Added min-width here */}
             <TableHeader>
               <TableRow>
                 <TableHead>Title</TableHead>
