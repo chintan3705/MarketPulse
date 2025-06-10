@@ -1,6 +1,8 @@
+
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Mail } from "lucide-react";
+import type React from "react";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
@@ -35,13 +37,12 @@ export const metadata: Metadata = {
   },
 };
 
-const SectionTitle = ({
-  title,
-  icon: Icon,
-}: {
+interface SectionTitleProps {
   title: string;
-  icon?: React.ElementType;
-}) => (
+  icon?: React.ComponentType<{ className?: string }>;
+}
+
+const SectionTitle: React.FC<SectionTitleProps> = ({ title, icon: Icon }) => (
   <div className="flex items-center gap-2 mb-6">
     {Icon && <Icon className="h-7 w-7 text-primary" />}
     <h1 className="font-headline text-2xl sm:text-3xl font-bold">{title}</h1>

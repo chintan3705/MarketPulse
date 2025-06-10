@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Input } from "@/components/ui/input";
@@ -5,15 +6,21 @@ import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import React, { useState } from "react";
 // import { useRouter } from 'next/navigation'; // Not used currently
+// import { useToast } from "@/hooks/use-toast"; // Not used currently
 
-export function SearchInput({ className }: { className?: string }) {
-  const [searchTerm, setSearchTerm] = useState("");
-  // const router = useRouter(); // Not used currently
+interface SearchInputProps {
+  className?: string;
+}
 
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+export function SearchInput({ className }: SearchInputProps) {
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  // const router = useRouter();
+  // const { toast } = useToast();
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      // For now, we'll just log. A real implementation would navigate to a search results page.
+      // For now, we'll just log. A real implementation would navigate.
       // router.push(`/search?q=${encodeURIComponent(searchTerm.trim())}`);
       console.log("Searching for:", searchTerm.trim());
       // toast({ title: "Search", description: `Searching for: ${searchTerm.trim()}` });
@@ -30,7 +37,9 @@ export function SearchInput({ className }: { className?: string }) {
         placeholder="Search market insights (e.g. Nifty)"
         className="pr-10 h-10 rounded-md border-input focus:border-primary"
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setSearchTerm(e.target.value)
+        }
         aria-label="Search market insights"
       />
       <Button

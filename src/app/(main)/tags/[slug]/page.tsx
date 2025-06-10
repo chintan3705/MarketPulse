@@ -1,8 +1,10 @@
+
 import type { Metadata, ResolvingMetadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { Tag } from "lucide-react";
 import type { BlogPost } from "@/types";
 import { unstable_noStore as noStore } from "next/cache";
+import type React from "react";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
@@ -56,7 +58,7 @@ export async function generateMetadata(
       type: "website",
       images: [
         {
-          url: `${SITE_URL}/og-image.png`, // Generic OG for tag pages
+          url: `${SITE_URL}/og-image.png`,
           width: 1200,
           height: 630,
           alt: title,
@@ -67,18 +69,17 @@ export async function generateMetadata(
       card: "summary_large_image",
       title: title,
       description: description,
-      images: [`${SITE_URL}/twitter-image.png`], // Generic Twitter image
+      images: [`${SITE_URL}/twitter-image.png`],
     },
   };
 }
 
-const SectionTitle = ({
-  title,
-  icon: Icon,
-}: {
+interface SectionTitleProps {
   title: string;
-  icon?: React.ElementType;
-}) => (
+  icon?: React.ComponentType<{ className?: string }>;
+}
+
+const SectionTitle: React.FC<SectionTitleProps> = ({ title, icon: Icon }) => (
   <div className="flex items-center gap-2 mb-6">
     {Icon && <Icon className="h-7 w-7 text-primary" />}
     <h1 className="font-headline text-2xl sm:text-3xl font-bold capitalize">
@@ -87,8 +88,13 @@ const SectionTitle = ({
   </div>
 );
 
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<{ slug: string }[]> {
   // Dynamically render tag pages as fetching all possible tags might be extensive
+  // Or, fetch all unique tags from your database if you want to pre-render them.
+  // Example:
+  // const allPosts = await fetchAllPosts(); // You'd need a function to get all posts
+  // const allTags = new Set(allPosts.flatMap(post => post.tags.map(tag => tag.toLowerCase().replace(/\s+/g, '-'))));
+  // return Array.from(allTags).map(slug => ({ slug }));
   return [];
 }
 
@@ -107,7 +113,7 @@ export default async function TagPage({ params }: TagPageProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {postsWithTag.map((post, index) => (
             <BlogPostCard
-              key={post._id || post.id || index}
+              key={post._id || post.id || index.toString()}
               post={post}
               orientation="vertical"
             />

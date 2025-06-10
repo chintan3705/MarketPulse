@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { TrendingHeadlineCard } from "@/components/blog/TrendingHeadlineCard";
@@ -14,6 +15,7 @@ import { PopularReadsSection } from "@/components/home/PopularReadsSection";
 import { MarketLensSection } from "@/components/home/MarketLensSection";
 import type { BlogPost } from "@/types";
 import { unstable_noStore as noStore } from "next/cache";
+import type React from "react";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
@@ -32,7 +34,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `${SITE_URL}/og-image.png`, // Ensure this image exists in /public
+        url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
         alt: "MarketPulse Homepage",
@@ -44,18 +46,20 @@ export const metadata: Metadata = {
     title: "MarketPulse – Your Daily Lens on the Share Market",
     description:
       "Get the latest share market news, stock analysis, IPO updates, and financial insights.",
-    images: [`${SITE_URL}/twitter-image.png`], // Ensure this image exists in /public
+    images: [`${SITE_URL}/twitter-image.png`],
   },
 };
 
-const SectionTitle = ({
+interface SectionTitleProps {
+  title: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  viewAllLink?: string;
+}
+
+const SectionTitle: React.FC<SectionTitleProps> = ({
   title,
   icon: Icon,
   viewAllLink,
-}: {
-  title: string;
-  icon?: React.ElementType;
-  viewAllLink?: string;
 }) => (
   <div className="flex items-center justify-between mb-6">
     <div className="flex items-center gap-2">
@@ -138,7 +142,7 @@ export default async function HomePage() {
                   post={featuredPost}
                   orientation="vertical"
                   className="shadow-lg"
-                  priority={true} // Featured post is LCP candidate
+                  priority={true}
                 />
               </section>
             )}
@@ -153,7 +157,7 @@ export default async function HomePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {otherPosts.map((post, index) => (
                     <BlogPostCard
-                      key={post._id || post.id || index}
+                      key={post._id || post.id || index.toString()}
                       post={post}
                       orientation="vertical"
                     />
@@ -240,7 +244,10 @@ export default async function HomePage() {
             />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {moreNewsPosts.map((post, index) => (
-                <BlogPostCard key={post._id || post.id || index} post={post} />
+                <BlogPostCard
+                  key={post._id || post.id || index.toString()}
+                  post={post}
+                />
               ))}
             </div>
           </section>

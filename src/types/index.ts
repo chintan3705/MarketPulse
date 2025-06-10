@@ -1,3 +1,4 @@
+
 export interface NavItem {
   label: string;
   href: string;
@@ -11,20 +12,20 @@ export interface Category {
 }
 
 export interface BlogPost {
-  _id?: string;
-  id?: string; // Kept for potential compatibility, but _id is primary for DB
+  _id?: string; // From MongoDB
+  id?: string; // Kept for potential frontend compatibility, maps to _id
   slug: string;
   title: string;
   summary: string;
   imageUrl?: string;
   imageAiHint?: string;
-  category: Category; // This will be populated by API based on categorySlug
+  category: Category; // Populated by API based on categorySlug
   categorySlug: string; // Stored in DB
-  categoryName: string; // Stored in DB
+  categoryName: string; // Stored in DB for convenience
   author: string;
   publishedAt: string; // ISO date string
   tags: string[];
-  content?: string;
+  content?: string; // Full HTML content
   isAiGenerated?: boolean;
 }
 
@@ -48,11 +49,11 @@ export interface TradingViewWidgetConfig {
 export interface AdConfig {
   id: string;
   type: "image" | "script" | "tradingview-widget";
-  src?: string;
-  tradingViewWidgetConfig?: TradingViewWidgetConfig;
+  src?: string; // For image type
+  tradingViewWidgetConfig?: TradingViewWidgetConfig; // For TradingView widget type
   altText?: string;
   width?: number | string;
   height?: number | string;
   className?: string;
-  imageAiHint?: string;
+  imageAiHint?: string; // For image type, used in data-ai-hint
 }

@@ -1,13 +1,17 @@
+
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Flame } from "lucide-react";
 import type { BlogPost } from "@/types";
+import type React from "react";
 
 interface TrendingTagsSectionProps {
-  posts: BlogPost[]; // Pass posts to derive tags
+  posts: BlogPost[];
 }
 
-export function TrendingTagsSection({ posts }: TrendingTagsSectionProps) {
+export const TrendingTagsSection: React.FC<TrendingTagsSectionProps> = ({
+  posts,
+}) => {
   if (!posts || posts.length === 0) {
     return (
       <section className="py-8 md:py-12">
@@ -26,13 +30,13 @@ export function TrendingTagsSection({ posts }: TrendingTagsSectionProps) {
     );
   }
 
-  const allTags = posts.flatMap((post) => post.tags);
+  const allTags: string[] = posts.flatMap((post) => post.tags);
   const tagCounts: { [key: string]: number } = {};
-  allTags.forEach((tag) => {
+  allTags.forEach((tag: string) => {
     tagCounts[tag] = (tagCounts[tag] || 0) + 1;
   });
 
-  const trendingTags = Object.entries(tagCounts)
+  const trendingTags: string[] = Object.entries(tagCounts)
     .sort(([, countA], [, countB]) => countB - countA)
     .slice(0, 8)
     .map(([tag]) => tag);
@@ -55,7 +59,8 @@ export function TrendingTagsSection({ posts }: TrendingTagsSectionProps) {
     );
   }
 
-  const createTagSlug = (tag: string) => tag.toLowerCase().replace(/\s+/g, "-");
+  const createTagSlug = (tag: string): string =>
+    tag.toLowerCase().replace(/\s+/g, "-");
 
   return (
     <section className="py-8 md:py-12">
@@ -67,7 +72,7 @@ export function TrendingTagsSection({ posts }: TrendingTagsSectionProps) {
           </h2>
         </div>
         <div className="flex flex-wrap gap-3">
-          {trendingTags.map((tag) => (
+          {trendingTags.map((tag: string) => (
             <Link key={tag} href={`/tags/${createTagSlug(tag)}`}>
               <Badge
                 variant="secondary"
@@ -81,4 +86,4 @@ export function TrendingTagsSection({ posts }: TrendingTagsSectionProps) {
       </div>
     </section>
   );
-}
+};

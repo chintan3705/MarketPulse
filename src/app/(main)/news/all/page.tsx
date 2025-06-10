@@ -1,8 +1,10 @@
+
 import type { Metadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { Newspaper } from "lucide-react";
 import type { BlogPost } from "@/types";
 import { unstable_noStore as noStore } from "next/cache";
+import type React from "react";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
@@ -37,13 +39,12 @@ export const metadata: Metadata = {
   },
 };
 
-const SectionTitle = ({
-  title,
-  icon: Icon,
-}: {
+interface SectionTitleProps {
   title: string;
-  icon?: React.ElementType;
-}) => (
+  icon?: React.ComponentType<{ className?: string }>;
+}
+
+const SectionTitle: React.FC<SectionTitleProps> = ({ title, icon: Icon }) => (
   <div className="flex items-center gap-2 mb-6">
     {Icon && <Icon className="h-7 w-7 text-primary" />}
     <h1 className="font-headline text-2xl sm:text-3xl font-bold">{title}</h1>
@@ -81,7 +82,7 @@ export default async function AllNewsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {allPosts.map((post, index) => (
             <BlogPostCard
-              key={post._id || post.id || index}
+              key={post._id || post.id || index.toString()}
               post={post}
               orientation="vertical"
             />

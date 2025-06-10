@@ -1,17 +1,19 @@
+
 import Link from "next/link";
 import type { TrendingHeadline } from "@/types";
 import { TrendingUp, TrendingDown, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type React from "react";
 
 interface TrendingHeadlineCardProps {
   headline: TrendingHeadline;
   className?: string;
 }
 
-export function TrendingHeadlineCard({
+export const TrendingHeadlineCard: React.FC<TrendingHeadlineCardProps> = ({
   headline,
   className,
-}: TrendingHeadlineCardProps) {
+}) => {
   const timeSince = (dateString: string): string => {
     const date = new Date(dateString);
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
@@ -65,4 +67,4 @@ export function TrendingHeadlineCard({
       </Link>
     </div>
   );
-}
+};

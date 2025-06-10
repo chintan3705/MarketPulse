@@ -1,3 +1,4 @@
+
 import type { Metadata, ResolvingMetadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { categories } from "@/lib/data";
@@ -5,6 +6,7 @@ import { LayoutGrid } from "lucide-react";
 import { notFound } from "next/navigation";
 import type { BlogPost } from "@/types";
 import { unstable_noStore as noStore } from "next/cache";
+import type React from "react";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
@@ -42,7 +44,7 @@ async function fetchPostsByCategory(categorySlug: string): Promise<BlogPost[]> {
 
 export async function generateMetadata(
   { params }: CategoryPageProps,
-  _parent: ResolvingMetadata,
+  _parent: ResolvingMetadata, // parent can be used to access parent metadata
 ): Promise<Metadata> {
   const slug = params.slug;
   const category = categories.find((cat) => cat.slug === slug);
@@ -86,13 +88,12 @@ export async function generateMetadata(
   };
 }
 
-const SectionTitle = ({
-  title,
-  icon: Icon,
-}: {
+interface SectionTitleProps {
   title: string;
-  icon?: React.ElementType;
-}) => (
+  icon?: React.ComponentType<{ className?: string }>;
+}
+
+const SectionTitle: React.FC<SectionTitleProps> = ({ title, icon: Icon }) => (
   <div className="flex items-center gap-2 mb-6">
     {Icon && <Icon className="h-7 w-7 text-primary" />}
     <h1 className="font-headline text-2xl sm:text-3xl font-bold capitalize">
@@ -101,7 +102,7 @@ const SectionTitle = ({
   </div>
 );
 
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<{ slug: string }[]> {
   return categories.map((category) => ({
     slug: category.slug,
   }));
@@ -130,7 +131,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {postsInCategory.map((post, index) => (
             <BlogPostCard
-              key={post._id || post.id || index}
+              key={post._id || post.id || index.toString()} // Ensure key is a string
               post={post}
               orientation="vertical"
             />

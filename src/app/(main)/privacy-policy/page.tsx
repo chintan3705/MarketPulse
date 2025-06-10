@@ -1,46 +1,27 @@
-import type { Metadata } from "next";
+
+"use client"; // Required for useEffect and useState
+
+import type { Metadata } from "next"; // Note: Metadata from "next" is for static export, client effects won't change it after build.
 import { ShieldCheck } from "lucide-react";
+import React, { useState, useEffect } from "react";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
+// const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
+// Static metadata:
+// export const metadata: Metadata = {
+//   title: "Privacy Policy | MarketPulse",
+//   description: "Read the MarketPulse Privacy Policy to understand how we collect, use, and protect your personal data when you use our financial news service.",
+//   alternates: {
+//     canonical: `${SITE_URL}/privacy-policy`,
+//   },
+//   // ... other static metadata
+// };
 
-export const metadata: Metadata = {
-  title: "Privacy Policy | MarketPulse",
-  description:
-    "Read the MarketPulse Privacy Policy to understand how we collect, use, and protect your personal data when you use our financial news service.",
-  alternates: {
-    canonical: `${SITE_URL}/privacy-policy`,
-  },
-  openGraph: {
-    title: "Privacy Policy | MarketPulse",
-    description:
-      "Understand how MarketPulse collects, uses, and protects your personal data.",
-    url: `${SITE_URL}/privacy-policy`,
-    type: "website",
-    images: [
-      {
-        url: `${SITE_URL}/og-image.png`,
-        width: 1200,
-        height: 630,
-        alt: "MarketPulse Privacy Policy",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Privacy Policy | MarketPulse",
-    description:
-      "Understand how MarketPulse collects, uses, and protects your personal data.",
-    images: [`${SITE_URL}/twitter-image.png`],
-  },
-};
-
-const SectionTitle = ({
-  title,
-  icon: Icon,
-}: {
+interface SectionTitleProps {
   title: string;
-  icon?: React.ElementType;
-}) => (
+  icon?: React.ComponentType<{ className?: string }>;
+}
+
+const SectionTitle: React.FC<SectionTitleProps> = ({ title, icon: Icon }) => (
   <div className="flex items-center gap-2 mb-6">
     {Icon && <Icon className="h-7 w-7 text-primary" />}
     <h1 className="font-headline text-2xl sm:text-3xl font-bold">{title}</h1>
@@ -48,9 +29,10 @@ const SectionTitle = ({
 );
 
 export default function PrivacyPolicyPage() {
-  const [lastUpdatedDate, setLastUpdatedDate] = React.useState("");
+  const [lastUpdatedDate, setLastUpdatedDate] = useState<string>("");
 
-  React.useEffect(() => {
+  useEffect(() => {
+    // This effect runs only on the client after hydration
     setLastUpdatedDate(
       new Date().toLocaleDateString("en-US", {
         year: "numeric",
@@ -58,7 +40,11 @@ export default function PrivacyPolicyPage() {
         day: "numeric",
       }),
     );
-  }, []);
+  }, []); // Empty dependency array ensures this runs once on mount
+
+  // If you need dynamic metadata based on client-side state, it's more complex and usually involves
+  // setting document.title directly, but for SEO, server-rendered metadata is preferred.
+  // The static metadata object at the top level of the file is standard.
 
   return (
     <div
@@ -259,3 +245,38 @@ export default function PrivacyPolicyPage() {
     </div>
   );
 }
+
+// It's generally better to define static metadata at the top-level of the file.
+// If dynamic metadata is needed (e.g., based on fetched data), use generateMetadata.
+// For this page, static metadata is sufficient.
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
+export const metadata: Metadata = {
+  title: "Privacy Policy | MarketPulse",
+  description:
+    "Read the MarketPulse Privacy Policy to understand how we collect, use, and protect your personal data when you use our financial news service.",
+  alternates: {
+    canonical: `${SITE_URL}/privacy-policy`,
+  },
+  openGraph: {
+    title: "Privacy Policy | MarketPulse",
+    description:
+      "Understand how MarketPulse collects, uses, and protects your personal data.",
+    url: `${SITE_URL}/privacy-policy`,
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "MarketPulse Privacy Policy",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Privacy Policy | MarketPulse",
+    description:
+      "Understand how MarketPulse collects, uses, and protects your personal data.",
+    images: [`${SITE_URL}/twitter-image.png`],
+  },
+};

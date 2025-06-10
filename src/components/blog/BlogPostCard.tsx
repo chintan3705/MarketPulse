@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import Image from "next/image";
 import type { BlogPost } from "@/types";
@@ -58,7 +59,7 @@ export function BlogPostCard({
           <Link href={`/blog/${post.slug}`} aria-label={post.title}>
             <Image
               src={post.imageUrl}
-              alt={post.title} // Use post title for alt text
+              alt={post.title}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -70,14 +71,14 @@ export function BlogPostCard({
       )}
       <div
         className={cn("flex flex-col flex-grow", {
-          "p-0": orientation === "horizontal", // No padding for horizontal card wrapper div
-          "p-4 md:p-6": orientation === "vertical", // Padding for vertical card content area
+          "p-0": orientation === "horizontal",
+          "p-4 md:p-6": orientation === "vertical",
         })}
       >
         <CardHeader
           className={cn("pb-2", {
-            "p-4 md:p-6 pb-2": orientation === "horizontal", // Specific padding for horizontal header
-            "p-0": orientation === "vertical", // No extra padding for vertical header, handled by parent
+            "p-4 md:p-6 pb-2": orientation === "horizontal",
+            "p-0": orientation === "vertical",
           })}
         >
           <Link href={`/category/${post.category.slug}`}>
@@ -132,11 +133,11 @@ export function BlogPostCard({
         {post.tags && post.tags.length > 0 && orientation === "vertical" && (
           <div
             className={cn("pt-2", {
-              "px-0": orientation === "vertical", // No extra padding if parent already has it
+              "px-0": orientation === "vertical",
             })}
           >
             <div className="flex flex-wrap gap-2">
-              {post.tags.slice(0, 3).map((tag) => (
+              {post.tags.slice(0, 3).map((tag: string) => (
                 <Link key={tag} href={`/tags/${createTagSlug(tag)}`}>
                   <Badge
                     variant="outline"

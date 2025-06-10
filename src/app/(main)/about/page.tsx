@@ -1,5 +1,7 @@
+
 import type { Metadata } from "next";
 import { Info } from "lucide-react";
+import type React from "react";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
@@ -18,7 +20,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `${SITE_URL}/og-image.png`, // Replace with your actual OG image URL
+        url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
         alt: "MarketPulse - About Us",
@@ -30,17 +32,16 @@ export const metadata: Metadata = {
     title: "About MarketPulse",
     description:
       "Learn more about MarketPulse, our mission, and our dedication to providing timely financial insights.",
-    images: [`${SITE_URL}/twitter-image.png`], // Replace with your actual Twitter image URL
+    images: [`${SITE_URL}/twitter-image.png`],
   },
 };
 
-const SectionTitle = ({
-  title,
-  icon: Icon,
-}: {
+interface SectionTitleProps {
   title: string;
-  icon?: React.ElementType;
-}) => (
+  icon?: React.ComponentType<{ className?: string }>;
+}
+
+const SectionTitle: React.FC<SectionTitleProps> = ({ title, icon: Icon }) => (
   <div className="flex items-center gap-2 mb-6">
     {Icon && <Icon className="h-7 w-7 text-primary" />}
     <h1 className="font-headline text-2xl sm:text-3xl font-bold">{title}</h1>

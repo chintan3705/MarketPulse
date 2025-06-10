@@ -1,47 +1,23 @@
-import type { Metadata } from "next";
+
+"use client"; // Required for useEffect and useState
+
+import type { Metadata } from "next"; // For static metadata
 import { FileText } from "lucide-react";
-import React from "react"; // Import React for useEffect and useState
+import React, { useState, useEffect } from "react";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
+// Static metadata:
+// const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
+// export const metadata: Metadata = {
+//   title: "Terms of Service | MarketPulse",
+//   // ... other static metadata
+// };
 
-export const metadata: Metadata = {
-  title: "Terms of Service | MarketPulse",
-  description:
-    "Read the MarketPulse Terms of Service. Understand the rules and guidelines for using our financial news and analysis platform.",
-  alternates: {
-    canonical: `${SITE_URL}/terms-of-service`,
-  },
-  openGraph: {
-    title: "Terms of Service | MarketPulse",
-    description:
-      "Understand the rules and guidelines for using the MarketPulse platform.",
-    url: `${SITE_URL}/terms-of-service`,
-    type: "website",
-    images: [
-      {
-        url: `${SITE_URL}/og-image.png`,
-        width: 1200,
-        height: 630,
-        alt: "MarketPulse Terms of Service",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Terms of Service | MarketPulse",
-    description:
-      "Understand the rules and guidelines for using the MarketPulse platform.",
-    images: [`${SITE_URL}/twitter-image.png`],
-  },
-};
-
-const SectionTitle = ({
-  title,
-  icon: Icon,
-}: {
+interface SectionTitleProps {
   title: string;
-  icon?: React.ElementType;
-}) => (
+  icon?: React.ComponentType<{ className?: string }>;
+}
+
+const SectionTitle: React.FC<SectionTitleProps> = ({ title, icon: Icon }) => (
   <div className="flex items-center gap-2 mb-6">
     {Icon && <Icon className="h-7 w-7 text-primary" />}
     <h1 className="font-headline text-2xl sm:text-3xl font-bold">{title}</h1>
@@ -49,9 +25,10 @@ const SectionTitle = ({
 );
 
 export default function TermsOfServicePage() {
-  const [lastUpdatedDate, setLastUpdatedDate] = React.useState("");
+  const [lastUpdatedDate, setLastUpdatedDate] = useState<string>("");
 
-  React.useEffect(() => {
+  useEffect(() => {
+    // This effect runs only on the client after hydration
     setLastUpdatedDate(
       new Date().toLocaleDateString("en-US", {
         year: "numeric",
@@ -59,7 +36,7 @@ export default function TermsOfServicePage() {
         day: "numeric",
       }),
     );
-  }, []);
+  }, []); // Empty dependency array ensures this runs once on mount
 
   return (
     <div
@@ -362,3 +339,36 @@ export default function TermsOfServicePage() {
     </div>
   );
 }
+
+// Static metadata defined at the top-level
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
+export const metadata: Metadata = {
+  title: "Terms of Service | MarketPulse",
+  description:
+    "Read the MarketPulse Terms of Service. Understand the rules and guidelines for using our financial news and analysis platform.",
+  alternates: {
+    canonical: `${SITE_URL}/terms-of-service`,
+  },
+  openGraph: {
+    title: "Terms of Service | MarketPulse",
+    description:
+      "Understand the rules and guidelines for using the MarketPulse platform.",
+    url: `${SITE_URL}/terms-of-service`,
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "MarketPulse Terms of Service",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Terms of Service | MarketPulse",
+    description:
+      "Understand the rules and guidelines for using the MarketPulse platform.",
+    images: [`${SITE_URL}/twitter-image.png`],
+  },
+};

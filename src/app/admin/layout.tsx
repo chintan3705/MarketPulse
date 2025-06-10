@@ -1,21 +1,25 @@
+
 "use client"; // Required for usePathname
 
 import Link from "next/link";
 import { Logo } from "@/components/common/Logo";
 import { Home, Newspaper, Settings, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation"; // Import usePathname
+import { usePathname } from "next/navigation";
+import type React from "react"; // Import React for types
 
-const AdminNavItem = ({
+interface AdminNavItemProps {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>; // More specific type for Lucide icons
+  currentPath: string;
+}
+
+const AdminNavItem: React.FC<AdminNavItemProps> = ({
   href,
   label,
   icon: Icon,
   currentPath,
-}: {
-  href: string;
-  label: string;
-  icon: React.ElementType;
-  currentPath: string;
 }) => {
   const isActive =
     currentPath === href || (href !== "/admin" && currentPath.startsWith(href));
@@ -33,12 +37,12 @@ const AdminNavItem = ({
   );
 };
 
-export default function AdminLayout({
-  children,
-}: {
+interface AdminLayoutProps {
   children: React.ReactNode;
-}) {
-  const currentPath = usePathname(); // Get current path using the hook
+}
+
+export default function AdminLayout({ children }: AdminLayoutProps) {
+  const currentPath = usePathname();
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -61,7 +65,6 @@ export default function AdminLayout({
                 icon={Newspaper}
                 currentPath={currentPath}
               />
-              {/* Add more admin navigation items here */}
               <AdminNavItem
                 href="/admin/settings"
                 label="Settings"
@@ -71,7 +74,6 @@ export default function AdminLayout({
             </nav>
           </div>
           <div className="mt-auto p-4">
-            {/* Can add footer content here like logout button */}
             <Link
               href="/"
               className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary"
@@ -83,7 +85,6 @@ export default function AdminLayout({
       </div>
       <div className="flex flex-col">
         <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6 md:hidden">
-          {/* Mobile header: Could include a Sheet for nav, and a simpler Logo */}
           <Logo className="text-lg" />
           {/* Add mobile nav trigger here if needed */}
         </header>

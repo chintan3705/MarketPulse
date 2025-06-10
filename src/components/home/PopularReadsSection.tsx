@@ -1,12 +1,16 @@
+
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { Star } from "lucide-react";
 import type { BlogPost } from "@/types";
+import type React from "react";
 
 interface PopularReadsSectionProps {
   posts: BlogPost[];
 }
 
-export function PopularReadsSection({ posts }: PopularReadsSectionProps) {
+export const PopularReadsSection: React.FC<PopularReadsSectionProps> = ({
+  posts,
+}) => {
   if (!posts || posts.length === 0) {
     return (
       <section className="py-8 md:py-12 bg-muted/30">
@@ -47,4 +51,4 @@ export function PopularReadsSection({ posts }: PopularReadsSectionProps) {
       </div>
     </section>
   );
-}
+};
