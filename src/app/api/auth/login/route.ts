@@ -15,83 +15,122 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
 
 if (!JWT_SECRET) {
-  throw new Error('JWT_SECRET is not defined in environment variables.');
+  // This is critical and will cause a server-level error if JWT_SECRET is not set
+  // when the module is loaded. This often results in an HTML error page.
+  console.error("❌ FATAL: JWT_SECRET is not defined in /api/auth/login/route.ts. Ensure it's in your .env file and the server is restarted.");
+  throw new Error('Server configuration error: JWT_SECRET is missing.');
 }
 
 export async function POST(request: NextRequest) {
+  console.log("✅ [API Login] Received POST request."); // Entry log
   try {
+    console.log("  [API Login] Attempting to connect to DB...");
     await connectDB();
+    console.log("  [API Login] DB Connected. Parsing request body...");
     const body = await request.json();
+    console.log("  [API Login] Request body parsed:", body);
 
     const validationResult = LoginSchema.safeParse(body);
     if (!validationResult.success) {
+      console.warn("  [API Login] Input validation failed:", validationResult.error.format());
       return NextResponse.json(
         { message: 'Invalid input.', errors: validationResult.error.format() },
         { status: 400 },
       );
     }
+    console.log("  [API Login] Input validated.");
 
     const { email, password } = validationResult.data;
+    console.log(`  [API Login] Attempting to find user: ${email}`);
 
     const user = await UserModel.findOne({ email }).select('+password');
     if (!user) {
+      console.warn(`  [API Login] User not found: ${email}`);
       return NextResponse.json(
         { message: 'Invalid email or password.' },
         { status: 401 },
       );
     }
+    console.log(`  [API Login] User found: ${email}, Role: ${user.role}`);
 
+    if (!user.password) {
+        console.error(`  [API Login] User ${email} found but has no password hash in DB.`);
+        return NextResponse.json(
+            { message: 'Authentication error. Critical: User record incomplete.' },
+            { status: 500 },
+        );
+    }
+
+    console.log(`  [API Login] Comparing password for user: ${email}`);
     const isPasswordMatch = await user.comparePassword(password);
     if (!isPasswordMatch) {
+      console.warn(`  [API Login] Password mismatch for user: ${email}`);
       return NextResponse.json(
         { message: 'Invalid email or password.' },
         { status: 401 },
       );
     }
+    console.log(`  [API Login] Password matched for user: ${email}`);
 
     if (user.role !== 'admin') {
+       console.warn(`  [API Login] Non-admin user login attempt: ${email}, Role: ${user.role}`);
        return NextResponse.json(
         { message: 'Access denied. Not an admin user.' },
         { status: 403 }, // Forbidden
       );
     }
+    console.log(`  [API Login] Admin user verified: ${email}`);
 
     const tokenPayload = {
       userId: user._id.toString(),
       email: user.email,
       role: user.role,
     };
+    console.log("  [API Login] Token payload created:", tokenPayload);
+    // Log length for security, not the secret itself. A length of 0 or undefined would be an issue.
+    console.log("  [API Login] JWT_SECRET used for signing (length check):", JWT_SECRET?.length || 0);
+
 
     const token = jwt.sign(tokenPayload, JWT_SECRET, {
       expiresIn: JWT_EXPIRES_IN,
     });
+    console.log("  [API Login] JWT signed successfully.");
 
     const cookieStore = cookies();
+    console.log("  [API Login] Setting auth cookie...");
+    let maxAgeSeconds = 24 * 60 * 60; // Default to 1 day
+    if (JWT_EXPIRES_IN === '7d') {
+      maxAgeSeconds = 7 * 24 * 60 * 60;
+    } else if (typeof JWT_EXPIRES_IN === 'string' && JWT_EXPIRES_IN.endsWith('h')) {
+      maxAgeSeconds = parseInt(JWT_EXPIRES_IN, 10) * 60 * 60;
+    } // Add more parsing if other formats for JWT_EXPIRES_IN are used
+
     cookieStore.set('marketpulse_auth_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: JWT_EXPIRES_IN === '1d' ? 24 * 60 * 60 : 7 * 24 * 60 * 60, // 1 day or 7 days in seconds
+      maxAge: maxAgeSeconds,
     });
+    console.log("  [API Login] Auth cookie set.");
     
-    // Do not return password
     const userResponse = {
       _id: user._id,
       email: user.email,
       role: user.role,
     };
 
+    console.log("✅ [API Login] Login successful. Sending response.");
     return NextResponse.json(
       { message: 'Login successful.', user: userResponse },
       { status: 200 },
     );
   } catch (error) {
-    console.error('Login API Error:', error);
+    console.error("❌ [API Login] Error in POST handler:", error);
     const errorMessage =
-      error instanceof Error ? error.message : 'An unexpected error occurred.';
+      error instanceof Error ? error.message : 'An unexpected error occurred during login.';
     return NextResponse.json(
-      { message: 'Error during login.', error: errorMessage },
+      { message: 'Login failed due to a server error.', error: errorMessage },
       { status: 500 },
     );
   }
