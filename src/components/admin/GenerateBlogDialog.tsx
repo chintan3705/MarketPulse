@@ -86,7 +86,13 @@ export function GenerateBlogDialog() {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({ topic, categorySlug: selectedCategorySlug === "ai-choose" ? undefined : selectedCategorySlug }),
+        body: JSON.stringify({
+          topic,
+          categorySlug:
+            selectedCategorySlug === "ai-choose"
+              ? undefined
+              : selectedCategorySlug,
+        }),
       });
 
       if (!response.ok) {
@@ -209,7 +215,11 @@ export function GenerateBlogDialog() {
                     Let AI choose category
                   </SelectItem>
                   {categories.map((category) => (
-                    <SelectItem key={category.slug} value={category.slug} className="text-sm">
+                    <SelectItem
+                      key={category.slug}
+                      value={category.slug}
+                      className="text-sm"
+                    >
                       {category.name}
                     </SelectItem>
                   ))}
@@ -219,11 +229,20 @@ export function GenerateBlogDialog() {
           </div>
           <DialogFooter className="mt-4 sm:mt-6">
             <DialogClose asChild>
-              <Button type="button" variant="outline" disabled={isLoading} size="sm">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isLoading}
+                size="sm"
+              >
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={isLoading || !topic.trim()} size="sm">
+            <Button
+              type="submit"
+              disabled={isLoading || !topic.trim()}
+              size="sm"
+            >
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
@@ -245,7 +264,9 @@ export function GenerateBlogDialog() {
               </div>
             </CardHeader>
             <CardContent className="p-3 sm:p-4 pt-0">
-              <p className="text-xs sm:text-sm text-destructive-foreground">{error}</p>
+              <p className="text-xs sm:text-sm text-destructive-foreground">
+                {error}
+              </p>
             </CardContent>
           </Card>
         )}

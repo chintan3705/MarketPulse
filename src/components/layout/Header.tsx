@@ -73,7 +73,7 @@ export function Header() {
         </div>
 
         <div className="md:hidden flex items-center ml-auto space-x-1">
-           {/* Search input for mobile can be triggered by an icon if needed */}
+          {/* Search input for mobile can be triggered by an icon if needed */}
           <Link href="/admin" passHref>
             <Button
               variant="ghost"
@@ -86,11 +86,19 @@ export function Header() {
           </Link>
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Open menu" className="text-foreground/80 hover:text-primary">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Open menu"
+                className="text-foreground/80 hover:text-primary"
+              >
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-full max-w-xs sm:max-w-sm p-0">
+            <SheetContent
+              side="right"
+              className="w-full max-w-xs sm:max-w-sm p-0"
+            >
               <div className="flex flex-col h-full">
                 <SheetHeader className="p-4 border-b">
                   <div className="flex items-center justify-between">
@@ -140,8 +148,11 @@ export function Header() {
                     Admin Panel
                   </Link>
                 </nav>
-                 <div className="p-4 mt-auto border-t">
-                    <ThemeToggle /> <span className="ml-2 text-sm text-muted-foreground">Toggle Theme</span>
+                <div className="p-4 mt-auto border-t">
+                  <ThemeToggle />{" "}
+                  <span className="ml-2 text-sm text-muted-foreground">
+                    Toggle Theme
+                  </span>
                 </div>
               </div>
             </SheetContent>

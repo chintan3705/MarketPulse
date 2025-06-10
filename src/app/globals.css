@@ -44,7 +44,7 @@ body {
 
     /* Specific colors for financial theme */
     --gain: 145 63% 42%; /* Green for gains */
-    --loss: 0 75% 60%;  /* Red for losses */
+    --loss: 0 75% 60%; /* Red for losses */
 
     /* Sidebar variables for light theme */
     --sidebar-background: 0 0% 98%; /* Slightly off-white for admin sidebar */

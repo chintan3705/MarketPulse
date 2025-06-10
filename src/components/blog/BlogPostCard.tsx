@@ -51,8 +51,10 @@ export function BlogPostCard({
         <div
           className={cn(
             "relative w-full shrink-0",
-            orientation === "vertical" ? "aspect-video" : "md:aspect-auto md:w-1/3 lg:w-2/5 md:h-full",
-             !post.imageUrl && "hidden" // Hide if no image
+            orientation === "vertical"
+              ? "aspect-video"
+              : "md:aspect-auto md:w-1/3 lg:w-2/5 md:h-full",
+            !post.imageUrl && "hidden", // Hide if no image
           )}
         >
           <Link href={`/blog/${post.slug}`} aria-label={post.title}>
@@ -108,7 +110,9 @@ export function BlogPostCard({
             ) : (
               <UserCircle size={12} />
             )}
-            <span className="truncate max-w-[100px] sm:max-w-none">{post.author}</span>
+            <span className="truncate max-w-[100px] sm:max-w-none">
+              {post.author}
+            </span>
           </div>
           <div className="flex items-center gap-1">
             <CalendarDays size={12} />

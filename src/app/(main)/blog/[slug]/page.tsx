@@ -123,7 +123,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <article className="max-w-3xl mx-auto">
         <header className="mb-6 md:mb-8">
           <div className="flex justify-between items-center mb-3 sm:mb-4">
-            <Button variant="outline" asChild size="sm" className="text-xs sm:text-sm">
+            <Button
+              variant="outline"
+              asChild
+              size="sm"
+              className="text-xs sm:text-sm"
+            >
               <Link href="/news">
                 <ArrowLeft size={14} className="mr-1.5" />
                 Back to News
@@ -187,7 +192,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
         ) : (
-          <p className="text-base sm:text-lg text-muted-foreground">{post.summary}</p>
+          <p className="text-base sm:text-lg text-muted-foreground">
+            {post.summary}
+          </p>
         )}
 
         {post.tags && post.tags.length > 0 && (

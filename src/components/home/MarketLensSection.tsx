@@ -30,13 +30,23 @@ const TrendIcon = ({
 }) => {
   const iconSize = "h-4 w-4 sm:h-5 sm:w-5";
   if (trendIcon === "up" || sentiment === "Bullish") {
-    return <TrendingUp className={`${iconSize} text-gain mr-1.5 sm:mr-2 flex-shrink-0`} />;
+    return (
+      <TrendingUp
+        className={`${iconSize} text-gain mr-1.5 sm:mr-2 flex-shrink-0`}
+      />
+    );
   }
   if (trendIcon === "down" || sentiment === "Bearish") {
-    return <TrendingDown className={`${iconSize} text-loss mr-1.5 sm:mr-2 flex-shrink-0`} />;
+    return (
+      <TrendingDown
+        className={`${iconSize} text-loss mr-1.5 sm:mr-2 flex-shrink-0`}
+      />
+    );
   }
   return (
-    <MinusCircle className={`${iconSize} text-muted-foreground mr-1.5 sm:mr-2 flex-shrink-0`} />
+    <MinusCircle
+      className={`${iconSize} text-muted-foreground mr-1.5 sm:mr-2 flex-shrink-0`}
+    />
   );
 };
 
@@ -50,10 +60,9 @@ export function MarketLensSection() {
       setIsLoading(true);
       setError(null);
       try {
-        const headlinesToProcess: TrendingHeadline[] =
-          mockHeadlinesData
-            .slice(0, 3)
-            .map((h: TrendingHeadline) => ({ ...h }));
+        const headlinesToProcess: TrendingHeadline[] = mockHeadlinesData
+          .slice(0, 3)
+          .map((h: TrendingHeadline) => ({ ...h }));
 
         const marketLensInputHeadlines: MarketLensDigestInput["headlines"] =
           headlinesToProcess.map((h) => ({
@@ -107,7 +116,10 @@ export function MarketLensSection() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
               {[1, 2, 3].map((item) => (
-                <Card key={item} className="glass-card flex flex-col p-3 sm:p-4">
+                <Card
+                  key={item}
+                  className="glass-card flex flex-col p-3 sm:p-4"
+                >
                   <CardHeader className="p-0 mb-1.5 sm:mb-2">
                     <div className="flex items-start mb-1 sm:mb-1.5">
                       <Skeleton className="h-5 w-5 mr-2 rounded-full" />
@@ -220,7 +232,12 @@ export function MarketLensSection() {
             Select your favorite sectors or stocks to get a personalized feed.
             (Feature coming soon!)
           </p>
-          <Button variant="outline" size="sm" className="mt-3 sm:mt-4 text-xs sm:text-sm" disabled>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3 sm:mt-4 text-xs sm:text-sm"
+            disabled
+          >
             Configure Watchlist
           </Button>
         </div>

@@ -1,6 +1,5 @@
-
 import type { Metadata } from "next";
-import PrivacyPolicyClientContent from "@/app/(main)/privacy-policy/_components/PrivacyPolicyClientContent"; 
+import PrivacyPolicyClientContent from "@/app/(main)/privacy-policy/_components/PrivacyPolicyClientContent";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
@@ -19,7 +18,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `${SITE_URL}/og-image.png`, 
+        url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
         alt: "MarketPulse Privacy Policy",

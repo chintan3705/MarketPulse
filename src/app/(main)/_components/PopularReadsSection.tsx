@@ -1,4 +1,3 @@
-
 import type React from "react";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { Star } from "lucide-react";

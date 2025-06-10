@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Newspaper } from "lucide-react";
 import Link from "next/link";

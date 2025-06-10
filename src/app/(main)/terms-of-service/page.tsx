@@ -1,6 +1,5 @@
-
 import type { Metadata } from "next";
-import TermsOfServiceClientContent from "@/app/(main)/terms-of-service/_components/TermsOfServiceClientContent"; 
+import TermsOfServiceClientContent from "@/app/(main)/terms-of-service/_components/TermsOfServiceClientContent";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
@@ -19,7 +18,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `${SITE_URL}/og-image.png`, 
+        url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
         alt: "MarketPulse Terms of Service",

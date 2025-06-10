@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -72,7 +71,9 @@ export default async function AdminBlogsPage() {
                 <TableHead>Title</TableHead>
                 <TableHead className="hidden sm:table-cell">Category</TableHead>
                 <TableHead className="hidden md:table-cell">Author</TableHead>
-                <TableHead className="hidden lg:table-cell">Published At</TableHead>
+                <TableHead className="hidden lg:table-cell">
+                  Published At
+                </TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -95,7 +96,9 @@ export default async function AdminBlogsPage() {
                       {post.categoryName || post.category?.name || "N/A"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">{post.author}</TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {post.author}
+                  </TableCell>
                   <TableCell className="hidden lg:table-cell">
                     {new Date(post.publishedAt).toLocaleDateString("en-US", {
                       year: "numeric",

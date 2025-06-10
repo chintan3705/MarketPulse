@@ -13,7 +13,9 @@ export default function MainLayout({
     <>
       <Header />
       <StickyNav categories={categories} />
-      <main className="flex-grow pt-0"> {/* Removed default pt-6 from main, pages will handle their own top padding */}
+      <main className="flex-grow pt-0">
+        {" "}
+        {/* Removed default pt-6 from main, pages will handle their own top padding */}
         {children}
       </main>
       <Footer />

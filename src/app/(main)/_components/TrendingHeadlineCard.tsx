@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import type { TrendingHeadline } from "@/types";
 import { TrendingUp, TrendingDown, ExternalLink } from "lucide-react";
@@ -54,13 +53,18 @@ export const TrendingHeadlineCard: React.FC<TrendingHeadlineCardProps> = ({
             )}
           </div>
         )}
-        <div className="flex-grow min-w-0"> {/* Added min-w-0 for better flex handling */}
+        <div className="flex-grow min-w-0">
+          {" "}
+          {/* Added min-w-0 for better flex handling */}
           <h3 className="font-headline text-sm sm:text-base font-medium leading-snug group-hover:text-primary transition-colors line-clamp-2">
             {headline.title}
           </h3>
           <div className="flex items-center justify-between text-xs text-muted-foreground mt-1">
             <span className="truncate">{headline.source}</span>
-            <time dateTime={headline.publishedAt} className="flex-shrink-0 ml-2">
+            <time
+              dateTime={headline.publishedAt}
+              className="flex-shrink-0 ml-2"
+            >
               {timeSince(headline.publishedAt)}
             </time>
           </div>

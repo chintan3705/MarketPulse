@@ -2,12 +2,26 @@
 
 import Link from "next/link";
 import { Logo } from "@/components/common/Logo";
-import { Home, Newspaper, Settings, LayoutDashboard, Menu, X } from "lucide-react";
+import {
+  Home,
+  Newspaper,
+  Settings,
+  LayoutDashboard,
+  Menu,
+  X,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetClose,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 interface AdminNavItemProps {
   href: string;
@@ -31,7 +45,9 @@ const AdminNavItem: React.FC<AdminNavItemProps> = ({
       href={href}
       className={cn(
         "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all hover:text-primary",
-        isActive ? "bg-muted text-primary font-medium" : "text-muted-foreground",
+        isActive
+          ? "bg-muted text-primary font-medium"
+          : "text-muted-foreground",
       )}
       onClick={onClick}
     >
@@ -106,12 +122,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col p-0">
-                <SheetHeader className="flex flex-row items-center justify-between border-b p-4">
-                     <Logo iconSize="h-6 w-6" textSize="text-lg"/>
-                    <SheetClose asChild>
-                         <Button variant="ghost" size="icon"><X className="h-5 w-5"/></Button>
-                    </SheetClose>
-                </SheetHeader>
+              <SheetHeader className="flex flex-row items-center justify-between border-b p-4">
+                <Logo iconSize="h-6 w-6" textSize="text-lg" />
+                <SheetClose asChild>
+                  <Button variant="ghost" size="icon">
+                    <X className="h-5 w-5" />
+                  </Button>
+                </SheetClose>
+              </SheetHeader>
               {navItems}
               <div className="mt-auto p-4 border-t">
                 <Link
@@ -125,7 +143,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </SheetContent>
           </Sheet>
           <div className="md:hidden">
-             <Logo iconSize="h-6 w-6" textSize="text-lg"/>
+            <Logo iconSize="h-6 w-6" textSize="text-lg" />
           </div>
           {/* Optionally add a search or other actions here for mobile header */}
         </header>

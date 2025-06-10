@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import type { AdConfig } from "@/types";
 import { cn } from "@/lib/utils";
@@ -29,8 +28,14 @@ export function AdSlot({ config }: AdSlotProps) {
   const finalHeight = !isNaN(numericHeight as number) ? numericHeight : 250;
 
   // Ensure width and height for style are strings with 'px' or '%'
-  const styleWidth = typeof width === "string" ? width : (finalWidth ? `${finalWidth}px` : '100%');
-  const styleHeight = typeof height === "string" ? height : (finalHeight ? `${finalHeight}px` : 'auto');
+  const styleWidth =
+    typeof width === "string" ? width : finalWidth ? `${finalWidth}px` : "100%";
+  const styleHeight =
+    typeof height === "string"
+      ? height
+      : finalHeight
+        ? `${finalHeight}px`
+        : "auto";
 
   if (type === "image" && src) {
     return (
@@ -42,7 +47,7 @@ export function AdSlot({ config }: AdSlotProps) {
         style={{
           width: styleWidth,
           height: styleHeight,
-          maxWidth: '100%', // Ensure it does not overflow container
+          maxWidth: "100%", // Ensure it does not overflow container
         }}
       >
         <Image
@@ -67,7 +72,7 @@ export function AdSlot({ config }: AdSlotProps) {
         style={{
           width: styleWidth,
           height: styleHeight,
-          maxWidth: '100%',
+          maxWidth: "100%",
         }}
       >
         Ad Slot (Script Based) - {config.id}
@@ -85,11 +90,13 @@ export function AdSlot({ config }: AdSlotProps) {
         style={{
           width: styleWidth,
           height: styleHeight,
-          maxWidth: '100%',
+          maxWidth: "100%",
         }}
       >
         <AreaChart className="w-12 h-12 sm:w-16 sm:w-16 text-primary mb-2" />
-        <p className="font-semibold text-foreground text-sm sm:text-base">TradingView Chart</p>
+        <p className="font-semibold text-foreground text-sm sm:text-base">
+          TradingView Chart
+        </p>
         <p className="text-xs mt-1">
           Symbol: {tradingViewWidgetConfig.symbol || "N/A"}
         </p>
@@ -104,7 +111,12 @@ export function AdSlot({ config }: AdSlotProps) {
         "bg-muted/30 dark:bg-muted/50 flex items-center justify-center text-xs sm:text-sm text-muted-foreground p-4 rounded-md shadow-sm mx-auto",
         className,
       )}
-      style={{ width: "100%", height: styleHeight, maxHeight: '90px', maxWidth: '100%' }}
+      style={{
+        width: "100%",
+        height: styleHeight,
+        maxHeight: "90px",
+        maxWidth: "100%",
+      }}
     >
       Advertisement Placeholder
     </div>

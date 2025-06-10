@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { AdSlot } from "@/app/(main)/_components/AdSlot";
@@ -154,7 +153,10 @@ export default async function HomePage() {
             )}
 
             {otherPosts.length > 0 && (
-              <section aria-labelledby="latest-posts-title" className="mt-6 md:mt-8">
+              <section
+                aria-labelledby="latest-posts-title"
+                className="mt-6 md:mt-8"
+              >
                 <SectionTitle
                   title="Latest Insights"
                   icon={Newspaper}
