@@ -71,8 +71,7 @@ export default async function AdminBlogsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table className="min-w-[700px]"> {/* Added min-width here */}
-            <TableHeader>
+          <Table className="min-w-[700px]"><TableHeader>
               <TableRow>
                 <TableHead>Title</TableHead>
                 <TableHead className="hidden sm:table-cell">
@@ -84,8 +83,7 @@ export default async function AdminBlogsPage() {
                 </TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
-            </TableHeader>
-            <TableBody>
+            </TableHeader><TableBody>
               {posts.map((post) => (
                 <TableRow key={post._id || post.slug}>
                   <TableCell className="font-medium text-sm">
@@ -151,8 +149,7 @@ export default async function AdminBlogsPage() {
                   </TableCell>
                 </TableRow>
               ))}
-            </TableBody>
-          </Table>
+            </TableBody></Table>
         </CardContent>
       </Card>
       {posts.length === 0 && (
