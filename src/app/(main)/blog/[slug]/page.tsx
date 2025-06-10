@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -7,14 +8,13 @@ import {
   ArrowLeft,
   Headphones,
   Bot,
-  BarChartHorizontalBig, // Icon for chart placeholder
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 import type { Metadata, ResolvingMetadata } from "next";
 import type { BlogPost } from "@/types";
 import { unstable_noStore as noStore } from "next/cache";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartPlaceholderCard } from "./_components/ChartPlaceholderCard";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
@@ -103,6 +103,40 @@ export async function generateStaticParams() {
   return []; // No static generation for blog posts for now
 }
 
+const renderContentWithChartPlaceholders = (post: BlogPost) => {
+  if (!post.content) return [{ type: "html", content: post.summary }];
+
+  const contentParts = post.content.split(/(\[CHART:\s*[^\]]+\])/g);
+  const elements: Array<{
+    type: "html" | "chart";
+    content?: string;
+    chartData?: ChartPlaceholderCardProps;
+  }> = [];
+
+  contentParts.forEach((part) => {
+    const chartMatch = part.match(/\[CHART:\s*([^\]]+)\]/);
+    if (chartMatch && post.chartDataJson) {
+      const chartDescription = chartMatch[1];
+      elements.push({
+        type: "chart",
+        chartData: {
+          chartType: post.chartType,
+          chartDescription: chartDescription,
+          detailedInformation: post.detailedInformation,
+          chartDataJson: post.chartDataJson,
+        },
+      });
+    } else if (part.trim() !== "") {
+      elements.push({ type: "html", content: part });
+    }
+  });
+  if (elements.length === 0) {
+     elements.push({ type: "html", content: post.summary });
+  }
+
+  return elements;
+};
+
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = params;
   const post = await getPostData(slug);
@@ -117,29 +151,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     day: "numeric",
   });
 
-  // Simple placeholder for chart data display
-  let chartPlaceholderContent = "";
-  if (post.chartDataJson && post.content?.includes("[CHART:")) {
-    const chartDescriptionMatch = post.content.match(/\[CHART:\s*([^\]]+)\]/);
-    const chartDescription = chartDescriptionMatch
-      ? chartDescriptionMatch[1]
-      : "related data";
-    chartPlaceholderContent = `
-      <div class="my-6 p-4 border border-dashed border-border rounded-md bg-muted/50">
-        <div class="flex items-center text-muted-foreground mb-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><line x1="12" x2="12" y1="20" y2="10"></line><line x1="18" x2="18" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="16"></line></svg>
-          <h4 class="font-semibold">Chart Information</h4>
-        </div>
-        <p class="text-sm">A ${post.chartType || "chart"} visualizing ${chartDescription} would be displayed here.</p>
-        ${post.detailedInformation ? `<p class="text-xs mt-1 text-muted-foreground/80">Context: ${post.detailedInformation.substring(0, 150)}...</p>` : ""}
-        <!-- Developer Note: Implement chart rendering using: ${post.chartType}, data: ${post.chartDataJson} -->
-      </div>
-    `;
-  }
-
-  const finalContent =
-    post.content?.replace(/\[CHART:[^\]]+\]/g, chartPlaceholderContent) ||
-    post.summary;
+  const contentElements = renderContentWithChartPlaceholders(post);
 
   return (
     <div
@@ -212,10 +224,22 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </div>
         )}
 
-        <div
-          className="prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert max-w-none [&_h3]:font-headline [&_h3]:text-xl [&_h3]:sm:text-2xl [&_h3]:mb-2 [&_h3]:mt-6 [&_p]:mb-4 [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:ml-5"
-          dangerouslySetInnerHTML={{ __html: finalContent }}
-        />
+        <div className="prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert max-w-none [&_h3]:font-headline [&_h3]:text-xl [&_h3]:sm:text-2xl [&_h3]:mb-2 [&_h3]:mt-6 [&_p]:mb-4 [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:ml-5">
+          {contentElements.map((element, index) => {
+            if (element.type === "chart" && element.chartData) {
+              return <ChartPlaceholderCard key={index} {...element.chartData} />;
+            }
+            if (element.type === "html" && element.content) {
+              return (
+                <div
+                  key={index}
+                  dangerouslySetInnerHTML={{ __html: element.content }}
+                />
+              );
+            }
+            return null;
+          })}
+        </div>
 
         {post.tags && post.tags.length > 0 && (
           <div className="mt-6 md:mt-8 pt-4 md:pt-6 border-t">
