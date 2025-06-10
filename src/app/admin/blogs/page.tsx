@@ -48,8 +48,8 @@ export default async function AdminBlogsPage() {
       className="animate-slide-in"
       style={{ animationDelay: "0.1s", animationFillMode: "backwards" }}
     >
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold font-headline">
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-3 sm:gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold font-headline text-center sm:text-left">
           Manage Blogs
         </h1>
         <GenerateBlogDialog />
@@ -57,8 +57,8 @@ export default async function AdminBlogsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Blog Posts from Database</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-lg sm:text-xl md:text-2xl">Blog Posts from Database</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">
             A list of all blog posts fetched from the database. Editing and
             Deleting are placeholders. Use &quot;Generate &amp; Save Blog&quot;
             to create new content.
@@ -80,26 +80,26 @@ export default async function AdminBlogsPage() {
             <TableBody>
               {posts.map((post) => (
                 <TableRow key={post._id || post.slug}>
-                  <TableCell className="font-medium">
+                  <TableCell className="font-medium text-sm">
                     <Link
                       href={`/blog/${post.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:underline"
+                      className="hover:underline line-clamp-2"
                       title={post.title}
                     >
                       {post.title}
                     </Link>
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell">
-                    <Badge variant="outline">
+                  <TableCell className="hidden sm:table-cell text-xs">
+                    <Badge variant="outline" className="whitespace-nowrap">
                       {post.categoryName || post.category?.name || "N/A"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">
+                  <TableCell className="hidden md:table-cell text-xs">
                     {post.author}
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell">
+                  <TableCell className="hidden lg:table-cell text-xs">
                     {new Date(post.publishedAt).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "short",
@@ -112,6 +112,7 @@ export default async function AdminBlogsPage() {
                       size="icon"
                       asChild
                       title="View live post"
+                      className="h-8 w-8 sm:h-9 sm:w-9"
                     >
                       <Link
                         href={`/blog/${post.slug}`}
@@ -126,7 +127,7 @@ export default async function AdminBlogsPage() {
                       size="icon"
                       disabled
                       title="Edit (Placeholder)"
-                      className="hidden sm:inline-flex"
+                      className="hidden sm:inline-flex h-8 w-8 sm:h-9 sm:w-9"
                     >
                       <Edit3 className="h-4 w-4" />
                     </Button>
@@ -135,7 +136,7 @@ export default async function AdminBlogsPage() {
                       size="icon"
                       disabled
                       title="Delete (Placeholder)"
-                      className="hidden sm:inline-flex"
+                      className="hidden sm:inline-flex h-8 w-8 sm:h-9 sm:w-9"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -147,7 +148,7 @@ export default async function AdminBlogsPage() {
         </CardContent>
       </Card>
       {posts.length === 0 && (
-        <p className="text-center text-muted-foreground mt-6">
+        <p className="text-center text-muted-foreground mt-6 text-sm sm:text-base">
           No blog posts found in the database.
         </p>
       )}

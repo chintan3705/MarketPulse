@@ -13,8 +13,8 @@ export default function AdminDashboardPage() {
       className="animate-slide-in"
       style={{ animationDelay: "0.1s", animationFillMode: "backwards" }}
     >
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold font-headline">
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-2">
+        <h1 className="text-2xl sm:text-3xl font-bold font-headline text-center sm:text-left">
           Admin Dashboard
         </h1>
       </div>
@@ -61,10 +61,10 @@ export default function AdminDashboardPage() {
         </Card>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-6 sm:mt-8">
         <Card>
           <CardHeader>
-            <CardTitle className="font-headline text-xl sm:text-2xl">
+            <CardTitle className="font-headline text-lg sm:text-xl md:text-2xl">
               Recent Activity
             </CardTitle>
             <CardDescription>
@@ -72,7 +72,7 @@ export default function AdminDashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-sm sm:text-base">
               No recent activity to display. This section will show logs or
               important events.
             </p>

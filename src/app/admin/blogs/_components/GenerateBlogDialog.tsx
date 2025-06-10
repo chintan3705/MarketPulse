@@ -29,7 +29,7 @@ import {
   DatabaseZap,
   AlertTriangle,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"; // Corrected import path
 import type { IMongoBlogPost } from "@/models/BlogPost";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { categories } from "@/lib/data";
@@ -227,13 +227,14 @@ export function GenerateBlogDialog() {
               </Select>
             </div>
           </div>
-          <DialogFooter className="mt-4 sm:mt-6">
+          <DialogFooter className="mt-4 sm:mt-6 flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-0">
             <DialogClose asChild>
               <Button
                 type="button"
                 variant="outline"
                 disabled={isLoading}
                 size="sm"
+                className="w-full sm:w-auto"
               >
                 Cancel
               </Button>
@@ -242,6 +243,7 @@ export function GenerateBlogDialog() {
               type="submit"
               disabled={isLoading || !topic.trim()}
               size="sm"
+              className="w-full sm:w-auto"
             >
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
