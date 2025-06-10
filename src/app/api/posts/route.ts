@@ -1,4 +1,3 @@
-
 import { NextResponse, type NextRequest } from "next/server";
 import connectDB from "@/lib/mongodb";
 import BlogPostModel, { type IMongoBlogPost } from "@/models/BlogPost";
@@ -29,7 +28,9 @@ function transformPost(doc: IMongoBlogPost): BlogPost {
     categoryName: doc.categoryName,
     author: doc.author,
     publishedAt: doc.publishedAt.toISOString(),
-    updatedAt: doc.updatedAt ? doc.updatedAt.toISOString() : doc.publishedAt.toISOString(), // ADDED updatedAt
+    updatedAt: doc.updatedAt
+      ? doc.updatedAt.toISOString()
+      : doc.publishedAt.toISOString(), // ADDED updatedAt
     tags: doc.tags,
     content: doc.content,
     isAiGenerated: doc.isAiGenerated,
@@ -107,7 +108,6 @@ export async function GET(
   }
 }
 
-
 // Schema for manual blog post creation (server-side validation)
 const CreateManualBlogPostAPISchema = z.object({
   title: z.string().min(5),
@@ -119,7 +119,6 @@ const CreateManualBlogPostAPISchema = z.object({
   imageUrl: z.string().url().optional().or(z.literal("")).nullable(),
   imageAiHint: z.string().optional().nullable(),
 });
-
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
@@ -134,7 +133,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const { title, summary, content, categorySlug, tags, author, imageUrl, imageAiHint } = validationResult.data;
+    const {
+      title,
+      summary,
+      content,
+      categorySlug,
+      tags,
+      author,
+      imageUrl,
+      imageAiHint,
+    } = validationResult.data;
 
     // Generate slug
     let slug = title
@@ -154,30 +162,37 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
     slug = uniqueSlug;
 
-    const categoryDetails = staticCategories.find(c => c.slug === categorySlug);
-    const categoryName = categoryDetails?.name || staticCategories.find(c => c.slug === "general")?.name || "General";
+    const categoryDetails = staticCategories.find(
+      (c) => c.slug === categorySlug,
+    );
+    const categoryName =
+      categoryDetails?.name ||
+      staticCategories.find((c) => c.slug === "general")?.name ||
+      "General";
 
-    const newPostData: Omit<IMongoBlogPost, "_id" | "createdAt" | "updatedAt"> = {
-      slug,
-      title,
-      summary,
-      content,
-      categorySlug,
-      categoryName,
-      tags,
-      author,
-      imageUrl: imageUrl || undefined, // Ensure undefined if empty string
-      imageAiHint: imageAiHint || undefined,
-      publishedAt: new Date(),
-      isAiGenerated: false, // Explicitly false for manual creation
-      // chartType, chartDataJson, detailedInformation will be undefined by default
-    };
+    const newPostData: Omit<IMongoBlogPost, "_id" | "createdAt" | "updatedAt"> =
+      {
+        slug,
+        title,
+        summary,
+        content,
+        categorySlug,
+        categoryName,
+        tags,
+        author,
+        imageUrl: imageUrl || undefined, // Ensure undefined if empty string
+        imageAiHint: imageAiHint || undefined,
+        publishedAt: new Date(),
+        isAiGenerated: false, // Explicitly false for manual creation
+        // chartType, chartDataJson, detailedInformation will be undefined by default
+      };
 
     const newPost = new BlogPostModel(newPostData);
     const savedPost = await newPost.save();
 
-    return NextResponse.json(transformPost(savedPost as IMongoBlogPost), { status: 201 });
-
+    return NextResponse.json(transformPost(savedPost as IMongoBlogPost), {
+      status: 201,
+    });
   } catch (error) {
     console.error("API Error creating manual post:", error);
     const errorMessage =

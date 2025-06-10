@@ -1,4 +1,3 @@
-
 import { NextResponse, type NextRequest } from "next/server";
 import connectDB from "@/lib/mongodb";
 import BlogPostModel, { type IMongoBlogPost } from "@/models/BlogPost";
@@ -47,7 +46,9 @@ function transformPost(doc: IMongoBlogPost): BlogPost {
     categoryName: doc.categoryName,
     author: doc.author,
     publishedAt: doc.publishedAt.toISOString(),
-    updatedAt: doc.updatedAt ? doc.updatedAt.toISOString() : doc.publishedAt.toISOString(), // ADDED updatedAt
+    updatedAt: doc.updatedAt
+      ? doc.updatedAt.toISOString()
+      : doc.publishedAt.toISOString(), // ADDED updatedAt
     tags: doc.tags,
     content: doc.content,
     isAiGenerated: doc.isAiGenerated,
@@ -67,7 +68,6 @@ const UpdateBlogPostSchema = z.object({
   imageAiHint: z.string().optional(),
   // chartType, chartDataJson, detailedInformation could be part of an update schema if needed
 });
-
 
 export async function GET(
   _request: NextRequest,
@@ -155,7 +155,7 @@ export async function DELETE(
           );
         }
       } else {
-         console.warn(
+        console.warn(
           `[API DELETE /posts/${slug}] Cloudinary credentials not set. Skipping image deletion for ${postToDelete.imageUrl}.`,
         );
       }
@@ -196,7 +196,7 @@ export async function PUT(
     }
 
     const updateData = validationResult.data;
-    
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const finalUpdateData: any = { ...updateData };
 
@@ -207,7 +207,7 @@ export async function PUT(
       );
       finalUpdateData.categoryName = categoryDetails?.name || "General";
     }
-    
+
     // Handle slug regeneration if title changes
     if (updateData.title) {
       let newSlug = updateData.title
@@ -220,7 +220,9 @@ export async function PUT(
 
       if (newSlug !== currentSlug) {
         // Check for uniqueness if slug has changed
-        const existingPostWithNewSlug = await BlogPostModel.findOne({ slug: newSlug });
+        const existingPostWithNewSlug = await BlogPostModel.findOne({
+          slug: newSlug,
+        });
         if (existingPostWithNewSlug) {
           newSlug = `${newSlug}-${Date.now().toString().slice(-5)}`; // Append a short timestamp hash
         }
@@ -229,13 +231,15 @@ export async function PUT(
     }
 
     // Remove undefined fields from finalUpdateData to avoid overriding with null/undefined in MongoDB
-    Object.keys(finalUpdateData).forEach(key => finalUpdateData[key] === undefined && delete finalUpdateData[key]);
-
+    Object.keys(finalUpdateData).forEach(
+      (key) =>
+        finalUpdateData[key] === undefined && delete finalUpdateData[key],
+    );
 
     const updatedPostDoc = await BlogPostModel.findOneAndUpdate(
       { slug: currentSlug },
       { $set: finalUpdateData },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     if (!updatedPostDoc) {
@@ -246,7 +250,6 @@ export async function PUT(
     }
 
     return NextResponse.json(transformPost(updatedPostDoc), { status: 200 });
-
   } catch (error) {
     console.error(`API Error updating post with slug ${params.slug}:`, error);
     const errorMessage =

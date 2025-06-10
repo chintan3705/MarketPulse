@@ -1,12 +1,11 @@
-
 "use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm, type SubmitHandler } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -14,19 +13,19 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
-import { Loader2, UserPlus, ShieldAlert } from 'lucide-react';
-import { Logo } from '@/components/common/Logo';
-import Link from 'next/link';
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2, UserPlus, ShieldAlert } from "lucide-react";
+import { Logo } from "@/components/common/Logo";
+import Link from "next/link";
 
 const signupSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
   password: z
     .string()
-    .min(6, { message: 'Password must be at least 6 characters long.' }),
+    .min(6, { message: "Password must be at least 6 characters long." }),
 });
 
 type SignupFormValues = z.infer<typeof signupSchema>;
@@ -49,35 +48,38 @@ export default function SignupAdminPage() {
     setIsLoading(true);
     setApiError(null);
     try {
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, role: 'admin' }), // Explicitly set role to admin
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...data, role: "admin" }), // Explicitly set role to admin
       });
 
       const result = await response.json();
 
       if (!response.ok) {
-        let errorMsg = result.message || 'Signup failed. Please try again.';
+        let errorMsg = result.message || "Signup failed. Please try again.";
         if (result.errors) {
-            if (result.errors.email) errorMsg += ` Email: ${result.errors.email._errors.join(', ')}`;
-            if (result.errors.password) errorMsg += ` Password: ${result.errors.password._errors.join(', ')}`;
+          if (result.errors.email)
+            errorMsg += ` Email: ${result.errors.email._errors.join(", ")}`;
+          if (result.errors.password)
+            errorMsg += ` Password: ${result.errors.password._errors.join(", ")}`;
         }
         throw new Error(errorMsg);
       }
 
       toast({
-        title: 'Admin Account Created',
-        description: 'Your admin account has been successfully created. Please log in.',
+        title: "Admin Account Created",
+        description:
+          "Your admin account has been successfully created. Please log in.",
       });
-      router.push('/login'); // Redirect to login page after successful signup
+      router.push("/login"); // Redirect to login page after successful signup
     } catch (error) {
       const catchedError = error as Error;
       setApiError(catchedError.message);
       toast({
-        title: 'Signup Failed',
+        title: "Signup Failed",
         description: catchedError.message,
-        variant: 'destructive',
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -91,7 +93,9 @@ export default function SignupAdminPage() {
       </div>
       <Card className="w-full max-w-sm shadow-2xl">
         <CardHeader className="space-y-1 text-center">
-          <CardTitle className="text-2xl font-bold font-headline">Create Admin Account</CardTitle>
+          <CardTitle className="text-2xl font-bold font-headline">
+            Create Admin Account
+          </CardTitle>
           <CardDescription>
             Enter details to create an initial admin user.
           </CardDescription>
@@ -104,12 +108,14 @@ export default function SignupAdminPage() {
                 id="email"
                 type="email"
                 placeholder="admin@example.com"
-                {...register('email')}
-                className={errors.email ? 'border-destructive' : ''}
+                {...register("email")}
+                className={errors.email ? "border-destructive" : ""}
                 aria-invalid={errors.email ? "true" : "false"}
               />
               {errors.email && (
-                <p className="text-xs text-destructive" role="alert">{errors.email.message}</p>
+                <p className="text-xs text-destructive" role="alert">
+                  {errors.email.message}
+                </p>
               )}
             </div>
             <div className="space-y-2">
@@ -118,17 +124,22 @@ export default function SignupAdminPage() {
                 id="password"
                 type="password"
                 placeholder="•••••••• (min. 6 characters)"
-                {...register('password')}
-                className={errors.password ? 'border-destructive' : ''}
+                {...register("password")}
+                className={errors.password ? "border-destructive" : ""}
                 aria-invalid={errors.password ? "true" : "false"}
               />
               {errors.password && (
-                <p className="text-xs text-destructive" role="alert">{errors.password.message}</p>
+                <p className="text-xs text-destructive" role="alert">
+                  {errors.password.message}
+                </p>
               )}
             </div>
-            
+
             {apiError && (
-              <div className="flex items-center gap-2 rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive" role="alert">
+              <div
+                className="flex items-center gap-2 rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive"
+                role="alert"
+              >
                 <ShieldAlert className="h-4 w-4 flex-shrink-0" />
                 <span>{apiError}</span>
               </div>
@@ -145,12 +156,16 @@ export default function SignupAdminPage() {
           </form>
         </CardContent>
         <CardFooter className="flex flex-col items-center text-xs text-muted-foreground pt-4">
-          <p>Already have an account?{' '}
-            <Link href="/login" className="font-medium text-primary hover:underline">
+          <p>
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              className="font-medium text-primary hover:underline"
+            >
               Login here
             </Link>
           </p>
-           <p className="mt-2 text-center text-xs text-muted-foreground">
+          <p className="mt-2 text-center text-xs text-muted-foreground">
             Note: This page is for initial admin setup.
             <br /> It might be restricted in production environments.
           </p>

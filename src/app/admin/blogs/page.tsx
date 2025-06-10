@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -19,7 +18,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Edit3, Trash2, Eye, Loader2, AlertTriangle, PlusCircle, FileText } from "lucide-react"; // Added FileText
+import {
+  Edit3,
+  Trash2,
+  Eye,
+  Loader2,
+  AlertTriangle,
+  PlusCircle,
+  FileText,
+} from "lucide-react"; // Added FileText
 import { GenerateBlogDialog } from "@/app/admin/blogs/_components/GenerateBlogDialog";
 import { GenerateMultipleBlogsDialog } from "@/app/admin/blogs/_components/GenerateMultipleBlogsDialog";
 import type { BlogPost } from "@/types";
@@ -185,7 +192,9 @@ export default function AdminBlogsPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Title</TableHead>
-                  <TableHead className="hidden sm:table-cell">Category</TableHead>
+                  <TableHead className="hidden sm:table-cell">
+                    Category
+                  </TableHead>
                   <TableHead className="hidden lg:table-cell">Author</TableHead>
                   <TableHead className="hidden lg:table-cell">
                     Published At

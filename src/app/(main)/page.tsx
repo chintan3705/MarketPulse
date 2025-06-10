@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { AdSlot } from "@/app/(main)/_components/AdSlot";
@@ -204,7 +203,7 @@ export default async function HomePage() {
             {sidebarAd && (
               <section
                 aria-label="Sidebar Advertisement"
-                className="sticky top-20" 
+                className="sticky top-20"
               >
                 <AdSlot config={sidebarAd} />
               </section>

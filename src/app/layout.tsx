@@ -1,12 +1,10 @@
-
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk as SpaceGroteskFont } from "next/font/google"; // Renamed for clarity
 import { Toaster } from "@/components/ui/toaster";
 import { SmoothScroller } from "@/components/common/SmoothScroller";
 import "./globals.css";
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002"; // Fallback for local dev
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002"; // Fallback for local dev
 
 const inter = Inter({
   subsets: ["latin"],
@@ -42,7 +40,7 @@ export const metadata: Metadata = {
     "Sensex",
     "MarketPulse",
     "financial news",
-    "investment insights"
+    "investment insights",
   ],
   authors: [{ name: "MarketPulse Team", url: `${SITE_URL}/about` }],
   creator: "MarketPulse Team",
@@ -71,7 +69,8 @@ export const metadata: Metadata = {
       "Real-time Share Market News Blog Platform delivering timely updates, financial insights, and stock analysis.",
     images: [`${SITE_URL}/twitter-image.png`], // Needs to be absolute for Twitter. Assumes twitter-image.png is in /public
   },
-  robots: { // Ensure site is indexable
+  robots: {
+    // Ensure site is indexable
     index: true,
     follow: true,
     googleBot: {

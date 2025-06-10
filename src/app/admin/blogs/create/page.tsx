@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -40,17 +39,26 @@ const CreateManualBlogPostSchema = z.object({
   categorySlug: z.string().min(1, "Category is required."),
   tags: z.string().refine(
     (val) => {
-      const tagsArray = val.split(",").map((tag) => tag.trim()).filter(tag => tag.length > 0);
+      const tagsArray = val
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0);
       return tagsArray.length > 0;
     },
     { message: "Please provide at least one tag, separated by commas." },
   ),
   author: z.string().min(2, "Author name must be at least 2 characters long."),
-  imageUrl: z.string().url("Please enter a valid URL if providing an image.").optional().or(z.literal("")),
+  imageUrl: z
+    .string()
+    .url("Please enter a valid URL if providing an image.")
+    .optional()
+    .or(z.literal("")),
   imageAiHint: z.string().optional(),
 });
 
-type CreateManualBlogPostFormValues = z.infer<typeof CreateManualBlogPostSchema>;
+type CreateManualBlogPostFormValues = z.infer<
+  typeof CreateManualBlogPostSchema
+>;
 
 export default function CreateManualBlogPage() {
   const router = useRouter();
@@ -71,24 +79,35 @@ export default function CreateManualBlogPage() {
     },
   });
 
-  const onSubmit: SubmitHandler<CreateManualBlogPostFormValues> = async (data) => {
+  const onSubmit: SubmitHandler<CreateManualBlogPostFormValues> = async (
+    data,
+  ) => {
     setIsSubmitting(true);
     try {
-      const tagsArray = data.tags.split(",").map((tag) => tag.trim()).filter(tag => tag.length > 0);
+      const tagsArray = data.tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0);
       const payload = {
         ...data,
         tags: tagsArray,
       };
 
-      const response = await fetch(`${SITE_URL}/api/posts`, { // Targeting the general /api/posts for POST
+      const response = await fetch(`${SITE_URL}/api/posts`, {
+        // Targeting the general /api/posts for POST
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
-        const errorResult = await response.json().catch(() => ({ message: `Server error: ${response.status}` }));
-        throw new Error(errorResult.message || `Failed to create post: ${response.statusText}`);
+        const errorResult = await response
+          .json()
+          .catch(() => ({ message: `Server error: ${response.status}` }));
+        throw new Error(
+          errorResult.message ||
+            `Failed to create post: ${response.statusText}`,
+        );
       }
 
       const createdPost = await response.json();
@@ -155,7 +174,12 @@ export default function CreateManualBlogPage() {
 
             <div className="space-y-2">
               <Label htmlFor="content">Content (HTML)</Label>
-              <Textarea id="content" {...form.register("content")} rows={10} placeholder="Enter HTML content for the blog post..."/>
+              <Textarea
+                id="content"
+                {...form.register("content")}
+                rows={10}
+                placeholder="Enter HTML content for the blog post..."
+              />
               {form.formState.errors.content && (
                 <p className="text-xs text-destructive">
                   {form.formState.errors.content.message}
@@ -196,7 +220,11 @@ export default function CreateManualBlogPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="tags">Tags (comma-separated)</Label>
-                <Input id="tags" {...form.register("tags")} placeholder="e.g., finance, stocks, update" />
+                <Input
+                  id="tags"
+                  {...form.register("tags")}
+                  placeholder="e.g., finance, stocks, update"
+                />
                 {form.formState.errors.tags && (
                   <p className="text-xs text-destructive">
                     {form.formState.errors.tags.message}
@@ -204,9 +232,9 @@ export default function CreateManualBlogPage() {
                 )}
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-               <div className="space-y-2">
+              <div className="space-y-2">
                 <Label htmlFor="author">Author</Label>
                 <Input id="author" {...form.register("author")} />
                 {form.formState.errors.author && (
@@ -227,32 +255,33 @@ export default function CreateManualBlogPage() {
                     {form.formState.errors.imageUrl.message}
                   </p>
                 )}
-                 {form.watch("imageUrl") && (
-                    <div className="mt-2">
-                      <Label className="text-xs text-muted-foreground">Image Preview:</Label>
-                      <img
-                        src={form.watch("imageUrl")}
-                        alt="Preview"
-                        className="mt-1 rounded-md border max-h-40 object-contain"
-                      />
-                    </div>
-                  )}
-              </div>
-            </div>
-             <div className="space-y-2 md:w-1/2 pr-0 md:pr-3">
-                <Label htmlFor="imageAiHint">Image AI Hint (Optional)</Label>
-                <Input
-                  id="imageAiHint"
-                  {...form.register("imageAiHint")}
-                  placeholder="e.g., abstract financial graph"
-                />
-                  {form.formState.errors.imageAiHint && (
-                  <p className="text-xs text-destructive">
-                    {form.formState.errors.imageAiHint.message}
-                  </p>
+                {form.watch("imageUrl") && (
+                  <div className="mt-2">
+                    <Label className="text-xs text-muted-foreground">
+                      Image Preview:
+                    </Label>
+                    <img
+                      src={form.watch("imageUrl")}
+                      alt="Preview"
+                      className="mt-1 rounded-md border max-h-40 object-contain"
+                    />
+                  </div>
                 )}
               </div>
-
+            </div>
+            <div className="space-y-2 md:w-1/2 pr-0 md:pr-3">
+              <Label htmlFor="imageAiHint">Image AI Hint (Optional)</Label>
+              <Input
+                id="imageAiHint"
+                {...form.register("imageAiHint")}
+                placeholder="e.g., abstract financial graph"
+              />
+              {form.formState.errors.imageAiHint && (
+                <p className="text-xs text-destructive">
+                  {form.formState.errors.imageAiHint.message}
+                </p>
+              )}
+            </div>
 
             <div className="flex justify-end space-x-2 pt-4">
               <Button

@@ -1,4 +1,3 @@
-
 import { BarChartHorizontalBig } from "lucide-react";
 import type { BlogPost } from "@/types";
 

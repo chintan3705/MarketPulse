@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -46,7 +45,11 @@ const EditBlogPostSchema = z.object({
     },
     { message: "Please provide at least one tag, separated by commas." },
   ),
-  imageUrl: z.string().url("Please enter a valid URL.").optional().or(z.literal("")),
+  imageUrl: z
+    .string()
+    .url("Please enter a valid URL.")
+    .optional()
+    .or(z.literal("")),
   imageAiHint: z.string().optional(),
   // chartType, chartDataJson, detailedInformation could be added here if directly editable
 });
@@ -129,8 +132,13 @@ export default function EditBlogPage() {
       });
 
       if (!response.ok) {
-        const errorResult = await response.json().catch(() => ({message: `Server error: ${response.status}`}));
-        throw new Error(errorResult.message || `Failed to update post: ${response.statusText}`);
+        const errorResult = await response
+          .json()
+          .catch(() => ({ message: `Server error: ${response.status}` }));
+        throw new Error(
+          errorResult.message ||
+            `Failed to update post: ${response.statusText}`,
+        );
       }
 
       const updatedPost = (await response.json()) as BlogPost;
@@ -265,7 +273,7 @@ export default function EditBlogPage() {
                 )}
               </div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="imageUrl">Image URL (Optional)</Label>
@@ -279,32 +287,33 @@ export default function EditBlogPage() {
                     {form.formState.errors.imageUrl.message}
                   </p>
                 )}
-                 {form.watch("imageUrl") && (
-                    <div className="mt-2">
-                      <Label className="text-xs text-muted-foreground">Image Preview:</Label>
-                      <img
-                        src={form.watch("imageUrl")}
-                        alt="Preview"
-                        className="mt-1 rounded-md border max-h-40 object-contain"
-                      />
-                    </div>
-                  )}
+                {form.watch("imageUrl") && (
+                  <div className="mt-2">
+                    <Label className="text-xs text-muted-foreground">
+                      Image Preview:
+                    </Label>
+                    <img
+                      src={form.watch("imageUrl")}
+                      alt="Preview"
+                      className="mt-1 rounded-md border max-h-40 object-contain"
+                    />
+                  </div>
+                )}
               </div>
-                <div className="space-y-2">
-                  <Label htmlFor="imageAiHint">Image AI Hint (Optional)</Label>
-                  <Input
-                    id="imageAiHint"
-                    {...form.register("imageAiHint")}
-                    placeholder="e.g., stock market graph"
-                  />
-                   {form.formState.errors.imageAiHint && (
+              <div className="space-y-2">
+                <Label htmlFor="imageAiHint">Image AI Hint (Optional)</Label>
+                <Input
+                  id="imageAiHint"
+                  {...form.register("imageAiHint")}
+                  placeholder="e.g., stock market graph"
+                />
+                {form.formState.errors.imageAiHint && (
                   <p className="text-xs text-destructive">
                     {form.formState.errors.imageAiHint.message}
                   </p>
                 )}
-                </div>
+              </div>
             </div>
-
 
             <div className="flex justify-end space-x-2 pt-4">
               <Button
