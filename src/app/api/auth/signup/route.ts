@@ -9,7 +9,7 @@ const SignupSchema = z.object({
   password: z
     .string()
     .min(6, { message: 'Password must be at least 6 characters long.' }),
-  role: z.enum(['admin', 'user']).optional(),
+  role: z.enum(['admin', 'user']).optional(), // Role is optional from the request
 });
 
 export async function POST(request: NextRequest) {
@@ -35,16 +35,27 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // For simplicity, first admin user created gets admin role, otherwise default to user
-    // In a real app, role assignment should be more secure.
-    const userCount = await UserModel.countDocuments();
-    const assignedRole = role || (userCount === 0 ? 'admin' : 'user');
+    // Determine the role:
+    // If 'admin' is explicitly passed (e.g., from the admin creation utility page), use 'admin'.
+    // Otherwise, default to 'user'. This makes the API flexible.
+    // For the specific /api/auth/signup-page, it will always send 'admin'.
+    const assignedRole = role === 'admin' ? 'admin' : 'user';
 
+    // If this is the very first user being created in the system, and no role was specified,
+    // consider making them an admin. This is a fallback, the /api/auth/signup-page should handle explicit admin creation.
+    // However, with the `assignedRole` logic above, this specific block might become less critical
+    // if the admin utility page always correctly sends `role: 'admin'`.
+    // For now, keeping it simple: if the utility page sends 'admin', it's 'admin'.
+    // If this API were used for general public signup, `assignedRole` would correctly default to 'user'.
+    
+    // const userCount = await UserModel.countDocuments();
+    // const finalRole = role || (userCount === 0 ? 'admin' : 'user');
+    // Using `assignedRole` from above is cleaner if utility page sends role:'admin'
 
     const newUser = new UserModel({
       email,
       password, // Hashing is handled by pre-save middleware in User model
-      role: assignedRole,
+      role: assignedRole, 
     });
 
     await newUser.save();
@@ -57,7 +68,7 @@ export async function POST(request: NextRequest) {
     };
 
     return NextResponse.json(
-      { message: 'User created successfully.', user: userResponse },
+      { message: `User created successfully with role: ${assignedRole}.`, user: userResponse },
       { status: 201 },
     );
   } catch (error) {

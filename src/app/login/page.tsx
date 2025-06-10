@@ -67,7 +67,7 @@ export default function LoginPage() {
       
       const redirectUrl = searchParams.get('redirect') || '/admin';
       router.push(redirectUrl);
-      router.refresh(); // Important to refresh server-side state after login
+      router.refresh(); 
 
     } catch (error) {
       const catchedError = error as Error;
@@ -104,9 +104,10 @@ export default function LoginPage() {
                 placeholder="admin@example.com"
                 {...register('email')}
                 className={errors.email ? 'border-destructive' : ''}
+                aria-invalid={errors.email ? "true" : "false"}
               />
               {errors.email && (
-                <p className="text-xs text-destructive">{errors.email.message}</p>
+                <p className="text-xs text-destructive" role="alert">{errors.email.message}</p>
               )}
             </div>
             <div className="space-y-2">
@@ -117,15 +118,16 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 {...register('password')}
                 className={errors.password ? 'border-destructive' : ''}
+                aria-invalid={errors.password ? "true" : "false"}
               />
               {errors.password && (
-                <p className="text-xs text-destructive">{errors.password.message}</p>
+                <p className="text-xs text-destructive" role="alert">{errors.password.message}</p>
               )}
             </div>
             
             {apiError && (
-              <div className="flex items-center gap-2 rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
-                <ShieldAlert className="h-4 w-4" />
+              <div className="flex items-center gap-2 rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive" role="alert">
+                <ShieldAlert className="h-4 w-4 flex-shrink-0" />
                 <span>{apiError}</span>
               </div>
             )}
@@ -147,7 +149,6 @@ export default function LoginPage() {
           </Link>
         </CardFooter>
       </Card>
-       {/* Signup Link - for development/initial setup only */}
        <p className="mt-6 text-center text-xs text-muted-foreground">
         First time setup?{' '}
         <Link href="/api/auth/signup-page" className="underline hover:text-primary" prefetch={false}> 
