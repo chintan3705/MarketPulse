@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -14,7 +15,7 @@ import {
 } from "@/components/ui/sheet";
 import { Menu, X, UserCog } from "lucide-react";
 import type { NavItem } from "@/types";
-import { useState } from "react";
+import React, { useState } from "react"; // Import React
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
@@ -28,7 +29,7 @@ const mainNavItems: NavItem[] = [
 ];
 
 export function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const pathname = usePathname();
 
   return (
@@ -73,9 +74,8 @@ export function Header() {
 
         <div className="md:hidden flex items-center ml-auto space-x-1">
           <ThemeToggle />
-          <Link href="/admin" passHref legacyBehavior={false}>
+          <Link href="/admin" passHref>
             {" "}
-            {/* Removed legacyBehavior, passHref remains useful if Button were not asChild */}
             <Button
               variant="ghost"
               size="icon"
@@ -96,7 +96,7 @@ export function Header() {
                 <SheetHeader className="p-4 border-b">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Logo />
+                      <Logo textSize="text-xl" iconSize="h-6 w-6" />
                       <SheetTitle>Menu</SheetTitle>
                     </div>
                     <SheetClose asChild>

@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import Image from "next/image";
 import type { BlogPost } from "@/types";
@@ -70,14 +71,14 @@ export function BlogPostCard({
       )}
       <div
         className={cn("flex flex-col flex-grow", {
-          "p-0": orientation === "horizontal",
-          "p-4 md:p-6": orientation === "vertical",
+          "p-0": orientation === "horizontal", // No padding for div, header/content/footer will have
+          "p-4 md:p-6": orientation === "vertical", // Padding for vertical layout
         })}
       >
         <CardHeader
           className={cn("pb-2", {
             "p-4 md:p-6 pb-2": orientation === "horizontal",
-            "p-0": orientation === "vertical",
+            "p-0": orientation === "vertical", // Remove padding from header for vertical
           })}
         >
           <Link href={`/category/${post.category.slug}`}>
@@ -88,7 +89,7 @@ export function BlogPostCard({
               {post.category.name}
             </Badge>
           </Link>
-          <CardTitle className="font-headline text-xl lg:text-2xl leading-tight">
+          <CardTitle className="font-headline text-lg md:text-xl lg:text-2xl leading-tight">
             <Link
               href={`/blog/${post.slug}`}
               className="hover:text-primary transition-colors"
@@ -100,7 +101,7 @@ export function BlogPostCard({
         <CardContent
           className={cn("flex-grow pt-0 pb-2", {
             "p-4 md:p-6 pt-0 pb-2": orientation === "horizontal",
-            "p-0 pt-2": orientation === "vertical",
+            "p-0 pt-2": orientation === "vertical", // Adjust padding for vertical
           })}
         >
           <p className="text-sm text-muted-foreground line-clamp-3">
@@ -112,7 +113,7 @@ export function BlogPostCard({
             "flex flex-wrap items-center justify-between text-xs text-muted-foreground gap-2 pt-0",
             {
               "p-4 md:p-6 pt-0": orientation === "horizontal",
-              "p-0 pt-2": orientation === "vertical",
+              "p-0 pt-2": orientation === "vertical", // Adjust padding for vertical
             },
           )}
         >
@@ -132,7 +133,7 @@ export function BlogPostCard({
         {post.tags && post.tags.length > 0 && orientation === "vertical" && (
           <div
             className={cn("pt-2", {
-              "px-0": orientation === "vertical",
+              "p-0": orientation === "vertical", // Tags within vertical layout
             })}
           >
             <div className="flex flex-wrap gap-2">

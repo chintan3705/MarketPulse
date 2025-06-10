@@ -1,7 +1,9 @@
+
 import type { SVGProps } from "react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
-const LogoIcon = (props: SVGProps<SVGSVGElement>) => (
+const LogoIconSvg = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
@@ -17,15 +19,29 @@ const LogoIcon = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-export function Logo({ className = "" }: { className?: string }) {
+interface LogoProps {
+  className?: string;
+  iconClassName?: string; // For direct styling of the icon if needed via className
+  iconSize?: string; // e.g., "h-6 w-6"
+  textSize?: string; // e.g., "text-xl"
+}
+
+export function Logo({
+  className,
+  iconClassName,
+  iconSize = "h-8 w-8",
+  textSize = "text-2xl",
+}: LogoProps) {
   return (
     <Link
       href="/"
-      className={`flex items-center gap-2 text-primary ${className}`}
+      className={cn("flex items-center gap-2 text-primary", className)}
       aria-label="MarketPulse Home"
     >
-      <LogoIcon className="h-8 w-8" />
-      <span className="text-2xl font-headline font-bold">MarketPulse</span>
+      <LogoIconSvg className={cn(iconSize, iconClassName)} />
+      <span className={cn(textSize, "font-headline font-bold")}>
+        MarketPulse
+      </span>
     </Link>
   );
 }
