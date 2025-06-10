@@ -26,7 +26,7 @@ export function HomeCategoryTabs() {
                 variant="outline"
                 size="sm"
                 asChild
-                className="shadow-sm hover:shadow-md transition-shadow text-xs sm:text-sm"
+                className="shadow-sm hover:shadow-md transition-all duration-200 ease-in-out text-xs sm:text-sm" // hover:bg-accent already from button variant
               >
                 <Link href={`/category/${category.slug}`}>{category.name}</Link>
               </Button>

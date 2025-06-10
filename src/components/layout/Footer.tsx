@@ -19,28 +19,28 @@ export function Footer() {
               <Link
                 href="#"
                 aria-label="Facebook"
-                className="text-muted-foreground hover:text-primary transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
               >
                 <Facebook size={20} />
               </Link>
               <Link
                 href="#"
                 aria-label="Twitter"
-                className="text-muted-foreground hover:text-primary transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
               >
                 <Twitter size={20} />
               </Link>
               <Link
                 href="#"
                 aria-label="LinkedIn"
-                className="text-muted-foreground hover:text-primary transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
               >
                 <Linkedin size={20} />
               </Link>
               <Link
                 href="#"
                 aria-label="Instagram"
-                className="text-muted-foreground hover:text-primary transition-colors"
+                className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
               >
                 <Instagram size={20} />
               </Link>
@@ -55,7 +55,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/about"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
                 >
                   About Us
                 </Link>
@@ -63,7 +63,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
                 >
                   Contact
                 </Link>
@@ -71,7 +71,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/advertise"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
                 >
                   Advertise
                 </Link>
@@ -79,7 +79,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/careers"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
                 >
                   Careers
                 </Link>
@@ -95,7 +95,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/category/stocks"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
                 >
                   Stocks
                 </Link>
@@ -103,7 +103,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/category/ipos"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
                 >
                   IPOs
                 </Link>
@@ -111,7 +111,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/category/mutual-funds"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
                 >
                   Mutual Funds
                 </Link>
@@ -119,7 +119,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/category/economy"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
                 >
                   Economy
                 </Link>
@@ -133,7 +133,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/privacy-policy"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
                 >
                   Privacy Policy
                 </Link>
@@ -141,7 +141,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/terms-of-service"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
                 >
                   Terms of Service
                 </Link>
@@ -149,7 +149,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/disclaimer"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
                 >
                   Disclaimer
                 </Link>

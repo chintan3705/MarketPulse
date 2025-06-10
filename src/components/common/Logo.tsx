@@ -34,7 +34,10 @@ export function Logo({
   return (
     <Link
       href="/"
-      className={cn("flex items-center gap-2 text-primary", className)}
+      className={cn(
+        "flex items-center gap-2 text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-sm",
+        className,
+      )}
       aria-label="MarketPulse Home"
     >
       <LogoIconSvg className={cn(iconSize, iconClassName)} />

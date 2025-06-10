@@ -45,7 +45,7 @@ const AdminNavItem: React.FC<AdminNavItemProps> = ({
     <Link
       href={href}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all hover:text-primary",
+        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200 ease-in-out hover:text-primary",
         isActive
           ? "bg-muted text-primary font-medium"
           : "text-muted-foreground",
@@ -104,7 +104,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <div className="mt-auto p-4 border-t">
             <Link
               href="/"
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary"
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
             >
               <Home className="h-4 w-4" /> Go to Main Site
             </Link>
@@ -124,11 +124,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </SheetTrigger>
             <SheetContent
               side="left"
-              className="flex flex-col p-0 w-[260px] sm:w-[280px]"
+              className="flex flex-col p-0 w-[260px] sm:w-[280px] overflow-y-auto"
             >
-              <SheetHeader className="flex flex-row items-center justify-between border-b p-4">
+              <SheetHeader className="flex flex-row items-center justify-between border-b p-4 sticky top-0 bg-background z-10">
                 <Logo iconSize="h-6 w-6" textSize="text-lg" />
-                <SheetTitle className="sr-only">Admin Navigation</SheetTitle>
+                <SheetTitle className="sr-only">Admin Menu</SheetTitle>
                 <SheetClose asChild>
                   <Button variant="ghost" size="icon">
                     <X className="h-5 w-5" />
@@ -136,11 +136,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   </Button>
                 </SheetClose>
               </SheetHeader>
-              <div className="flex-1 py-2 overflow-y-auto">{navItems}</div>
-              <div className="mt-auto p-4 border-t">
+              <div className="flex-1 py-2">{navItems}</div>
+              <div className="mt-auto p-4 border-t sticky bottom-0 bg-background z-10">
                 <Link
                   href="/"
-                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary"
+                  className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors duration-200 ease-in-out"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <Home className="h-4 w-4" /> Go to Main Site

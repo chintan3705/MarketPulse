@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -29,7 +30,7 @@ export function StickyNav({ categories }: StickyNavProps) {
                 key={category.id}
                 href={`/category/${category.slug}`}
                 className={cn(
-                  "px-2.5 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground whitespace-nowrap",
+                  "px-2.5 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors duration-200 ease-in-out hover:bg-accent hover:text-accent-foreground whitespace-nowrap",
                   currentCategorySlug === category.slug
                     ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
                     : "text-foreground/70 hover:text-foreground/90",

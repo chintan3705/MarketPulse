@@ -40,7 +40,7 @@ export function BlogPostCard({
   return (
     <Card
       className={cn(
-        "overflow-hidden hover:shadow-lg transition-shadow duration-300 group flex flex-col", // Always flex-col for consistent structure
+        "overflow-hidden hover:shadow-lg transition-all duration-300 ease-in-out group flex flex-col", // Always flex-col for consistent structure
         className,
         {
           "md:flex-row": orientation === "horizontal", // Horizontal layout on md+
@@ -67,7 +67,7 @@ export function BlogPostCard({
                   ? "(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 25vw"
                   : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               }
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              className="object-cover group-hover:scale-105 transition-transform duration-300 ease-in-out"
               priority={priority}
               data-ai-hint={post.imageAiHint || "financial news"}
             />
@@ -84,7 +84,7 @@ export function BlogPostCard({
           <Link href={`/category/${post.category.slug}`}>
             <Badge
               variant="secondary"
-              className="mb-2 inline-block hover:bg-accent hover:text-accent-foreground transition-colors text-xs px-2 py-0.5"
+              className="mb-2 inline-block hover:bg-accent hover:text-accent-foreground transition-colors duration-200 ease-in-out text-xs px-2 py-0.5"
             >
               {post.category.name}
             </Badge>
@@ -92,7 +92,7 @@ export function BlogPostCard({
           <CardTitle className="font-headline text-lg sm:text-xl md:text-xl leading-tight">
             <Link
               href={`/blog/${post.slug}`}
-              className="hover:text-primary transition-colors"
+              className="hover:text-primary transition-colors duration-200 ease-in-out"
             >
               {post.title}
             </Link>
@@ -126,7 +126,7 @@ export function BlogPostCard({
                 <Link key={tag} href={`/tags/${createTagSlug(tag)}`}>
                   <Badge
                     variant="outline"
-                    className="text-xs px-1.5 py-0.5 transition-colors"
+                    className="text-xs px-1.5 py-0.5" // Transition inherited from base
                   >
                     # {tag}
                   </Badge>

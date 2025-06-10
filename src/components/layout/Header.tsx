@@ -43,7 +43,7 @@ export function Header() {
               key={item.label}
               href={item.href}
               className={cn(
-                "transition-colors hover:text-primary px-2 py-1 rounded-md",
+                "transition-colors duration-200 ease-in-out hover:text-primary px-2 py-1 rounded-md",
                 pathname === item.href
                   ? "text-primary font-medium bg-primary/10"
                   : "text-foreground/80 hover:text-primary/90",
@@ -104,9 +104,7 @@ export function Header() {
                 <SheetHeader className="p-4 border-b">
                   <div className="flex items-center justify-between">
                     <Logo textSize="text-lg" iconSize="h-6 w-6" />
-                    <SheetTitle className="sr-only">
-                      Navigation Menu
-                    </SheetTitle>
+                    <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                     <SheetClose asChild>
                       <Button
                         variant="ghost"
@@ -127,7 +125,7 @@ export function Header() {
                       key={item.label}
                       href={item.href}
                       className={cn(
-                        "block px-3 py-2.5 rounded-md text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+                        "block px-3 py-2.5 rounded-md text-base font-medium transition-colors duration-200 ease-in-out hover:bg-accent hover:text-accent-foreground",
                         pathname === item.href
                           ? "bg-accent text-accent-foreground"
                           : "text-foreground",
@@ -140,7 +138,7 @@ export function Header() {
                   <Link
                     href="/admin"
                     className={cn(
-                      "block px-3 py-2.5 rounded-md text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+                      "block px-3 py-2.5 rounded-md text-base font-medium transition-colors duration-200 ease-in-out hover:bg-accent hover:text-accent-foreground",
                       pathname.startsWith("/admin")
                         ? "bg-accent text-accent-foreground"
                         : "text-foreground",
