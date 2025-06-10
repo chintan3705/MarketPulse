@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk as SpaceGroteskFont } from "next/font/google"; // Renamed for clarity
 import { Toaster } from "@/components/ui/toaster";
@@ -5,7 +6,7 @@ import { SmoothScroller } from "@/components/common/SmoothScroller";
 import "./globals.css";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://www.marketpulse.example.com";
+  process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002"; // Fallback for local dev
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
     template: "%s | MarketPulse",
   },
   description:
-    "Real-time Share Market News Blog Platform delivering timely updates, financial insights, and stock analysis.",
+    "Real-time Share Market News Blog Platform delivering timely updates, financial insights, and stock analysis. Aiming for high-quality content for AdSense approval.",
   keywords: [
     "stock market",
     "share market",
@@ -40,6 +41,8 @@ export const metadata: Metadata = {
     "Nifty",
     "Sensex",
     "MarketPulse",
+    "financial news",
+    "investment insights"
   ],
   authors: [{ name: "MarketPulse Team", url: `${SITE_URL}/about` }],
   creator: "MarketPulse Team",
@@ -52,7 +55,7 @@ export const metadata: Metadata = {
     siteName: "MarketPulse",
     images: [
       {
-        url: "/og-image.png", // Relative path for /public
+        url: "/og-image.png", // Relative path for /public. Assumes og-image.png is in /public
         width: 1200,
         height: 630,
         alt: "MarketPulse Logo and Tagline",
@@ -66,9 +69,9 @@ export const metadata: Metadata = {
     title: "MarketPulse – Your Daily Lens on the Share Market",
     description:
       "Real-time Share Market News Blog Platform delivering timely updates, financial insights, and stock analysis.",
-    images: [`${SITE_URL}/twitter-image.png`], // Needs to be absolute for Twitter
+    images: [`${SITE_URL}/twitter-image.png`], // Needs to be absolute for Twitter. Assumes twitter-image.png is in /public
   },
-  robots: {
+  robots: { // Ensure site is indexable
     index: true,
     follow: true,
     googleBot: {
@@ -85,6 +88,9 @@ export const metadata: Metadata = {
   //   apple: '/apple-touch-icon.png',
   // },
   // manifest: '/site.webmanifest', // Ensure this file exists in /public if uncommented
+  alternates: {
+    canonical: SITE_URL, // Default canonical for homepage
+  },
 };
 
 interface RootLayoutProps {
@@ -99,6 +105,7 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
       suppressHydrationWarning // Suppress warning for theme toggle script
     >
       <head>
+        {/* Viewport tag is automatically added by Next.js */}
         {/* Initial theme setup script to prevent FOUC */}
         <script
           dangerouslySetInnerHTML={{

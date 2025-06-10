@@ -29,6 +29,7 @@ function transformPost(doc: IMongoBlogPost): BlogPost {
     categoryName: doc.categoryName,
     author: doc.author,
     publishedAt: doc.publishedAt.toISOString(),
+    updatedAt: doc.updatedAt ? doc.updatedAt.toISOString() : doc.publishedAt.toISOString(), // ADDED updatedAt
     tags: doc.tags,
     content: doc.content,
     isAiGenerated: doc.isAiGenerated,

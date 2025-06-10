@@ -1,3 +1,4 @@
+
 export interface NavItem {
   label: string;
   href: string;
@@ -24,11 +25,12 @@ export interface BlogPost {
   categoryName: string;
   author: string;
   publishedAt: string; // ISO date string
+  updatedAt: string; // ISO date string - ADDED
   tags: string[];
   isAiGenerated?: boolean;
-  chartType?: "bar" | "line" | "pie" | "table"; // Added
-  chartDataJson?: string; // Added
-  detailedInformation?: string; // Added
+  chartType?: "bar" | "line" | "pie" | "table";
+  chartDataJson?: string;
+  detailedInformation?: string;
 }
 
 export interface TrendingHeadline {

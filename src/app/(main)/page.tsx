@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { AdSlot } from "@/app/(main)/_components/AdSlot";
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `${SITE_URL}/og-image.png`,
+        url: `${SITE_URL}/og-image.png`, // Ensure this image exists in /public
         width: 1200,
         height: 630,
         alt: "MarketPulse Homepage",
@@ -45,7 +46,7 @@ export const metadata: Metadata = {
     title: "MarketPulse – Your Daily Lens on the Share Market",
     description:
       "Get the latest share market news, stock analysis, IPO updates, and financial insights.",
-    images: [`${SITE_URL}/twitter-image.png`],
+    images: [`${SITE_URL}/twitter-image.png`], // Ensure this image exists in /public
   },
 };
 
@@ -128,7 +129,7 @@ export default async function HomePage() {
       <HomeCategoryTabs />
 
       {topBannerAd && (
-        <section className="py-4 md:py-6 bg-muted/30">
+        <section className="py-4 md:py-6 bg-muted/30 dark:bg-muted/40">
           <div className="container">
             <AdSlot config={topBannerAd} />
           </div>
@@ -147,7 +148,7 @@ export default async function HomePage() {
                   post={featuredPost}
                   orientation="vertical"
                   className="shadow-lg"
-                  priority={true}
+                  priority={true} // LCP Image for featured post
                 />
               </section>
             )}
@@ -203,7 +204,7 @@ export default async function HomePage() {
             {sidebarAd && (
               <section
                 aria-label="Sidebar Advertisement"
-                className="sticky top-20" // Adjust top to account for sticky header + nav
+                className="sticky top-20" 
               >
                 <AdSlot config={sidebarAd} />
               </section>
