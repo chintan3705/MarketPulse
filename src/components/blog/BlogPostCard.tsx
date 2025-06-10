@@ -89,7 +89,7 @@ export function BlogPostCard({
               {post.category.name}
             </Badge>
           </Link>
-          <CardTitle className="font-headline text-base sm:text-lg md:text-xl leading-tight">
+          <CardTitle className="font-headline text-lg sm:text-xl md:text-xl leading-tight">
             <Link
               href={`/blog/${post.slug}`}
               className="hover:text-primary transition-colors"
@@ -126,7 +126,7 @@ export function BlogPostCard({
                 <Link key={tag} href={`/tags/${createTagSlug(tag)}`}>
                   <Badge
                     variant="outline"
-                    className="text-xs px-1.5 py-0.5 hover:bg-muted transition-colors"
+                    className="text-xs px-1.5 py-0.5 transition-colors"
                   >
                     # {tag}
                   </Badge>

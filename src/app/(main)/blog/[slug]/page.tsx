@@ -92,11 +92,15 @@ export async function generateMetadata(
       card: "summary_large_image",
       title: post.title,
       description: post.summary,
-      images: postOgImage.map((img) => img.url),
+      images: postOgImage.map((img) => img.url), // Ensure absolute URLs if not already
     },
   };
 }
 
+// This ensures that new blog posts (generated via admin) are dynamically rendered.
+// If you had a small, finite set of blog posts you wanted to pre-render at build time,
+// you could fetch them here and return their slugs.
+// For a dynamic blog, returning an empty array is appropriate for on-demand rendering.
 export async function generateStaticParams() {
   return [];
 }
@@ -210,7 +214,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 >
                   <Badge
                     variant="outline"
-                    className="text-xs px-2 py-0.5 hover:bg-muted transition-colors"
+                    className="text-xs px-2 py-0.5 transition-colors"
                   >
                     # {tag}
                   </Badge>
