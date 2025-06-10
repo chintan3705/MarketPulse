@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -28,7 +27,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
 import type { BlogPost, Category } from "@/types";
-import { categories } from "@/lib/data"; 
+import { categories } from "@/lib/data";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
@@ -48,7 +47,8 @@ const EditBlogPostSchema = z.object({
     .string()
     .url("Please enter a valid URL.")
     .optional()
-    .or(z.literal("")).nullable(),
+    .or(z.literal(""))
+    .nullable(),
   imageAiHint: z.string().optional().nullable(),
 });
 
@@ -117,7 +117,10 @@ export default function EditBlogPage() {
   const onSubmit: SubmitHandler<EditBlogPostFormValues> = async (data) => {
     setIsSubmitting(true);
     try {
-      const tagsArray = data.tags.split(",").map((tag) => tag.trim()).filter(tag => tag.length > 0);
+      const tagsArray = data.tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0);
       const payload = {
         ...data,
         tags: tagsArray,
@@ -147,8 +150,8 @@ export default function EditBlogPage() {
         title: "Post Updated!",
         description: `"${updatedPost.title}" has been successfully updated.`,
       });
-      router.push("/admin/blogs"); 
-      router.refresh(); 
+      router.push("/admin/blogs");
+      router.refresh();
     } catch (error: unknown) {
       const catchedError = error as Error;
       toast({

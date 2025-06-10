@@ -1,4 +1,3 @@
-
 import type { MetadataRoute } from "next";
 import connectDB from "@/lib/mongodb";
 import BlogPostModel, { type IMongoBlogPost } from "@/models/BlogPost";

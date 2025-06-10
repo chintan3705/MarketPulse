@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -72,9 +71,9 @@ export default function CreateManualBlogPage() {
       title: "",
       summary: "",
       content: "",
-      categorySlug: categories[0]?.slug || "", 
+      categorySlug: categories[0]?.slug || "",
       tags: "",
-      author: "Admin", 
+      author: "Admin",
       imageUrl: "",
       imageAiHint: "",
     },
@@ -117,7 +116,7 @@ export default function CreateManualBlogPage() {
         description: `"${createdPost.title}" has been successfully created.`,
       });
       router.push("/admin/blogs");
-      router.refresh(); 
+      router.refresh();
     } catch (error: unknown) {
       const catchedError = error as Error;
       toast({

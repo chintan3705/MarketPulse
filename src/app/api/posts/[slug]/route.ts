@@ -1,4 +1,3 @@
-
 import { NextResponse, type NextRequest } from "next/server";
 import connectDB from "@/lib/mongodb";
 import BlogPostModel, { type IMongoBlogPost } from "@/models/BlogPost";
@@ -241,7 +240,10 @@ export async function PUT(
       hasChanges = true;
     }
 
-    if (updateData.categorySlug && updateData.categorySlug !== postBeingUpdated.categorySlug) {
+    if (
+      updateData.categorySlug &&
+      updateData.categorySlug !== postBeingUpdated.categorySlug
+    ) {
       updateFields.categorySlug = updateData.categorySlug;
       const categoryDetails = staticCategories.find(
         (c) => c.slug === updateData.categorySlug,
@@ -256,19 +258,33 @@ export async function PUT(
       hasChanges = true; // Assume change if tags field is present in payload
     }
 
-    if (updateData.imageUrl !== undefined && updateData.imageUrl !== postBeingUpdated.imageUrl) {
-      updateFields.imageUrl = updateData.imageUrl === "" || updateData.imageUrl === null ? undefined : updateData.imageUrl;
+    if (
+      updateData.imageUrl !== undefined &&
+      updateData.imageUrl !== postBeingUpdated.imageUrl
+    ) {
+      updateFields.imageUrl =
+        updateData.imageUrl === "" || updateData.imageUrl === null
+          ? undefined
+          : updateData.imageUrl;
       hasChanges = true;
     }
-    if (updateData.imageAiHint !== undefined && updateData.imageAiHint !== postBeingUpdated.imageAiHint) {
-      updateFields.imageAiHint = updateData.imageAiHint === "" || updateData.imageAiHint === null ? undefined : updateData.imageAiHint;
+    if (
+      updateData.imageAiHint !== undefined &&
+      updateData.imageAiHint !== postBeingUpdated.imageAiHint
+    ) {
+      updateFields.imageAiHint =
+        updateData.imageAiHint === "" || updateData.imageAiHint === null
+          ? undefined
+          : updateData.imageAiHint;
       hasChanges = true;
     }
 
     if (!hasChanges) {
-      return NextResponse.json(transformPost(postBeingUpdated), { status: 200 });
+      return NextResponse.json(transformPost(postBeingUpdated), {
+        status: 200,
+      });
     }
-    
+
     updateFields.updatedAt = new Date();
 
     const updatedPostDoc = await BlogPostModel.findByIdAndUpdate(

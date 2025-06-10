@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -59,7 +58,10 @@ async function fetchAdminPosts(): Promise<BlogPost[]> {
     return data.posts || [];
   } catch (error: unknown) {
     const catchedError = error as Error;
-    console.error("Admin: Error fetching posts from API:", catchedError.message);
+    console.error(
+      "Admin: Error fetching posts from API:",
+      catchedError.message,
+    );
     return [];
   }
 }
@@ -83,7 +85,9 @@ export default function AdminBlogsPage() {
       setPosts(fetchedPosts);
     } catch (err: unknown) {
       const catchedError = err as Error;
-      setError(catchedError.message || "Failed to load posts. Please try again.");
+      setError(
+        catchedError.message || "Failed to load posts. Please try again.",
+      );
       console.error(catchedError);
     } finally {
       setIsLoading(false);
