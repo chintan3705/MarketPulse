@@ -170,7 +170,7 @@ export default function AdminBlogsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table className="min-w-[700px]">
+          <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Title</TableHead>
