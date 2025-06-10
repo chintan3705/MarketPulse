@@ -1,9 +1,11 @@
+
 import { NextResponse, type NextRequest } from "next/server";
 import connectDB from "@/lib/mongodb";
 import BlogPostModel, { type IMongoBlogPost } from "@/models/BlogPost";
 import type { BlogPost, Category } from "@/types";
 import { categories as staticCategories } from "@/lib/data";
 import { v2 as cloudinary } from "cloudinary";
+import { z } from "zod";
 
 // Configure Cloudinary (ensure environment variables are set)
 if (
@@ -19,7 +21,7 @@ if (
   });
 } else {
   console.warn(
-    "❌ [Cloudinary Config Warning - API /posts/[slug]] Cloudinary environment variables not fully set. Image deletion might fail.",
+    "❌ [Cloudinary Config Warning - API /posts/[slug]] Cloudinary environment variables not fully set. Image deletion/update might fail.",
   );
 }
 
@@ -53,6 +55,18 @@ function transformPost(doc: IMongoBlogPost): BlogPost {
     detailedInformation: doc.detailedInformation,
   };
 }
+
+const UpdateBlogPostSchema = z.object({
+  title: z.string().min(5).optional(),
+  summary: z.string().min(10).optional(),
+  content: z.string().min(50).optional(),
+  categorySlug: z.string().min(1).optional(),
+  tags: z.array(z.string().min(1)).optional(),
+  imageUrl: z.string().url().optional().or(z.literal("")),
+  imageAiHint: z.string().optional(),
+  // chartType, chartDataJson, detailedInformation could be part of an update schema if needed
+});
+
 
 export async function GET(
   _request: NextRequest,
@@ -116,33 +130,21 @@ export async function DELETE(
       );
     }
 
-    // Attempt to delete image from Cloudinary if imageUrl exists
     if (postToDelete.imageUrl) {
       if (
-        !process.env.CLOUDINARY_CLOUD_NAME ||
-        !process.env.CLOUDINARY_API_KEY ||
-        !process.env.CLOUDINARY_API_SECRET
+        process.env.CLOUDINARY_CLOUD_NAME &&
+        process.env.CLOUDINARY_API_KEY &&
+        process.env.CLOUDINARY_API_SECRET
       ) {
-        console.warn(
-          `[API DELETE /posts/${slug}] Cloudinary credentials not set. Skipping image deletion for ${postToDelete.imageUrl}.`,
-        );
-      } else {
         try {
           const publicIdMatch = postToDelete.imageUrl.match(
             /marketpulse_blog_images\/([^/.]+)/,
           );
           if (publicIdMatch && publicIdMatch[1]) {
             const publicId = `marketpulse_blog_images/${publicIdMatch[1]}`;
-            console.log(
-              `[API DELETE /posts/${slug}] Attempting to delete image from Cloudinary with public_id: ${publicId}`,
-            );
             await cloudinary.uploader.destroy(publicId);
             console.log(
               `[API DELETE /posts/${slug}] Successfully deleted image from Cloudinary: ${publicId}`,
-            );
-          } else {
-            console.warn(
-              `[API DELETE /posts/${slug}] Could not extract public_id from imageUrl: ${postToDelete.imageUrl}. Skipping Cloudinary deletion.`,
             );
           }
         } catch (cloudinaryError) {
@@ -150,8 +152,11 @@ export async function DELETE(
             `[API DELETE /posts/${slug}] Error deleting image from Cloudinary: `,
             cloudinaryError,
           );
-          // Continue with DB deletion even if Cloudinary deletion fails
         }
+      } else {
+         console.warn(
+          `[API DELETE /posts/${slug}] Cloudinary credentials not set. Skipping image deletion for ${postToDelete.imageUrl}.`,
+        );
       }
     }
 
@@ -178,30 +183,69 @@ export async function PUT(
 ): Promise<NextResponse> {
   try {
     await connectDB();
-    const slug = params.slug;
-    // const body = await request.json(); // Placeholder for updated data
+    const currentSlug = params.slug;
+    const body: unknown = await request.json();
 
-    if (!slug) {
+    const validationResult = UpdateBlogPostSchema.safeParse(body);
+    if (!validationResult.success) {
       return NextResponse.json(
-        { message: "Slug parameter is missing for update." },
+        { message: "Invalid input.", errors: validationResult.error.format() },
         { status: 400 },
       );
     }
 
-    // Placeholder: Find and update logic
-    // const updatedPost = await BlogPostModel.findOneAndUpdate({ slug: slug }, body, { new: true });
-    // if (!updatedPost) {
-    //   return NextResponse.json({ message: "Blog post not found for update." }, { status: 404 });
-    // }
-    // return NextResponse.json(transformPost(updatedPost), { status: 200 });
+    const updateData = validationResult.data;
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const finalUpdateData: any = { ...updateData };
 
-    console.log(
-      `PUT request received for slug: ${slug}. Edit functionality not fully implemented.`,
+    // Handle categoryName update
+    if (updateData.categorySlug) {
+      const categoryDetails = staticCategories.find(
+        (c) => c.slug === updateData.categorySlug,
+      );
+      finalUpdateData.categoryName = categoryDetails?.name || "General";
+    }
+    
+    // Handle slug regeneration if title changes
+    if (updateData.title) {
+      let newSlug = updateData.title
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^\w-]+/g, "")
+        .replace(/--+/g, "-")
+        .replace(/^-+/, "")
+        .replace(/-+$/, "");
+
+      if (newSlug !== currentSlug) {
+        // Check for uniqueness if slug has changed
+        const existingPostWithNewSlug = await BlogPostModel.findOne({ slug: newSlug });
+        if (existingPostWithNewSlug) {
+          newSlug = `${newSlug}-${Date.now().toString().slice(-5)}`; // Append a short timestamp hash
+        }
+        finalUpdateData.slug = newSlug;
+      }
+    }
+
+    // Remove undefined fields from finalUpdateData to avoid overriding with null/undefined in MongoDB
+    Object.keys(finalUpdateData).forEach(key => finalUpdateData[key] === undefined && delete finalUpdateData[key]);
+
+
+    const updatedPostDoc = await BlogPostModel.findOneAndUpdate(
+      { slug: currentSlug },
+      { $set: finalUpdateData },
+      { new: true, runValidators: true }
     );
-    return NextResponse.json(
-      { message: "Edit functionality is under development." },
-      { status: 501 },
-    );
+
+    if (!updatedPostDoc) {
+      return NextResponse.json(
+        { message: "Blog post not found for update." },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json(transformPost(updatedPostDoc), { status: 200 });
+
   } catch (error) {
     console.error(`API Error updating post with slug ${params.slug}:`, error);
     const errorMessage =
