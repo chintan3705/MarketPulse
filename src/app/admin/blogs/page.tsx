@@ -1,4 +1,6 @@
 
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,16 +19,29 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Edit3, Trash2, Eye } from "lucide-react";
+import { Edit3, Trash2, Eye, Loader2, AlertTriangle } from "lucide-react";
 import { GenerateBlogDialog } from "@/app/admin/blogs/_components/GenerateBlogDialog";
 import { GenerateMultipleBlogsDialog } from "@/app/admin/blogs/_components/GenerateMultipleBlogsDialog";
 import type { BlogPost } from "@/types";
-import { unstable_noStore as noStore } from "next/cache";
+import React, { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
 async function fetchAdminPosts(): Promise<BlogPost[]> {
-  noStore();
+  // noStore() is not needed for client-side fetch
   try {
     const res = await fetch(`${SITE_URL}/api/posts`, { cache: "no-store" });
     if (!res.ok) {
@@ -42,8 +57,93 @@ async function fetchAdminPosts(): Promise<BlogPost[]> {
   }
 }
 
-export default async function AdminBlogsPage() {
-  const posts = await fetchAdminPosts();
+export default function AdminBlogsPage() {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [postToDelete, setPostToDelete] = useState<BlogPost | null>(null);
+
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const loadPosts = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const fetchedPosts = await fetchAdminPosts();
+      setPosts(fetchedPosts);
+    } catch (err) {
+      setError("Failed to load posts. Please try again.");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadPosts();
+  }, [loadPosts]);
+
+  const handleDeleteClick = (post: BlogPost) => {
+    setPostToDelete(post);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!postToDelete) return;
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/posts/${postToDelete.slug}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: "Failed to delete post" }));
+        throw new Error(errorData.message || `Server error: ${response.status}`);
+      }
+      toast({
+        title: "Post Deleted",
+        description: `"${postToDelete.title}" has been successfully deleted.`,
+      });
+      setShowDeleteConfirm(false);
+      setPostToDelete(null);
+      // Refresh data:
+      // router.refresh(); // Good for server components, for client can also filter state or re-fetch
+      setPosts(prevPosts => prevPosts.filter(p => p.slug !== postToDelete.slug));
+
+    } catch (err) {
+      const catchedError = err as Error;
+      toast({
+        title: "Error Deleting Post",
+        description: catchedError.message || "An unexpected error occurred.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="ml-2 text-muted-foreground">Loading posts...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-10">
+        <AlertTriangle className="mx-auto h-12 w-12 text-destructive" />
+        <p className="mt-4 text-lg font-semibold text-destructive-foreground">Error loading posts</p>
+        <p className="text-sm text-muted-foreground">{error}</p>
+        <Button onClick={loadPosts} className="mt-4">Try Again</Button>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -63,15 +163,15 @@ export default async function AdminBlogsPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg sm:text-xl md:text-2xl">
-            Blog Posts from Database
+            Blog Posts
           </CardTitle>
           <CardDescription className="text-xs sm:text-sm">
-            A list of all blog posts. Editing and Deleting are placeholders. Use
-            generation buttons to create new content.
+            A list of all blog posts from the database.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table className="min-w-[700px]"><TableHeader>
+          <Table className="min-w-[700px]">
+            <TableHeader>
               <TableRow>
                 <TableHead>Title</TableHead>
                 <TableHead className="hidden sm:table-cell">
@@ -83,7 +183,8 @@ export default async function AdminBlogsPage() {
                 </TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
-            </TableHeader><TableBody>
+            </TableHeader>
+            <TableBody>
               {posts.map((post) => (
                 <TableRow key={post._id || post.slug}>
                   <TableCell className="font-medium text-sm">
@@ -131,32 +232,56 @@ export default async function AdminBlogsPage() {
                     <Button
                       variant="outline"
                       size="icon"
-                      disabled
-                      title="Edit (Placeholder)"
+                      title="Edit Post"
                       className="hidden sm:inline-flex h-8 w-8 sm:h-9 sm:w-9"
+                      asChild
                     >
-                      <Edit3 className="h-4 w-4" />
+                      <Link href={`/admin/blogs/edit/${post.slug}`}>
+                        <Edit3 className="h-4 w-4" />
+                      </Link>
                     </Button>
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      disabled
-                      title="Delete (Placeholder)"
-                      className="hidden sm:inline-flex h-8 w-8 sm:h-9 sm:w-9"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <AlertDialogTrigger asChild>
+                       <Button
+                          variant="destructive"
+                          size="icon"
+                          title="Delete Post"
+                          className="h-8 w-8 sm:h-9 sm:w-9"
+                          onClick={() => handleDeleteClick(post)}
+                          disabled={isDeleting && postToDelete?.slug === post.slug}
+                        >
+                          {isDeleting && postToDelete?.slug === post.slug ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                        </Button>
+                    </AlertDialogTrigger>
                   </TableCell>
                 </TableRow>
               ))}
-            </TableBody></Table>
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
-      {posts.length === 0 && (
+      {posts.length === 0 && !isLoading && (
         <p className="text-center text-muted-foreground mt-6 text-sm sm:text-base">
           No blog posts found in the database.
         </p>
       )}
+      <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              blog post titled &quot;{postToDelete?.title}&quot; and remove its data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPostToDelete(null)} disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDelete} disabled={isDeleting} className="bg-destructive hover:bg-destructive/90">
+              {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
