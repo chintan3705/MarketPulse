@@ -17,9 +17,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Edit3, Trash2, Eye, PlusCircle, CopyPlus } from "lucide-react";
+import { Edit3, Trash2, Eye } from "lucide-react";
 import { GenerateBlogDialog } from "@/app/admin/blogs/_components/GenerateBlogDialog";
-import { GenerateMultipleBlogsDialog } from "@/app/admin/blogs/_components/GenerateMultipleBlogsDialog"; // New import
+import { GenerateMultipleBlogsDialog } from "@/app/admin/blogs/_components/GenerateMultipleBlogsDialog";
 import type { BlogPost } from "@/types";
 import { unstable_noStore as noStore } from "next/cache";
 
@@ -56,7 +56,7 @@ export default async function AdminBlogsPage() {
         </h1>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
           <GenerateBlogDialog />
-          <GenerateMultipleBlogsDialog /> {/* Added new dialog trigger */}
+          <GenerateMultipleBlogsDialog />
         </div>
       </div>
 
@@ -78,7 +78,7 @@ export default async function AdminBlogsPage() {
                 <TableHead className="hidden sm:table-cell">
                   Category
                 </TableHead>
-                <TableHead className="hidden md:table-cell">Author</TableHead>
+                <TableHead className="hidden lg:table-cell">Author</TableHead>
                 <TableHead className="hidden lg:table-cell">
                   Published At
                 </TableHead>
@@ -104,7 +104,7 @@ export default async function AdminBlogsPage() {
                       {post.categoryName || post.category?.name || "N/A"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-xs">
+                  <TableCell className="hidden lg:table-cell text-xs">
                     {post.author}
                   </TableCell>
                   <TableCell className="hidden lg:table-cell text-xs">
