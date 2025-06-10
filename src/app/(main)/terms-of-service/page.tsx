@@ -1,5 +1,6 @@
+
 import type { Metadata } from "next";
-import TermsOfServiceClientContent from "@/components/legal/TermsOfServiceClientContent"; 
+import TermsOfServiceClientContent from "@/app/(main)/terms-of-service/_components/TermsOfServiceClientContent"; 
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 

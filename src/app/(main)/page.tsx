@@ -1,17 +1,18 @@
+
 import type { Metadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
-import { TrendingHeadlineCard } from "@/components/blog/TrendingHeadlineCard";
-import { AdSlot } from "@/components/ads/AdSlot";
+import { AdSlot } from "@/app/(main)/_components/AdSlot";
 import { trendingHeadlines, adSlots } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Newspaper, Zap } from "lucide-react";
-import { HeroSection } from "@/components/home/HeroSection";
-import { HomeCategoryTabs } from "@/components/home/HomeCategoryTabs";
-import { TrendingTagsSection } from "@/components/home/TrendingTagsSection";
-import { PopularReadsSection } from "@/components/home/PopularReadsSection";
-import { MarketLensSection } from "@/components/home/MarketLensSection";
+import { HeroSection } from "@/app/(main)/_components/HeroSection";
+import { HomeCategoryTabs } from "@/app/(main)/_components/HomeCategoryTabs";
+import { TrendingTagsSection } from "@/app/(main)/_components/TrendingTagsSection";
+import { PopularReadsSection } from "@/app/(main)/_components/PopularReadsSection";
+import { MarketLensSection } from "@/app/(main)/_components/MarketLensSection";
+import { TrendingHeadlineCard } from "@/app/(main)/_components/TrendingHeadlineCard";
 import type { BlogPost } from "@/types";
 import { unstable_noStore as noStore } from "next/cache";
 import type React from "react";

@@ -1,5 +1,6 @@
+
 import type { Metadata } from "next";
-import PrivacyPolicyClientContent from "@/components/legal/PrivacyPolicyClientContent"; 
+import PrivacyPolicyClientContent from "@/app/(main)/privacy-policy/_components/PrivacyPolicyClientContent"; 
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 

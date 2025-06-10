@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Edit3, Trash2, Eye } from "lucide-react";
-import { GenerateBlogDialog } from "@/components/admin/GenerateBlogDialog";
+import { GenerateBlogDialog } from "@/app/admin/blogs/_components/GenerateBlogDialog";
 import type { BlogPost } from "@/types";
 import { unstable_noStore as noStore } from "next/cache";
 
