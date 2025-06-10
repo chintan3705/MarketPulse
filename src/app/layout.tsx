@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk as SpaceGroteskFont } from "next/font/google"; // Renamed for clarity
 import { Toaster } from "@/components/ui/toaster";

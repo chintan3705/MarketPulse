@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import type { TrendingHeadline } from "@/types";
 import { TrendingUp, TrendingDown, ExternalLink } from "lucide-react";

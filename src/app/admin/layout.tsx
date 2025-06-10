@@ -1,4 +1,3 @@
-
 "use client"; // Required for usePathname
 
 import Link from "next/link";

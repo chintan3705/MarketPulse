@@ -1,4 +1,3 @@
-
 "use client"; // Required for useEffect and useState
 
 import type { Metadata } from "next"; // Note: Metadata from "next" is for static export, client effects won't change it after build.

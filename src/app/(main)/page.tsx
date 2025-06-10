@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { TrendingHeadlineCard } from "@/components/blog/TrendingHeadlineCard";

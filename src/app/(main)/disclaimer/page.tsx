@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import { AlertTriangle } from "lucide-react";
 import type React from "react";

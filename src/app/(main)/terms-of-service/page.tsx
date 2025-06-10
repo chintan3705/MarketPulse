@@ -1,4 +1,3 @@
-
 "use client"; // Required for useEffect and useState
 
 import type { Metadata } from "next"; // For static metadata

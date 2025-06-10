@@ -1,4 +1,3 @@
-
 import type { Metadata, ResolvingMetadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { categories } from "@/lib/data";

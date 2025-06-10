@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import { Info } from "lucide-react";
 import type React from "react";
