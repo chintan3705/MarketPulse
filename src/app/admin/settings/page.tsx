@@ -24,29 +24,46 @@ export default function AdminSettingsPage() {
       <div className="grid gap-6">
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg sm:text-xl md:text-2xl">General Settings</CardTitle>
-            <CardDescription className="text-xs sm:text-sm">Manage general site settings.</CardDescription>
+            <CardTitle className="text-lg sm:text-xl md:text-2xl">
+              General Settings
+            </CardTitle>
+            <CardDescription className="text-xs sm:text-sm">
+              Manage general site settings.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="siteName" className="text-sm">Site Name</Label>
-              <Input id="siteName" defaultValue="MarketPulse" className="text-sm" />
+              <Label htmlFor="siteName" className="text-sm">
+                Site Name
+              </Label>
+              <Input
+                id="siteName"
+                defaultValue="MarketPulse"
+                className="text-sm"
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="siteDescription" className="text-sm">Site Description</Label>
+              <Label htmlFor="siteDescription" className="text-sm">
+                Site Description
+              </Label>
               <Input
                 id="siteDescription"
                 defaultValue="Your daily lens on the Share Market."
                 className="text-sm"
               />
             </div>
-            <Button disabled size="sm">Save Changes</Button> {/* Disabled */}
+            <Button disabled size="sm">
+              Save Changes
+            </Button>{" "}
+            {/* Disabled */}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg sm:text-xl md:text-2xl">Theme Settings</CardTitle>
+            <CardTitle className="text-lg sm:text-xl md:text-2xl">
+              Theme Settings
+            </CardTitle>
             <CardDescription className="text-xs sm:text-sm">
               Customize the appearance of the site (placeholders).
             </CardDescription>
@@ -64,14 +81,18 @@ export default function AdminSettingsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg sm:text-xl md:text-2xl">API Keys</CardTitle>
+            <CardTitle className="text-lg sm:text-xl md:text-2xl">
+              API Keys
+            </CardTitle>
             <CardDescription className="text-xs sm:text-sm">
               Manage API keys for integrations (placeholders).
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="newsApiKey" className="text-sm">News API Key</Label>
+              <Label htmlFor="newsApiKey" className="text-sm">
+                News API Key
+              </Label>
               <Input
                 id="newsApiKey"
                 type="password"
@@ -79,7 +100,10 @@ export default function AdminSettingsPage() {
                 className="text-sm"
               />
             </div>
-            <Button disabled size="sm">Save API Keys</Button> {/* Disabled */}
+            <Button disabled size="sm">
+              Save API Keys
+            </Button>{" "}
+            {/* Disabled */}
           </CardContent>
         </Card>
       </div>

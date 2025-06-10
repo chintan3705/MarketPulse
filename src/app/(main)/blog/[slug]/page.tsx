@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -121,8 +120,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   // Simple placeholder for chart data display
   let chartPlaceholderContent = "";
   if (post.chartDataJson && post.content?.includes("[CHART:")) {
-     const chartDescriptionMatch = post.content.match(/\[CHART:\s*([^\]]+)\]/);
-     const chartDescription = chartDescriptionMatch ? chartDescriptionMatch[1] : "related data";
+    const chartDescriptionMatch = post.content.match(/\[CHART:\s*([^\]]+)\]/);
+    const chartDescription = chartDescriptionMatch
+      ? chartDescriptionMatch[1]
+      : "related data";
     chartPlaceholderContent = `
       <div class="my-6 p-4 border border-dashed border-border rounded-md bg-muted/50">
         <div class="flex items-center text-muted-foreground mb-2">
@@ -130,14 +131,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <h4 class="font-semibold">Chart Information</h4>
         </div>
         <p class="text-sm">A ${post.chartType || "chart"} visualizing ${chartDescription} would be displayed here.</p>
-        ${post.detailedInformation ? `<p class="text-xs mt-1 text-muted-foreground/80">Context: ${post.detailedInformation.substring(0,150)}...</p>` : ""}
+        ${post.detailedInformation ? `<p class="text-xs mt-1 text-muted-foreground/80">Context: ${post.detailedInformation.substring(0, 150)}...</p>` : ""}
         <!-- Developer Note: Implement chart rendering using: ${post.chartType}, data: ${post.chartDataJson} -->
       </div>
     `;
   }
-  
-  const finalContent = post.content?.replace(/\[CHART:[^\]]+\]/g, chartPlaceholderContent) || post.summary;
 
+  const finalContent =
+    post.content?.replace(/\[CHART:[^\]]+\]/g, chartPlaceholderContent) ||
+    post.summary;
 
   return (
     <div

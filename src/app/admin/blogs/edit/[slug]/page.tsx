@@ -1,4 +1,3 @@
-
 // Placeholder for Edit Blog Post Page
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -43,7 +42,8 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
             Edit Blog Post: <span className="text-primary">{slug}</span>
           </CardTitle>
           <CardDescription>
-            Modify the details of the blog post. (Form UI and update logic to be implemented)
+            Modify the details of the blog post. (Form UI and update logic to be
+            implemented)
           </CardDescription>
         </CardHeader>
         <CardContent>

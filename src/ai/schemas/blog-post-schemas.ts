@@ -60,7 +60,7 @@ export const GenerateBlogPostOutputSchema = z.object({
     .string()
     .optional()
     .describe(
-      "A JSON string representing data suitable for the suggested chartType. E.g., for a bar chart: '[{\"name\": \"Category A\", \"value\": 30}, ...]' or for a table: '[{\"column1\": \"Row1Cell1\", \"column2\": \"Row1Cell2\"}, ...]'. This data should correspond to the [CHART: ...] placeholder in the content.",
+      'A JSON string representing data suitable for the suggested chartType. E.g., for a bar chart: \'[{"name": "Category A", "value": 30}, ...]\' or for a table: \'[{"column1": "Row1Cell1", "column2": "Row1Cell2"}, ...]\'. This data should correspond to the [CHART: ...] placeholder in the content.',
     ),
   detailedInformation: z
     .string()

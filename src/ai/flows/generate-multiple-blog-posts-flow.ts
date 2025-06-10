@@ -1,4 +1,3 @@
-
 "use server";
 /**
  * @fileOverview A Genkit flow to generate a list of multiple blog posts, including AI-generated images.
@@ -22,7 +21,10 @@ import {
   type GenerateMultipleBlogPostsFlowOutput,
 } from "../schemas/multiple-blog-posts-schemas";
 
-export type { GenerateMultipleBlogPostsInput, GenerateMultipleBlogPostsFlowOutput };
+export type {
+  GenerateMultipleBlogPostsInput,
+  GenerateMultipleBlogPostsFlowOutput,
+};
 
 // This is the direct Genkit flow. The API route will handle saving to DB.
 export const generateMultipleBlogPostsFlow = ai.defineFlow(

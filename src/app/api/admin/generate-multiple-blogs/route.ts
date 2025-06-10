@@ -1,4 +1,3 @@
-
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "genkit";
 import connectDB from "@/lib/mongodb";
@@ -83,7 +82,9 @@ export async function POST(
       );
     }
 
-    console.log("[API /admin/generate-multiple-blogs] Connecting to MongoDB...");
+    console.log(
+      "[API /admin/generate-multiple-blogs] Connecting to MongoDB...",
+    );
     await connectDB();
     console.log("[API /admin/generate-multiple-blogs] Connected to MongoDB.");
 

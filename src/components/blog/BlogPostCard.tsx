@@ -124,10 +124,7 @@ export function BlogPostCard({
             <div className="flex flex-wrap gap-1.5">
               {post.tags.slice(0, 3).map((tag: string) => (
                 <Link key={tag} href={`/tags/${createTagSlug(tag)}`}>
-                  <Badge
-                    variant="outline"
-                    className="text-xs px-1.5 py-0.5" 
-                  >
+                  <Badge variant="outline" className="text-xs px-1.5 py-0.5">
                     # {tag}
                   </Badge>
                 </Link>

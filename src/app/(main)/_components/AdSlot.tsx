@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import type { AdConfig } from "@/types";
 import { cn } from "@/lib/utils";
@@ -27,7 +26,9 @@ export function AdSlot({ config }: AdSlotProps) {
 
   // Determine final dimensions for the Image component
   const finalImageWidth = !isNaN(numericWidth as number) ? numericWidth : 300;
-  const finalImageHeight = !isNaN(numericHeight as number) ? numericHeight : 250;
+  const finalImageHeight = !isNaN(numericHeight as number)
+    ? numericHeight
+    : 250;
 
   // Determine style dimensions for the container div
   // If width/height are specific pixel values, use them. If percentage, use as is.
@@ -104,8 +105,11 @@ export function AdSlot({ config }: AdSlotProps) {
           maxWidth: "100%",
         }}
       >
-        <AreaChart className="w-12 h-12 sm:w-16 sm:h-16 text-primary mb-2 sm:mb-3" /> {/* Adjusted icon size and margin */}
-        <p className="font-semibold text-foreground text-sm sm:text-base text-center"> {/* Added text-center */}
+        <AreaChart className="w-12 h-12 sm:w-16 sm:h-16 text-primary mb-2 sm:mb-3" />{" "}
+        {/* Adjusted icon size and margin */}
+        <p className="font-semibold text-foreground text-sm sm:text-base text-center">
+          {" "}
+          {/* Added text-center */}
           TradingView Market Chart
         </p>
         {tradingViewWidgetConfig.symbol && (
@@ -113,7 +117,9 @@ export function AdSlot({ config }: AdSlotProps) {
             Symbol: {tradingViewWidgetConfig.symbol}
           </p>
         )}
-        <p className="text-xs mt-2 text-center"> {/* Added text-center */}
+        <p className="text-xs mt-2 text-center">
+          {" "}
+          {/* Added text-center */}
           (Live interactive chart will be embedded here)
         </p>
       </div>
@@ -134,7 +140,9 @@ export function AdSlot({ config }: AdSlotProps) {
       }}
     >
       <Megaphone className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground/70 mb-2" />
-      <p className="text-xs sm:text-sm font-medium text-center">Advertisement Space</p>
+      <p className="text-xs sm:text-sm font-medium text-center">
+        Advertisement Space
+      </p>
       <p className="text-xs text-center">Content will appear here.</p>
     </div>
   );

@@ -48,7 +48,8 @@ const SectionTitle: React.FC<SectionTitleProps> = ({ title, icon: Icon }) => (
 );
 
 export default function AdvertisePage() {
-  const linkClasses = "text-primary hover:text-primary/80 hover:underline transition-colors duration-200 ease-in-out";
+  const linkClasses =
+    "text-primary hover:text-primary/80 hover:underline transition-colors duration-200 ease-in-out";
   return (
     <div
       className="container py-8 md:py-12 animate-slide-in"
@@ -78,10 +79,7 @@ export default function AdvertisePage() {
         <p>
           For more information on our advertising packages and to discuss your
           specific needs, please contact our advertising team at:{" "}
-          <a
-            href="mailto:ads@marketpulse.example.com"
-            className={linkClasses}
-          >
+          <a href="mailto:ads@marketpulse.example.com" className={linkClasses}>
             ads@marketpulse.example.com
           </a>
           .

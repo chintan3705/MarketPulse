@@ -27,7 +27,8 @@ export default function PrivacyPolicyClientContent() {
       }),
     );
   }, []);
-  const linkClasses = "text-primary hover:text-primary/80 hover:underline transition-colors duration-200 ease-in-out";
+  const linkClasses =
+    "text-primary hover:text-primary/80 hover:underline transition-colors duration-200 ease-in-out";
 
   return (
     <div

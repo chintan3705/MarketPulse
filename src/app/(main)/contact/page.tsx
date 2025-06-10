@@ -49,7 +49,8 @@ const SectionTitle: React.FC<SectionTitleProps> = ({ title, icon: Icon }) => (
 );
 
 export default function ContactPage() {
-  const linkClasses = "text-primary hover:text-primary/80 hover:underline transition-colors duration-200 ease-in-out";
+  const linkClasses =
+    "text-primary hover:text-primary/80 hover:underline transition-colors duration-200 ease-in-out";
   return (
     <div
       className="container py-8 md:py-12 animate-slide-in"
@@ -65,10 +66,7 @@ export default function ContactPage() {
         <h3 className="font-semibold text-xl">General Inquiries</h3>
         <p>
           For general questions or information, please email us at:{" "}
-          <a
-            href="mailto:info@marketpulse.example.com"
-            className={linkClasses}
-          >
+          <a href="mailto:info@marketpulse.example.com" className={linkClasses}>
             info@marketpulse.example.com
           </a>
         </p>
@@ -91,10 +89,7 @@ export default function ContactPage() {
             Advertise page
           </Link>{" "}
           or email:{" "}
-          <a
-            href="mailto:ads@marketpulse.example.com"
-            className={linkClasses}
-          >
+          <a href="mailto:ads@marketpulse.example.com" className={linkClasses}>
             ads@marketpulse.example.com
           </a>
         </p>

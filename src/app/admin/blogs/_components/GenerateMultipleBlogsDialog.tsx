@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -46,7 +45,8 @@ export function GenerateMultipleBlogsDialog() {
   const [isOpen, setIsOpen] = useState(false);
   const [count, setCount] = useState<number>(3);
   const [topics, setTopics] = useState<string>(""); // Comma-separated or one per line
-  const [selectedCategorySlug, setSelectedCategorySlug] = useState<string>("ai-choose-per-post");
+  const [selectedCategorySlug, setSelectedCategorySlug] =
+    useState<string>("ai-choose-per-post");
   const [savedPosts, setSavedPosts] = useState<SavedPostInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -67,7 +67,10 @@ export function GenerateMultipleBlogsDialog() {
     setSavedPosts([]);
     setError(null);
 
-    const topicsArray = topics.split("\n").map(t => t.trim()).filter(t => t.length > 0);
+    const topicsArray = topics
+      .split("\n")
+      .map((t) => t.trim())
+      .filter((t) => t.length > 0);
 
     try {
       const response = await fetch("/api/admin/generate-multiple-blogs", {
@@ -79,20 +82,33 @@ export function GenerateMultipleBlogsDialog() {
         body: JSON.stringify({
           count,
           topics: topicsArray.length > 0 ? topicsArray : undefined,
-          categorySlug: selectedCategorySlug === "ai-choose-per-post" ? undefined : selectedCategorySlug,
+          categorySlug:
+            selectedCategorySlug === "ai-choose-per-post"
+              ? undefined
+              : selectedCategorySlug,
         }),
       });
 
       if (!response.ok) {
-        const errorResult = await response.json().catch(() => ({ message: `Server error: ${response.status}` }));
-        throw new Error(errorResult.message || `Failed to generate posts: ${response.statusText}`);
+        const errorResult = await response
+          .json()
+          .catch(() => ({ message: `Server error: ${response.status}` }));
+        throw new Error(
+          errorResult.message ||
+            `Failed to generate posts: ${response.statusText}`,
+        );
       }
 
-      const result = (await response.json()) as { message: string; posts: SavedPostInfo[] };
+      const result = (await response.json()) as {
+        message: string;
+        posts: SavedPostInfo[];
+      };
       setSavedPosts(result.posts || []);
       toast({
         title: "Blog Posts Processed!",
-        description: result.message || `${result.posts?.length || 0} posts generated and saved.`,
+        description:
+          result.message ||
+          `${result.posts?.length || 0} posts generated and saved.`,
         duration: 7000,
       });
     } catch (err) {
@@ -132,25 +148,37 @@ export function GenerateMultipleBlogsDialog() {
             Generate Multiple AI Blog Posts
           </DialogTitle>
           <DialogDescription className="text-xs sm:text-sm">
-            Specify count, optional topics (one per line), and an optional global category. Max 10 posts.
+            Specify count, optional topics (one per line), and an optional
+            global category. Max 10 posts.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
             <div className="space-y-1.5">
-              <Label htmlFor="count" className="text-sm">Number of Posts (1-10)</Label>
+              <Label htmlFor="count" className="text-sm">
+                Number of Posts (1-10)
+              </Label>
               <Input
                 id="count"
                 type="number"
                 value={count}
-                onChange={(e) => setCount(Math.max(1, Math.min(10, parseInt(e.target.value, 10) || 1)))}
+                onChange={(e) =>
+                  setCount(
+                    Math.max(
+                      1,
+                      Math.min(10, parseInt(e.target.value, 10) || 1),
+                    ),
+                  )
+                }
                 min="1"
                 max="10"
                 className="text-sm"
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="topics" className="text-sm">Topics (Optional, one per line)</Label>
+              <Label htmlFor="topics" className="text-sm">
+                Topics (Optional, one per line)
+              </Label>
               <Textarea
                 id="topics"
                 value={topics}
@@ -158,10 +186,14 @@ export function GenerateMultipleBlogsDialog() {
                 placeholder="e.g., Future of AI in Finance&#x0a;Impact of Interest Rates on Stocks"
                 className="text-sm h-24"
               />
-              <p className="text-xs text-muted-foreground">If empty, AI will generate diverse financial topics.</p>
+              <p className="text-xs text-muted-foreground">
+                If empty, AI will generate diverse financial topics.
+              </p>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="category" className="text-sm">Global Category (Optional)</Label>
+              <Label htmlFor="category" className="text-sm">
+                Global Category (Optional)
+              </Label>
               <Select
                 value={selectedCategorySlug}
                 onValueChange={setSelectedCategorySlug}
@@ -188,11 +220,22 @@ export function GenerateMultipleBlogsDialog() {
           </div>
           <DialogFooter className="mt-4 sm:mt-6 flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-0">
             <DialogClose asChild>
-              <Button type="button" variant="outline" disabled={isLoading} size="sm" className="w-full sm:w-auto">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isLoading}
+                size="sm"
+                className="w-full sm:w-auto"
+              >
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={isLoading} size="sm" className="w-full sm:w-auto">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              size="sm"
+              className="w-full sm:w-auto"
+            >
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
@@ -208,11 +251,15 @@ export function GenerateMultipleBlogsDialog() {
             <CardHeader className="p-3 sm:p-4">
               <div className="flex items-center gap-2 text-destructive">
                 <AlertTriangle size={18} />
-                <CardTitle className="text-sm sm:text-base">Generation/Save Failed</CardTitle>
+                <CardTitle className="text-sm sm:text-base">
+                  Generation/Save Failed
+                </CardTitle>
               </div>
             </CardHeader>
             <CardContent className="p-3 sm:p-4 pt-0">
-              <p className="text-xs sm:text-sm text-destructive-foreground">{error}</p>
+              <p className="text-xs sm:text-sm text-destructive-foreground">
+                {error}
+              </p>
             </CardContent>
           </Card>
         )}
@@ -222,12 +269,16 @@ export function GenerateMultipleBlogsDialog() {
             <CardHeader className="p-3 sm:p-4">
               <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
                 <ListChecks size={18} />
-                <CardTitle className="text-sm sm:text-base">Successfully Generated Posts!</CardTitle>
+                <CardTitle className="text-sm sm:text-base">
+                  Successfully Generated Posts!
+                </CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-1.5 text-xs sm:text-sm p-3 sm:p-4 pt-0">
               <p className="mb-2">{savedPosts.length} post(s) processed:</p>
-              <div className="max-h-48 overflow-y-auto pr-2"> {/* Added scrollable container */}
+              <div className="max-h-48 overflow-y-auto pr-2">
+                {" "}
+                {/* Added scrollable container */}
                 <ul className="list-disc list-inside space-y-0.5">
                   {savedPosts.map((post) => (
                     <li key={post.slug}>
@@ -245,7 +296,7 @@ export function GenerateMultipleBlogsDialog() {
                   ))}
                 </ul>
               </div>
-               <Button
+              <Button
                 variant="outline"
                 size="sm"
                 className="mt-3 text-xs"

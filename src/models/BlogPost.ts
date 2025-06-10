@@ -1,4 +1,3 @@
-
 import mongoose, { Schema, Document } from "mongoose";
 import type { BlogPost as BlogPostType } from "@/types";
 

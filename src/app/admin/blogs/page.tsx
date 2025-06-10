@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -99,8 +98,12 @@ export default function AdminBlogsPage() {
         method: "DELETE",
       });
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: "Failed to delete post" }));
-        throw new Error(errorData.message || `Server error: ${response.status}`);
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: "Failed to delete post" }));
+        throw new Error(
+          errorData.message || `Server error: ${response.status}`,
+        );
       }
       toast({
         title: "Post Deleted",
@@ -110,8 +113,9 @@ export default function AdminBlogsPage() {
       setPostToDelete(null);
       // Refresh data:
       // router.refresh(); // Good for server components, for client can also filter state or re-fetch
-      setPosts(prevPosts => prevPosts.filter(p => p.slug !== postToDelete.slug));
-
+      setPosts((prevPosts) =>
+        prevPosts.filter((p) => p.slug !== postToDelete.slug),
+      );
     } catch (err) {
       const catchedError = err as Error;
       toast({
@@ -123,7 +127,6 @@ export default function AdminBlogsPage() {
       setIsDeleting(false);
     }
   };
-
 
   if (isLoading) {
     return (
@@ -138,9 +141,13 @@ export default function AdminBlogsPage() {
     return (
       <div className="text-center py-10">
         <AlertTriangle className="mx-auto h-12 w-12 text-destructive" />
-        <p className="mt-4 text-lg font-semibold text-destructive-foreground">Error loading posts</p>
+        <p className="mt-4 text-lg font-semibold text-destructive-foreground">
+          Error loading posts
+        </p>
         <p className="text-sm text-muted-foreground">{error}</p>
-        <Button onClick={loadPosts} className="mt-4">Try Again</Button>
+        <Button onClick={loadPosts} className="mt-4">
+          Try Again
+        </Button>
       </div>
     );
   }
@@ -174,9 +181,7 @@ export default function AdminBlogsPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Title</TableHead>
-                <TableHead className="hidden sm:table-cell">
-                  Category
-                </TableHead>
+                <TableHead className="hidden sm:table-cell">Category</TableHead>
                 <TableHead className="hidden lg:table-cell">Author</TableHead>
                 <TableHead className="hidden lg:table-cell">
                   Published At
@@ -241,16 +246,22 @@ export default function AdminBlogsPage() {
                       </Link>
                     </Button>
                     <AlertDialogTrigger asChild>
-                       <Button
-                          variant="destructive"
-                          size="icon"
-                          title="Delete Post"
-                          className="h-8 w-8 sm:h-9 sm:w-9"
-                          onClick={() => handleDeleteClick(post)}
-                          disabled={isDeleting && postToDelete?.slug === post.slug}
-                        >
-                          {isDeleting && postToDelete?.slug === post.slug ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-                        </Button>
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        title="Delete Post"
+                        className="h-8 w-8 sm:h-9 sm:w-9"
+                        onClick={() => handleDeleteClick(post)}
+                        disabled={
+                          isDeleting && postToDelete?.slug === post.slug
+                        }
+                      >
+                        {isDeleting && postToDelete?.slug === post.slug ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="h-4 w-4" />
+                        )}
+                      </Button>
                     </AlertDialogTrigger>
                   </TableCell>
                 </TableRow>
@@ -270,13 +281,25 @@ export default function AdminBlogsPage() {
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete the
-              blog post titled &quot;{postToDelete?.title}&quot; and remove its data from our servers.
+              blog post titled &quot;{postToDelete?.title}&quot; and remove its
+              data from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setPostToDelete(null)} disabled={isDeleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmDelete} disabled={isDeleting} className="bg-destructive hover:bg-destructive/90">
-              {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            <AlertDialogCancel
+              onClick={() => setPostToDelete(null)}
+              disabled={isDeleting}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              disabled={isDeleting}
+              className="bg-destructive hover:bg-destructive/90"
+            >
+              {isDeleting ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : null}
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
