@@ -14,16 +14,16 @@ import {
   Newspaper,
   LayoutGrid,
   Wand2,
-  TrendingUp,
   AlertTriangle,
   Loader2,
   Lightbulb,
   RadioTower,
   Search,
   ExternalLink,
+  Save,
 } from "lucide-react";
 import { categories } from "@/lib/data";
-import type { BlogPost } from "@/types";
+import type { BlogPost, MarketAuxNewsItem as IMOAuxNewsItem } from "@/types"; // Renamed for clarity
 import { Skeleton } from "@/components/ui/skeleton";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -35,6 +35,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { SaveMarketAuxToBlogDialog } from "./_components/SaveMarketAuxToBlogDialog"; // New Dialog
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
@@ -42,16 +43,6 @@ interface DashboardStats {
   totalBlogs: number;
   aiGeneratedBlogs: number;
   totalCategories: number;
-}
-
-interface MarketAuxNewsItem {
-  uuid: string;
-  title: string;
-  description: string;
-  url: string;
-  image_url: string;
-  source: string;
-  published_at: string;
 }
 
 type MarketAuxQueryType =
@@ -67,14 +58,18 @@ export default function AdminDashboardPage() {
   const [statsError, setStatsError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  // MarketAux States
   const [marketAuxQueryType, setMarketAuxQueryType] =
     useState<MarketAuxQueryType>("general");
   const [marketAuxSymbols, setMarketAuxSymbols] = useState<string>("");
   const [marketAuxLimit, setMarketAuxLimit] = useState<number>(3);
-  const [marketAuxNews, setMarketAuxNews] = useState<MarketAuxNewsItem[]>([]);
+  const [marketAuxNews, setMarketAuxNews] = useState<IMOAuxNewsItem[]>([]);
   const [isLoadingMarketAux, setIsLoadingMarketAux] = useState(false);
   const [marketAuxError, setMarketAuxError] = useState<string | null>(null);
+
+  // State for the new dialog
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [selectedNewsItem, setSelectedNewsItem] =
+    useState<IMOAuxNewsItem | null>(null);
 
   const fetchDashboardStats = useCallback(async () => {
     setIsLoadingStats(true);
@@ -121,7 +116,6 @@ export default function AdminDashboardPage() {
       return;
     }
     if (marketAuxLimit < 1 || marketAuxLimit > 10) {
-      // MarketAux free plan has a limit, usually higher, but good to cap for UX
       setMarketAuxError("Number of articles must be between 1 and 10.");
       setIsLoadingMarketAux(false);
       return;
@@ -172,6 +166,11 @@ export default function AdminDashboardPage() {
     } finally {
       setIsLoadingMarketAux(false);
     }
+  };
+
+  const handleSaveAsBlog = (newsItem: IMOAuxNewsItem) => {
+    setSelectedNewsItem(newsItem);
+    setShowSaveDialog(true);
   };
 
   const StatCard = ({
@@ -372,19 +371,32 @@ export default function AdminDashboardPage() {
                     key={news.uuid}
                     className="p-3 border rounded-md hover:bg-muted/50 transition-colors"
                   >
-                    <a
-                      href={news.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-medium text-sm text-primary hover:underline flex items-center"
-                    >
-                      {news.title}
-                      <ExternalLink size={12} className="ml-1.5 shrink-0" />
-                    </a>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {news.source} -{" "}
-                      {new Date(news.published_at).toLocaleDateString()}
-                    </p>
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <a
+                            href={news.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-medium text-sm text-primary hover:underline flex items-center"
+                            >
+                            {news.title}
+                            <ExternalLink size={12} className="ml-1.5 shrink-0" />
+                            </a>
+                            <p className="text-xs text-muted-foreground mt-1">
+                            {news.source} -{" "}
+                            {new Date(news.published_at).toLocaleDateString()}
+                            </p>
+                        </div>
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={() => handleSaveAsBlog(news)}
+                            className="ml-2 text-xs shrink-0"
+                            title="Save this news as a blog post draft"
+                        >
+                            <Save size={14} className="mr-1.5" /> Blog it
+                        </Button>
+                    </div>
                     <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
                       {news.description}
                     </p>
@@ -412,17 +424,27 @@ export default function AdminDashboardPage() {
             </div>
             <CardDescription className="text-xs sm:text-sm">
               Use the fetched headlines above to generate blog posts using the
-              AI or manual creation tools in the "Manage Blogs" section.
+              AI or manual creation tools in the "Manage Blogs" section, or use the "Blog it" button above.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground text-sm sm:text-base">
-              Example: Pick a headline, copy its title or main idea, then go to
-              "Manage Blogs" to generate a post on that topic.
+              Example: Pick a headline, click "Blog it", then refine the details in the dialog and save.
             </p>
           </CardContent>
         </Card>
       </div>
+      {selectedNewsItem && (
+        <SaveMarketAuxToBlogDialog
+          isOpen={showSaveDialog}
+          onOpenChange={setShowSaveDialog}
+          newsItem={selectedNewsItem}
+          onPostSaved={() => {
+            fetchDashboardStats(); // Refresh stats after a post is saved
+            toast({ title: "Blog Post Saved!", description: "The new post from MarketAux data has been added." });
+          }}
+        />
+      )}
     </div>
   );
 }
