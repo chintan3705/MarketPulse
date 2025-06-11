@@ -11,25 +11,13 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "placehold.co",
+        hostname: "**", // Wildcard to allow all hostnames
         port: "",
         pathname: "/**",
       },
       {
-        protocol: "https",
-        hostname: "res.cloudinary.com",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "cdn.benzinga.com",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "static.seekingalpha.com",
+        protocol: "http",
+        hostname: "**", // Wildcard to allow all hostnames
         port: "",
         pathname: "/**",
       },
