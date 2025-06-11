@@ -12,7 +12,7 @@ const BlogPostSchema: Schema = new Schema(
     slug: { type: String, required: true, unique: true, index: true },
     title: { type: String, required: true },
     summary: { type: String, required: true },
-    content: { type: String, required: true }, // Content is now required
+    content: { type: String, required: true },
     imageUrl: { type: String },
     imageAiHint: { type: String },
     categorySlug: { type: String, required: true, index: true },
@@ -21,9 +21,9 @@ const BlogPostSchema: Schema = new Schema(
     publishedAt: { type: Date, default: Date.now, index: true },
     tags: [{ type: String }],
     isAiGenerated: { type: Boolean, default: false },
-    chartType: { type: String }, // Added
-    chartDataJson: { type: String }, // Added
-    detailedInformation: { type: String }, // Added
+    chartType: { type: String },
+    chartDataJson: { type: String },
+    detailedInformation: { type: String },
   },
   { timestamps: true },
 );

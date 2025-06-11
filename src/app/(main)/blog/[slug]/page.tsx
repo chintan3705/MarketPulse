@@ -23,6 +23,14 @@ interface BlogPostPageProps {
   };
 }
 
+interface ChartPlaceholderCardPropsForPage { // Renamed to avoid conflict
+  chartType: BlogPost["chartType"];
+  chartDescription: string;
+  detailedInformation: BlogPost["detailedInformation"];
+  chartDataJson: BlogPost["chartDataJson"];
+}
+
+
 async function getPostData(slug: string): Promise<BlogPost | null> {
   noStore();
   try {
@@ -65,19 +73,19 @@ export async function generateMetadata(
         {
           url: post.imageUrl,
           alt: post.title,
-          width: 1200, // Typical OG image width
-          height: 630, // Typical OG image height
+          width: 1200, 
+          height: 630, 
         },
       ]
     : previousImages;
 
-  const siteName = "MarketPulse"; // Or from environment variable
-  const logoUrl = `${SITE_URL}/logo-schema.png`; // User needs to add this to /public
+  const siteName = "MarketPulse"; 
+  const logoUrl = `${SITE_URL}/logo-schema.png`; 
 
   const authorUrl =
     post.isAiGenerated || post.author === "MarketPulse AI"
       ? `${SITE_URL}/about`
-      : `${SITE_URL}`; // Fallback for human authors without dedicated pages
+      : `${SITE_URL}`; 
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -87,7 +95,7 @@ export async function generateMetadata(
       "@id": `${SITE_URL}/blog/${params.slug}`,
     },
     headline: post.title,
-    description: post.summary.substring(0, 155), // Ensure meta description length for SEO
+    description: post.summary.substring(0, 155),
     image: post.imageUrl ? [post.imageUrl] : [],
     author: {
       "@type": "Person",
@@ -100,8 +108,8 @@ export async function generateMetadata(
       logo: {
         "@type": "ImageObject",
         url: logoUrl,
-        width: 600, // Example width, adjust to actual logo
-        height: 60, // Example height, adjust to actual logo
+        width: 600, 
+        height: 60, 
       },
     },
     datePublished: new Date(post.publishedAt).toISOString(),
@@ -110,7 +118,7 @@ export async function generateMetadata(
 
   return {
     title: post.title,
-    description: post.summary.substring(0, 155), // Limit description length
+    description: post.summary.substring(0, 155), 
     keywords: post.tags,
     alternates: {
       canonical: `${SITE_URL}/blog/${params.slug}`,
@@ -131,7 +139,7 @@ export async function generateMetadata(
       card: "summary_large_image",
       title: post.title,
       description: post.summary,
-      images: postOgImage.map((img) => img.url), // Use the same image as OpenGraph
+      images: postOgImage.map((img) => img.url),
     },
     other: {
       "application/ld+json": JSON.stringify(jsonLd),
@@ -140,22 +148,22 @@ export async function generateMetadata(
 }
 
 export async function generateStaticParams() {
-  return []; // No static generation for blog posts for now
+  return []; 
 }
 
 const renderContentWithChartPlaceholders = (post: BlogPost) => {
-  if (!post.content) return [{ type: "html", content: post.summary }];
+  if (!post.content) return [{ type: "html" as const, content: post.summary }];
 
   const contentParts = post.content.split(/(\[CHART:\s*[^\]]+\])/g);
   const elements: Array<{
     type: "html" | "chart";
     content?: string;
-    chartData?: ChartPlaceholderCardProps;
+    chartData?: ChartPlaceholderCardPropsForPage;
   }> = [];
 
   contentParts.forEach((part) => {
     const chartMatch = part.match(/\[CHART:\s*([^\]]+)\]/);
-    if (chartMatch && post.chartDataJson) {
+    if (chartMatch && post.chartDataJson) { // Only add if chartDataJson exists
       const chartDescription = chartMatch[1];
       elements.push({
         type: "chart",
@@ -170,10 +178,13 @@ const renderContentWithChartPlaceholders = (post: BlogPost) => {
       elements.push({ type: "html", content: part });
     }
   });
+
+  // If after processing, elements is empty (e.g. content was just "[CHART: ...]" but no data),
+  // default to summary. Or if content was empty to begin with.
   if (elements.length === 0) {
     elements.push({ type: "html", content: post.summary });
   }
-
+  
   return elements;
 };
 
@@ -258,7 +269,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 80vw, 768px"
               className="object-cover"
-              priority={true} // LCP Image
+              priority={true}
               data-ai-hint={post.imageAiHint || "financial news article"}
             />
           </div>
@@ -272,10 +283,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               );
             }
             if (element.type === "html" && element.content) {
+              // Ensure content is not undefined before passing to dangerouslySetInnerHTML
               return (
                 <div
                   key={index}
-                  dangerouslySetInnerHTML={{ __html: element.content }}
+                  dangerouslySetInnerHTML={{ __html: element.content || "" }}
                 />
               );
             }

@@ -78,7 +78,7 @@ export async function POST(
           message: "AI failed to generate any blog post content.",
           posts: [],
         },
-        { status: 200 }, // Still 200, but with an empty posts array
+        { status: 200 },
       );
     }
 

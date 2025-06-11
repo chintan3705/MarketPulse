@@ -17,7 +17,7 @@ export interface BlogPost {
   slug: string;
   title: string;
   summary: string;
-  content: string; // Made content non-optional as it's a core part
+  content: string;
   imageUrl?: string;
   imageAiHint?: string;
   category: Category;
@@ -25,7 +25,7 @@ export interface BlogPost {
   categoryName: string;
   author: string;
   publishedAt: string; // ISO date string
-  updatedAt: string; // ISO date string - ADDED
+  updatedAt: string; // ISO date string
   tags: string[];
   isAiGenerated?: boolean;
   chartType?: "bar" | "line" | "pie" | "table";

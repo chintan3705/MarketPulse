@@ -10,7 +10,7 @@ const ApiInputSchema = z.object({
   topic: z
     .string()
     .min(3, { message: "Topic must be at least 3 characters long." }),
-  categorySlug: z.string().optional(), // Added optional categorySlug
+  categorySlug: z.string().optional(),
 });
 
 interface GenerateBlogSuccessResponse {
@@ -53,7 +53,6 @@ export async function POST(
       `[API /admin/generate-blog] Validated topic: "${topic}", categorySlug: "${categorySlug || "AI choice"}". Calling Genkit flow...`,
     );
 
-    // 1. Call the Genkit flow to generate content
     const genkitInput: GenerateBlogPostInput = { topic };
     if (categorySlug && categorySlug !== "ai-choose") {
       genkitInput.categorySlug = categorySlug;
@@ -120,6 +119,9 @@ export async function POST(
         publishedAt: new Date(),
         tags: generatedData.tags,
         isAiGenerated: true,
+        chartType: generatedData.chartType,
+        chartDataJson: generatedData.chartDataJson,
+        detailedInformation: generatedData.detailedInformation,
       };
 
     const newPost = new BlogPostModel(newPostData);

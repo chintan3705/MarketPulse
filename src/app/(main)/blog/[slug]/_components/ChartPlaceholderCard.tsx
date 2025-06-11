@@ -22,7 +22,7 @@ export function ChartPlaceholderCard({
         <h4 className="font-semibold text-base">Chart Information</h4>
       </div>
       <p className="text-sm">
-        A {chartType || "chart"} visualizing {chartDescription} would be
+        A {chartType || "chart"} visualizing "{chartDescription}" would be
         displayed here.
       </p>
       {detailedInformation && (
