@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Save, ExternalLink, Wand2, Image as ImageIcon } from "lucide-react";
+import { Loader2, Save, ExternalLink, Wand2, Image as ImageIcon, FileText } from "lucide-react";
 import type { MarketAuxNewsItem as IMOAuxNewsItem, Category } from "@/types";
 import { categories } from "@/lib/data";
 
@@ -70,6 +70,8 @@ export function SaveMarketAuxToBlogDialog({
   const [isRegeneratingSummary, setIsRegeneratingSummary] = useState(false);
   const [isRegeneratingTags, setIsRegeneratingTags] = useState(false);
   const [isRegeneratingImage, setIsRegeneratingImage] = useState(false);
+  const [isRegeneratingContent, setIsRegeneratingContent] = useState(false);
+
 
   const form = useForm<SaveBlogFormValues>({
     resolver: zodResolver(SaveBlogSchema),
@@ -103,6 +105,8 @@ export function SaveMarketAuxToBlogDialog({
       });
     }
   }, [newsItem, form, isOpen]);
+
+  const anyRegenInProgress = isRegeneratingSummary || isRegeneratingTags || isRegeneratingImage || isRegeneratingContent;
 
   const handleRegenerateSummary = async () => {
     setIsRegeneratingSummary(true);
@@ -167,6 +171,27 @@ export function SaveMarketAuxToBlogDialog({
       setIsRegeneratingImage(false);
     }
   };
+
+  const handleRegenerateContent = async () => {
+    setIsRegeneratingContent(true);
+    try {
+      const { title, summary, content: existingContent } = form.getValues();
+      const response = await fetch(`${SITE_URL}/api/admin/regenerate/content`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, summary, existingContent }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || "Failed to regenerate content");
+      form.setValue("content", result.newContent, { shouldValidate: true });
+      toast({ title: "Content Regenerated", description: "AI has generated new content." });
+    } catch (err) {
+      toast({ title: "Error", description: (err as Error).message, variant: "destructive" });
+    } finally {
+      setIsRegeneratingContent(false);
+    }
+  };
+
 
   const onSubmit = async (data: SaveBlogFormValues) => {
     setIsSubmitting(true);
@@ -234,7 +259,7 @@ export function SaveMarketAuxToBlogDialog({
           <div>
             <div className="flex justify-between items-center mb-1">
                 <Label htmlFor="summary">Summary</Label>
-                <Button type="button" variant="outline" size="xs" onClick={handleRegenerateSummary} disabled={isRegeneratingSummary}>
+                <Button type="button" variant="outline" size="xs" onClick={handleRegenerateSummary} disabled={anyRegenInProgress}>
                     {isRegeneratingSummary ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Wand2 className="h-3 w-3 mr-1" />} Regen AI
                 </Button>
             </div>
@@ -245,8 +270,13 @@ export function SaveMarketAuxToBlogDialog({
           </div>
 
           <div>
-            <Label htmlFor="content">Content (HTML supported)</Label>
-            <Textarea id="content" {...form.register("content")} rows={7} />
+            <div className="flex justify-between items-center mb-1">
+                <Label htmlFor="content">Content (HTML supported)</Label>
+                <Button type="button" variant="outline" size="xs" onClick={handleRegenerateContent} disabled={anyRegenInProgress}>
+                    {isRegeneratingContent ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <FileText className="h-3 w-3 mr-1" />} Regen AI
+                </Button>
+            </div>
+            <Textarea id="content" {...form.register("content")} rows={10} />
             {form.formState.errors.content && (
               <p className="text-xs text-destructive mt-1">{form.formState.errors.content.message}</p>
             )}
@@ -280,7 +310,7 @@ export function SaveMarketAuxToBlogDialog({
             <div>
                 <div className="flex justify-between items-center mb-1">
                     <Label htmlFor="tags">Tags (comma-separated)</Label>
-                    <Button type="button" variant="outline" size="xs" onClick={handleRegenerateTags} disabled={isRegeneratingTags}>
+                    <Button type="button" variant="outline" size="xs" onClick={handleRegenerateTags} disabled={anyRegenInProgress}>
                         {isRegeneratingTags ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Wand2 className="h-3 w-3 mr-1" />} Regen AI
                     </Button>
                 </div>
@@ -302,7 +332,7 @@ export function SaveMarketAuxToBlogDialog({
             <div>
                 <div className="flex justify-between items-center mb-1">
                     <Label htmlFor="imageUrl">Image URL (Optional)</Label>
-                    <Button type="button" variant="outline" size="xs" onClick={handleRegenerateImage} disabled={isRegeneratingImage}>
+                    <Button type="button" variant="outline" size="xs" onClick={handleRegenerateImage} disabled={anyRegenInProgress}>
                         {isRegeneratingImage ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <ImageIcon className="h-3 w-3 mr-1" />} Regen AI
                     </Button>
                 </div>
@@ -328,13 +358,13 @@ export function SaveMarketAuxToBlogDialog({
             <Input type="hidden" {...form.register("imageAiHint")} />
 
 
-          <DialogFooter className="pt-4">
+          <DialogFooter className="pt-4 sticky bottom-0 bg-background pb-2">
             <DialogClose asChild>
-              <Button type="button" variant="outline" disabled={isSubmitting || isRegeneratingSummary || isRegeneratingTags || isRegeneratingImage }>
+              <Button type="button" variant="outline" disabled={isSubmitting || anyRegenInProgress}>
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={isSubmitting || isRegeneratingSummary || isRegeneratingTags || isRegeneratingImage}>
+            <Button type="submit" disabled={isSubmitting || anyRegenInProgress}>
               {isSubmitting ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
