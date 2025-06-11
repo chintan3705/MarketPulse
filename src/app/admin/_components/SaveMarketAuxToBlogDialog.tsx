@@ -26,9 +26,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Save, ExternalLink } from "lucide-react";
+import { Loader2, Save, ExternalLink, Wand2, Image as ImageIcon } from "lucide-react";
 import type { MarketAuxNewsItem as IMOAuxNewsItem, Category } from "@/types";
-import { categories } from "@/lib/data"; // Your static categories
+import { categories } from "@/lib/data";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
@@ -46,7 +46,8 @@ const SaveBlogSchema = z.object({
   ),
   author: z.string().min(2, "Author name is required."),
   imageUrl: z.string().url("Must be a valid URL if provided.").optional().or(z.literal("")),
-  originalArticleUrl: z.string().url().optional(), // For reference
+  imageAiHint: z.string().optional(),
+  originalArticleUrl: z.string().url().optional(),
 });
 
 type SaveBlogFormValues = z.infer<typeof SaveBlogSchema>;
@@ -55,7 +56,7 @@ interface SaveMarketAuxToBlogDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   newsItem: IMOAuxNewsItem;
-  onPostSaved?: () => void; // Callback after successful save
+  onPostSaved?: () => void;
 }
 
 export function SaveMarketAuxToBlogDialog({
@@ -66,6 +67,9 @@ export function SaveMarketAuxToBlogDialog({
 }: SaveMarketAuxToBlogDialogProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRegeneratingSummary, setIsRegeneratingSummary] = useState(false);
+  const [isRegeneratingTags, setIsRegeneratingTags] = useState(false);
+  const [isRegeneratingImage, setIsRegeneratingImage] = useState(false);
 
   const form = useForm<SaveBlogFormValues>({
     resolver: zodResolver(SaveBlogSchema),
@@ -77,40 +81,103 @@ export function SaveMarketAuxToBlogDialog({
       tags: "",
       author: "MarketPulse Curated",
       imageUrl: "",
+      imageAiHint: "",
       originalArticleUrl: newsItem?.url,
     },
   });
 
   useEffect(() => {
-    if (newsItem) {
+    if (newsItem && isOpen) { // Reset form when dialog opens with new item
       const defaultContent = newsItem.description ? `${newsItem.description}\n\nRead the original article: ${newsItem.url}` : `Read the original article: ${newsItem.url}`;
+      const initialTags = newsItem.source ? newsItem.source.toLowerCase().replace(/\s+/g, '-').split(" ").join(",") : "";
       form.reset({
         title: newsItem.title || "",
         summary: newsItem.description || "",
         content: defaultContent,
-        categorySlug: categories.find(cat => cat.name.toLowerCase() === "general")?.slug || categories[0]?.slug || "",
-        tags: newsItem.source ? newsItem.source.toLowerCase().replace(/\s+/g, '-') : "", // Basic tag from source
+        categorySlug: categories.find(cat => cat.slug === "general")?.slug || categories[0]?.slug || "",
+        tags: initialTags,
         author: `MarketPulse (via ${newsItem.source || 'News Source'})`,
         imageUrl: newsItem.image_url || "",
+        imageAiHint: newsItem.title.substring(0,30) || "financial news",
         originalArticleUrl: newsItem.url,
       });
     }
-  }, [newsItem, form, isOpen]); // Re-run if newsItem or isOpen changes
+  }, [newsItem, form, isOpen]);
+
+  const handleRegenerateSummary = async () => {
+    setIsRegeneratingSummary(true);
+    try {
+      const { title, content, summary: existingSummary } = form.getValues();
+      const response = await fetch(`${SITE_URL}/api/admin/regenerate/summary`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, currentContent: content, existingSummary }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || "Failed to regenerate summary");
+      form.setValue("summary", result.newSummary, { shouldValidate: true });
+      toast({ title: "Summary Regenerated", description: "AI has updated the summary." });
+    } catch (err) {
+      toast({ title: "Error", description: (err as Error).message, variant: "destructive" });
+    } finally {
+      setIsRegeneratingSummary(false);
+    }
+  };
+
+  const handleRegenerateTags = async () => {
+    setIsRegeneratingTags(true);
+    try {
+      const { title, summary, content } = form.getValues();
+      const response = await fetch(`${SITE_URL}/api/admin/regenerate/tags`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, summary, currentContent: content }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || "Failed to regenerate tags");
+      form.setValue("tags", result.newTags.join(", "), { shouldValidate: true });
+      toast({ title: "Tags Regenerated", description: "AI has updated the tags." });
+    } catch (err) {
+      toast({ title: "Error", description: (err as Error).message, variant: "destructive" });
+    } finally {
+      setIsRegeneratingTags(false);
+    }
+  };
+  
+  const handleRegenerateImage = async () => {
+    setIsRegeneratingImage(true);
+    try {
+      const { title, summary, tags, categorySlug } = form.getValues();
+      const currentTagsArray = tags.split(",").map(t => t.trim()).filter(Boolean);
+      const categoryName = categories.find(c => c.slug === categorySlug)?.name;
+
+      const response = await fetch(`${SITE_URL}/api/admin/regenerate/image`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, summary, currentTags: currentTagsArray, categoryName }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || "Failed to regenerate image");
+      form.setValue("imageUrl", result.newImageUrl, { shouldValidate: true });
+      form.setValue("imageAiHint", result.newImageAiHint || title.substring(0,30));
+      toast({ title: "Image Regenerated", description: "AI has generated a new image." });
+    } catch (err) {
+      toast({ title: "Error", description: (err as Error).message, variant: "destructive" });
+    } finally {
+      setIsRegeneratingImage(false);
+    }
+  };
 
   const onSubmit = async (data: SaveBlogFormValues) => {
     setIsSubmitting(true);
     try {
       const tagsArray = data.tags.split(",").map((tag) => tag.trim()).filter(Boolean);
       const payload = {
-        title: data.title,
-        summary: data.summary,
-        content: data.content,
-        categorySlug: data.categorySlug,
+        ...data,
         tags: tagsArray,
-        author: data.author,
-        imageUrl: data.imageUrl || undefined, // Ensure empty string becomes undefined if API expects that
-        isAiGenerated: false, // This is curated, not AI-generated
-        // publishedAt will be set by the server
+        imageUrl: data.imageUrl || undefined,
+        imageAiHint: data.imageAiHint || data.title.substring(0,30),
+        isAiGenerated: false, 
       };
 
       const response = await fetch(
@@ -121,30 +188,18 @@ export function SaveMarketAuxToBlogDialog({
           body: JSON.stringify(payload),
         },
       );
-
       const result = await response.json();
-
       if (!response.ok) {
-        throw new Error(
-          result.message || `Failed to save blog post: ${response.statusText}`,
-        );
+        throw new Error(result.message || `Failed to save blog post: ${response.statusText}`);
       }
-
       toast({
         title: "Blog Post Saved!",
         description: `"${result.post.title}" has been successfully created.`,
       });
-      onOpenChange(false); // Close dialog
-      if (onPostSaved) {
-        onPostSaved(); // Trigger callback
-      }
+      onOpenChange(false);
+      if (onPostSaved) onPostSaved();
     } catch (error: unknown) {
-      const catchedError = error as Error;
-      toast({
-        title: "Error Saving Post",
-        description: catchedError.message,
-        variant: "destructive",
-      });
+      toast({ title: "Error Saving Post", description: (error as Error).message, variant: "destructive" });
     } finally {
       setIsSubmitting(false);
     }
@@ -158,10 +213,10 @@ export function SaveMarketAuxToBlogDialog({
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl flex items-center">
             <Save className="mr-2 h-5 w-5 text-primary" />
-            Save News as Blog Post
+            Curate News as Blog Post
           </DialogTitle>
           <DialogDescription className="text-xs sm:text-sm">
-            Review and edit the details from the MarketAux news item before saving it as a blog post. Original article:{" "}
+            Review, edit, and use AI to enhance details from the MarketAux news item. Original:{" "}
             <a href={newsItem.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline items-center inline-flex">
                 {newsItem.source} <ExternalLink size={12} className="ml-1"/>
             </a>
@@ -177,7 +232,12 @@ export function SaveMarketAuxToBlogDialog({
           </div>
 
           <div>
-            <Label htmlFor="summary">Summary</Label>
+            <div className="flex justify-between items-center mb-1">
+                <Label htmlFor="summary">Summary</Label>
+                <Button type="button" variant="outline" size="xs" onClick={handleRegenerateSummary} disabled={isRegeneratingSummary}>
+                    {isRegeneratingSummary ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Wand2 className="h-3 w-3 mr-1" />} Regen AI
+                </Button>
+            </div>
             <Textarea id="summary" {...form.register("summary")} rows={3} />
             {form.formState.errors.summary && (
               <p className="text-xs text-destructive mt-1">{form.formState.errors.summary.message}</p>
@@ -218,8 +278,13 @@ export function SaveMarketAuxToBlogDialog({
               )}
             </div>
             <div>
-              <Label htmlFor="tags">Tags (comma-separated)</Label>
-              <Input id="tags" {...form.register("tags")} placeholder="e.g., market-update, finance, analysis" />
+                <div className="flex justify-between items-center mb-1">
+                    <Label htmlFor="tags">Tags (comma-separated)</Label>
+                    <Button type="button" variant="outline" size="xs" onClick={handleRegenerateTags} disabled={isRegeneratingTags}>
+                        {isRegeneratingTags ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Wand2 className="h-3 w-3 mr-1" />} Regen AI
+                    </Button>
+                </div>
+              <Input id="tags" {...form.register("tags")} placeholder="e.g., market-update, finance" />
               {form.formState.errors.tags && (
                 <p className="text-xs text-destructive mt-1">{form.formState.errors.tags.message}</p>
               )}
@@ -235,7 +300,12 @@ export function SaveMarketAuxToBlogDialog({
               )}
             </div>
             <div>
-              <Label htmlFor="imageUrl">Image URL (Optional)</Label>
+                <div className="flex justify-between items-center mb-1">
+                    <Label htmlFor="imageUrl">Image URL (Optional)</Label>
+                    <Button type="button" variant="outline" size="xs" onClick={handleRegenerateImage} disabled={isRegeneratingImage}>
+                        {isRegeneratingImage ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <ImageIcon className="h-3 w-3 mr-1" />} Regen AI
+                    </Button>
+                </div>
               <Input id="imageUrl" {...form.register("imageUrl")} placeholder="https://example.com/image.jpg"/>
               {form.formState.errors.imageUrl && (
                 <p className="text-xs text-destructive mt-1">{form.formState.errors.imageUrl.message}</p>
@@ -247,21 +317,24 @@ export function SaveMarketAuxToBlogDialog({
              <div className="mt-2">
                 <Label className="text-xs text-muted-foreground">Image Preview:</Label>
                  <img
-                    src={form.watch("imageUrl")}
+                    src={form.watch("imageUrl")!}
                     alt="Preview"
                     className="mt-1 rounded-md border max-h-32 object-contain"
+                    onError={(e) => (e.currentTarget.style.display = 'none')} // Hide if image fails to load
+                    onLoad={(e) => (e.currentTarget.style.display = 'block')}
                     />
             </div>
            )}
+            <Input type="hidden" {...form.register("imageAiHint")} />
 
 
           <DialogFooter className="pt-4">
             <DialogClose asChild>
-              <Button type="button" variant="outline" disabled={isSubmitting}>
+              <Button type="button" variant="outline" disabled={isSubmitting || isRegeneratingSummary || isRegeneratingTags || isRegeneratingImage }>
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button type="submit" disabled={isSubmitting || isRegeneratingSummary || isRegeneratingTags || isRegeneratingImage}>
               {isSubmitting ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
