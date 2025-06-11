@@ -1,7 +1,7 @@
 
 # MarketPulse - Financial News Blog Platform
 
-MarketPulse is a modern financial news blog platform built with Next.js, React, Tailwind CSS, and ShadCN UI components. It leverages Genkit for AI-powered content generation and MongoDB for data persistence. The platform includes features for browsing articles, an admin panel for managing blog posts (including manual creation and AI generation), and user authentication for the admin area.
+MarketPulse is a modern financial news blog platform built with Next.js, React, Tailwind CSS, and ShadCN UI components. It leverages Genkit for AI-powered content generation and MongoDB for data persistence. The platform includes features for browsing articles, an admin panel for managing blog posts (including manual creation and AI generation), user authentication for the admin area, and MarketAux API integration for news suggestions.
 
 ## Features
 
@@ -10,8 +10,9 @@ MarketPulse is a modern financial news blog platform built with Next.js, React, 
 *   **Tailwind CSS & ShadCN UI:** A utility-first CSS framework and a collection of beautifully designed, accessible UI components.
 *   **Genkit Integration:** AI-powered blog post generation (text and images) and article summarization.
 *   **MongoDB Database:** Stores blog posts, categories, and user data.
+*   **MarketAux API Integration:** Fetches real-time financial news headlines to inspire blog content (Admin Dashboard).
 *   **Admin Panel:**
-    *   Dashboard overview.
+    *   Dashboard overview with dynamic stats and news suggestions.
     *   Manage blog posts:
         *   List all blog posts.
         *   AI-generate single or multiple blog posts.
@@ -33,6 +34,7 @@ MarketPulse is a modern financial news blog platform built with Next.js, React, 
 *   **UI:** React, ShadCN UI
 *   **Styling:** Tailwind CSS
 *   **AI Integration:** Genkit (with Google AI/Gemini models)
+*   **News API:** MarketAux
 *   **Database:** MongoDB (via Mongoose)
 *   **Authentication:** JWT (JSON Web Tokens) with HttpOnly cookies
 *   **Image Hosting (for AI-generated images):** Cloudinary
@@ -76,6 +78,9 @@ To get the project up and running locally, follow these steps:
     CLOUDINARY_API_KEY=your_cloudinary_api_key
     CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 
+    # MarketAux API Token (for news suggestions in Admin Dashboard)
+    MARKETAUX_API_TOKEN=your_marketaux_api_token_here
+
     # Next.js Public Site URL (used for absolute URLs in metadata, sitemap, etc.)
     # For local development:
     NEXT_PUBLIC_SITE_URL=http://localhost:9002
@@ -84,6 +89,7 @@ To get the project up and running locally, follow these steps:
     *   **`JWT_SECRET`**: Generate a long, random, and secure string.
     *   **`GOOGLE_API_KEY`**: Obtain this from your Google AI Studio or Google Cloud Console. Make sure the Gemini API is enabled for your project.
     *   **`CLOUDINARY_...`**: Sign up for a Cloudinary account to get these credentials if you want to use AI-generated images.
+    *   **`MARKETAUX_API_TOKEN`**: Get this from [MarketAux](https://marketaux.com/). The free tier has limitations.
 
 4.  **Run the development server:**
     The application runs on port `9002` by default (as specified in `package.json`).
@@ -146,4 +152,3 @@ Contributions are welcome! Please follow standard coding practices and ensure yo
 ## License
 
 This project is licensed under the MIT License - see the LICENSE.md file for details (if one exists, otherwise assume private).
-```

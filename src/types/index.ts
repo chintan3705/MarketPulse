@@ -1,3 +1,4 @@
+
 export interface NavItem {
   label: string;
   href: string;
@@ -58,4 +59,17 @@ export interface AdConfig {
   height?: number | string;
   className?: string;
   imageAiHint?: string;
+}
+
+// Added for MarketAux API integration
+export interface MarketAuxNewsItem {
+  uuid: string;
+  title: string;
+  description: string;
+  url: string;
+  image_url?: string; // Optional
+  source: string;
+  published_at: string; // ISO date string
+  language: string;
+  // Add other fields if needed, e.g., entities
 }
