@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { AdSlot } from "@/app/(main)/_components/AdSlot";
@@ -117,10 +118,7 @@ export default async function HomePage() {
   const inlineAd1 = adSlots.find((ad) => ad.id === "inline-ad-1");
 
   return (
-    <div
-      className="animate-slide-in"
-      style={{ animationDelay: "0.1s", animationFillMode: "backwards" }}
-    >
+    <div>
       <HeroSection />
 
       <MarketLensSection />
@@ -220,17 +218,11 @@ export default async function HomePage() {
           </section>
         )}
 
-        <section
-          className="mt-8 md:mt-12 animate-slide-in"
-          style={{ animationDelay: "0.5s", animationFillMode: "backwards" }}
-        >
+        <section className="mt-8 md:mt-12">
           <TrendingTagsSection posts={latestBlogPosts} />
         </section>
 
-        <section
-          className="mt-8 md:mt-12 animate-slide-in"
-          style={{ animationDelay: "0.7s", animationFillMode: "backwards" }}
-        >
+        <section className="mt-8 md:mt-12">
           <PopularReadsSection posts={latestBlogPosts.slice(0, 3)} />
         </section>
 
@@ -241,11 +233,7 @@ export default async function HomePage() {
         )}
 
         {moreNewsPosts.length > 0 && (
-          <section
-            className="mt-8 md:mt-12 animate-slide-in"
-            style={{ animationDelay: "0.9s", animationFillMode: "backwards" }}
-            aria-labelledby="more-posts-title"
-          >
+          <section className="mt-8 md:mt-12" aria-labelledby="more-posts-title">
             <SectionTitle
               title="More News & Analysis"
               viewAllLink="/news/all"

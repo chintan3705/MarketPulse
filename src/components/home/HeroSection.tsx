@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Newspaper } from "lucide-react";
 import Link from "next/link";
@@ -7,20 +8,18 @@ export function HeroSection() {
     <section className="py-10 md:py-16 lg:py-20 bg-gradient-to-br from-background to-muted/20 dark:to-muted/40">
       <div className="container text-center px-4 sm:px-6 lg:px-8">
         <h1
-          className="font-headline text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-4 animate-slide-in"
-          style={{ animationDelay: "0.2s" }}
+          className="font-headline text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-4"
         >
           MarketPulse
         </h1>
         <p
-          className="text-md sm:text-lg md:text-xl text-muted-foreground max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto mb-6 md:mb-8 animate-slide-in"
-          style={{ animationDelay: "0.3s" }}
+          className="text-md sm:text-lg md:text-xl text-muted-foreground max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto mb-6 md:mb-8"
         >
           Your Daily Lens on the Share Market. Timely updates, financial
           insights, and stock analysis to empower your investment decisions.
         </p>
 
-        <div className="animate-slide-in" style={{ animationDelay: "0.5s" }}>
+        <div>
           <Button
             size="lg"
             asChild
