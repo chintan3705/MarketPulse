@@ -11,20 +11,23 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import type React from "react";
 
 interface BlogPostCardProps {
   post: BlogPost;
   className?: string;
   orientation?: "vertical" | "horizontal";
   priority?: boolean; // For LCP image optimization
+  locale: string;
 }
 
-export function BlogPostCard({
+export const BlogPostCard: React.FC<BlogPostCardProps> = ({
   post,
   className,
   orientation = "vertical",
   priority = false,
-}: BlogPostCardProps) {
+  locale,
+}) => {
   const formattedDate: string = new Date(post.publishedAt).toLocaleDateString(
     "en-US",
     {
@@ -57,7 +60,7 @@ export function BlogPostCard({
             !post.imageUrl && "hidden", // Hide if no image
           )}
         >
-          <Link href={`/blog/${post.slug}`} aria-label={post.title}>
+          <Link href={`/${locale}/blog/${post.slug}`} aria-label={post.title}>
             <Image
               src={post.imageUrl}
               alt={post.title}
@@ -81,7 +84,7 @@ export function BlogPostCard({
         )}
       >
         <CardHeader className="p-0 pb-2">
-          <Link href={`/category/${post.category.slug}`}>
+          <Link href={`/${locale}/category/${post.category.slug}`}>
             <Badge
               variant="secondary"
               className="mb-2 inline-block hover:bg-accent hover:text-accent-foreground transition-colors duration-200 ease-in-out text-xs px-2 py-0.5"
@@ -91,7 +94,7 @@ export function BlogPostCard({
           </Link>
           <CardTitle className="font-headline text-lg sm:text-xl md:text-xl leading-tight">
             <Link
-              href={`/blog/${post.slug}`}
+              href={`/${locale}/blog/${post.slug}`}
               className="hover:text-primary/80 transition-colors duration-200 ease-in-out"
             >
               {post.title}
@@ -123,7 +126,7 @@ export function BlogPostCard({
           <div className="p-0 pt-3 mt-auto">
             <div className="flex flex-wrap gap-1.5">
               {post.tags.slice(0, 3).map((tag: string) => (
-                <Link key={tag} href={`/tags/${createTagSlug(tag)}`}>
+                <Link key={tag} href={`/${locale}/tags/${createTagSlug(tag)}`}>
                   <Badge variant="outline" className="text-xs px-1.5 py-0.5">
                     # {tag}
                   </Badge>
@@ -135,4 +138,4 @@ export function BlogPostCard({
       </div>
     </Card>
   );
-}
+};

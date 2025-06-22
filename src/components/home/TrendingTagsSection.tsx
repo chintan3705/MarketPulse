@@ -3,27 +3,30 @@ import { Badge } from "@/components/ui/badge";
 import { Flame } from "lucide-react";
 import type { BlogPost } from "@/types";
 import type React from "react";
+import { SectionTitle } from "../common/SectionTitle";
 
 interface TrendingTagsSectionProps {
   posts: BlogPost[];
+  locale: string;
 }
 
 export const TrendingTagsSection: React.FC<TrendingTagsSectionProps> = ({
   posts,
+  locale,
 }) => {
   const sectionPadding = "py-6 md:py-10";
   const containerPadding = "container px-4 sm:px-6 lg:px-8";
-  const titleClass = "font-headline text-xl sm:text-2xl md:text-3xl font-bold";
-  const iconClass = "h-5 w-5 md:h-6 md:w-6 text-primary";
 
   if (!posts || posts.length === 0) {
     return (
       <section className={sectionPadding}>
         <div className={containerPadding}>
-          <div className="flex items-center gap-2 mb-4 md:mb-6">
-            <Flame className={iconClass} />
-            <h2 className={titleClass}>Trending Tags</h2>
-          </div>
+          <SectionTitle
+            title="Trending Tags"
+            icon={Flame}
+            as="h2"
+            titleClassName="text-xl sm:text-2xl md:text-3xl"
+          />
           <p className="text-muted-foreground text-sm sm:text-base">
             No trending tags to display at the moment.
           </p>
@@ -47,10 +50,12 @@ export const TrendingTagsSection: React.FC<TrendingTagsSectionProps> = ({
     return (
       <section className={sectionPadding}>
         <div className={containerPadding}>
-          <div className="flex items-center gap-2 mb-4 md:mb-6">
-            <Flame className={iconClass} />
-            <h2 className={titleClass}>Trending Tags</h2>
-          </div>
+          <SectionTitle
+            title="Trending Tags"
+            icon={Flame}
+            as="h2"
+            titleClassName="text-xl sm:text-2xl md:text-3xl"
+          />
           <p className="text-muted-foreground text-sm sm:text-base">
             No trending tags to display at the moment.
           </p>
@@ -65,13 +70,15 @@ export const TrendingTagsSection: React.FC<TrendingTagsSectionProps> = ({
   return (
     <section className={sectionPadding}>
       <div className={containerPadding}>
-        <div className="flex items-center gap-2 mb-4 md:mb-6">
-          <Flame className={iconClass} />
-          <h2 className={titleClass}>Trending Tags</h2>
-        </div>
+        <SectionTitle
+          title="Trending Tags"
+          icon={Flame}
+          as="h2"
+          titleClassName="text-xl sm:text-2xl md:text-3xl"
+        />
         <div className="flex flex-wrap gap-2 sm:gap-3">
           {trendingTags.map((tag: string) => (
-            <Link key={tag} href={`/tags/${createTagSlug(tag)}`}>
+            <Link key={tag} href={`/${locale}/tags/${createTagSlug(tag)}`}>
               <Badge
                 variant="secondary"
                 className="text-xs sm:text-sm px-3 sm:px-4 py-1 sm:py-2 rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-200 ease-in-out transform hover:scale-105 shadow-sm hover:shadow-md"
