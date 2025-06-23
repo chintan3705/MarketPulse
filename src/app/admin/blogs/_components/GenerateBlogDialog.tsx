@@ -168,7 +168,7 @@ export function GenerateBlogDialog() {
       }}
     >
       <DialogTrigger asChild>
-        <Button size="sm">
+        <Button size="sm" className="w-full sm:w-auto">
           <PlusCircle className="mr-2 h-4 w-4" /> Generate & Save Blog
         </Button>
       </DialogTrigger>

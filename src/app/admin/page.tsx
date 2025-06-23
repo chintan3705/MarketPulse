@@ -441,7 +441,7 @@ export default function AdminDashboardPage() {
           onOpenChange={setShowSaveDialog}
           newsItem={selectedNewsItem}
           onPostSaved={() => {
-            fetchDashboardStats(); // Refresh stats after a post is saved
+            void fetchDashboardStats(); // Refresh stats after a post is saved
             toast({
               title: "Blog Post Saved!",
               description: "The new post from MarketAux data has been added.",

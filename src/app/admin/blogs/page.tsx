@@ -24,7 +24,6 @@ import {
   Eye,
   Loader2,
   AlertTriangle,
-  PlusCircle,
   FileText,
 } from "lucide-react";
 import { GenerateBlogDialog } from "@/app/admin/blogs/_components/GenerateBlogDialog";

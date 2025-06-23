@@ -9,6 +9,7 @@
  */
 
 import { ai } from "@/ai/genkit";
+import { googleAI } from "@genkit-ai/googleai";
 import {
   RegenerateImageInputSchema,
   RegenerateImageOutputSchema,
@@ -102,7 +103,7 @@ Avoid text in the image. Focus on conceptual or abstract representations. Overal
     );
 
     const { media } = await ai.generate({
-      model: "googleai/gemini-2.0-flash-exp",
+      model: googleAI.model("gemini-2.0-flash-preview-image-generation"),
       prompt: imagePromptText,
       config: {
         responseModalities: ["IMAGE", "TEXT"],

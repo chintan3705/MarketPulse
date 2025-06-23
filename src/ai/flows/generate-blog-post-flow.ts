@@ -9,6 +9,7 @@
  */
 
 import { ai } from "@/ai/genkit";
+import { googleAI } from "@genkit-ai/googleai";
 import { categories } from "@/lib/data";
 import {
   GenerateBlogPostInputSchema,
@@ -26,7 +27,7 @@ if (
   !process.env.CLOUDINARY_API_SECRET
 ) {
   console.warn(
-    "❌ [Cloudinary Setup Warning] Cloudinary environment variables (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET) are not fully set. Image uploads will fail. Ensure they are in your .env.local file and the server is restarted.",
+    "❌ [Cloudinary Setup Warning] Cloudinary environment variables (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET) are not fully set. Image uploads will fail. Ensure they are in your .env file and the server is restarted.",
   );
 } else {
   cloudinary.config({
@@ -108,7 +109,7 @@ async function uploadImageToCloudinary(
     !process.env.CLOUDINARY_API_SECRET
   ) {
     console.error(
-      "❌ [uploadImageToCloudinary] Cloudinary credentials not configured. Skipping upload. Please check .env.local.",
+      "❌ [uploadImageToCloudinary] Cloudinary credentials not configured. Skipping upload. Please check .env.",
     );
     return undefined;
   }
@@ -237,7 +238,7 @@ const generateBlogPostFlow = ai.defineFlow(
       );
 
       const { media } = await ai.generate({
-        model: "googleai/gemini-2.0-flash-exp",
+        model: googleAI.model("gemini-2.0-flash-preview-image-generation"),
         prompt: imagePromptText,
         config: {
           responseModalities: ["IMAGE", "TEXT"],

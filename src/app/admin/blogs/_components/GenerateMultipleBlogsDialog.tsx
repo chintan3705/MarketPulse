@@ -34,7 +34,6 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { categories } from "@/lib/data";
-import type { GenerateBlogPostOutput } from "@/ai/schemas/blog-post-schemas";
 
 interface SavedPostInfo {
   title: string;

@@ -104,8 +104,8 @@ export function SaveMarketAuxToBlogDialog({
     if (newsItem && isOpen) {
       // Reset form when dialog opens with new item
       const defaultContent = newsItem.description
-        ? `${newsItem.description}\n\nRead the original article: ${newsItem.url}`
-        : `Read the original article: ${newsItem.url}`;
+        ? `<p>${newsItem.description}</p><p><br></p><p><em>Read the original article on <a href="${newsItem.url}" target="_blank" rel="noopener noreferrer">${newsItem.source}</a>.</em></p>`
+        : `<p><em>Read the original article on <a href="${newsItem.url}" target="_blank" rel="noopener noreferrer">${newsItem.source}</a>.</em></p>`;
       const initialTags = newsItem.source
         ? newsItem.source
             .toLowerCase()
