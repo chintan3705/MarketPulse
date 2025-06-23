@@ -1,17 +1,17 @@
 import type { Metadata, ResolvingMetadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
-import { AdSlot } from "@/app/(main)/_components/AdSlot";
+import { AdSlot } from "@/components/ads/AdSlot";
 import { trendingHeadlines, adSlots, categories } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowRight, Newspaper, Zap } from "lucide-react";
-import { HeroSection } from "@/app/(main)/_components/HeroSection";
-import { HomeCategoryTabs } from "@/app/(main)/_components/HomeCategoryTabs";
-import { TrendingTagsSection } from "@/app/(main)/_components/TrendingTagsSection";
-import { PopularReadsSection } from "@/app/(main)/_components/PopularReadsSection";
-import { MarketLensSection } from "@/app/(main)/_components/MarketLensSection";
-import { TrendingHeadlineCard } from "@/app/(main)/_components/TrendingHeadlineCard";
+import { HeroSection } from "@/components/home/HeroSection";
+import { HomeCategoryTabs } from "@/components/home/HomeCategoryTabs";
+import { TrendingTagsSection } from "@/components/home/TrendingTagsSection";
+import { PopularReadsSection } from "@/components/home/PopularReadsSection";
+import { MarketLensSection } from "@/components/home/MarketLensSection";
+import { TrendingHeadlineCard } from "@/components/blog/TrendingHeadlineCard";
 import type { BlogPost } from "@/types";
 import { unstable_noStore as noStore } from "next/cache";
 import type React from "react";
@@ -81,7 +81,12 @@ const LocalizedSectionTitle: React.FC<LocalizedSectionTitleProps> = ({
   locale,
 }) => (
   <div className="flex items-center justify-between mb-4 md:mb-6">
-    <SectionTitle title={title} icon={icon} as="h2" titleClassName="text-xl sm:text-2xl md:text-3xl"/>
+    <SectionTitle
+      title={title}
+      icon={icon}
+      as="h2"
+      titleClassName="text-xl sm:text-2xl md:text-3xl"
+    />
     {viewAllLink && (
       <Button
         variant="link"
@@ -97,7 +102,6 @@ const LocalizedSectionTitle: React.FC<LocalizedSectionTitleProps> = ({
     )}
   </div>
 );
-
 
 async function fetchHomePagePosts(): Promise<BlogPost[]> {
   noStore();
@@ -229,7 +233,12 @@ export default async function HomePage({ params: { locale } }: HomePageProps) {
 
         {tradingViewAd && (
           <section className="mt-8 md:mt-12" aria-label="TradingView Chart">
-            <SectionTitle title="Market Spotlight" as="h2" titleClassName="text-xl sm:text-2xl md:text-3xl text-center" className="text-center" />
+            <SectionTitle
+              title="Market Spotlight"
+              as="h2"
+              titleClassName="text-xl sm:text-2xl md:text-3xl text-center"
+              className="text-center"
+            />
             <AdSlot config={tradingViewAd} />
           </section>
         )}
