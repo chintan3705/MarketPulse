@@ -3,7 +3,6 @@ import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { categories } from "@/lib/data";
 import { Rocket } from "lucide-react";
 import type { BlogPost } from "@/types";
-import { unstable_noStore as noStore } from "next/cache";
 import type React from "react";
 import { SectionTitle } from "@/components/common/SectionTitle";
 
@@ -48,10 +47,9 @@ export async function generateMetadata(
 }
 
 async function fetchIpoPosts(): Promise<BlogPost[]> {
-  noStore();
   try {
     const res = await fetch(`${SITE_URL}/api/posts?categorySlug=ipos`, {
-      cache: "no-store",
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
     });
     if (!res.ok) {
       console.error(

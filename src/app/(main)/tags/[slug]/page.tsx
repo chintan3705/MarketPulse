@@ -2,7 +2,6 @@ import type { Metadata, ResolvingMetadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { Tag } from "lucide-react";
 import type { BlogPost } from "@/types";
-import { unstable_noStore as noStore } from "next/cache";
 import type React from "react";
 import { SectionTitle } from "@/components/common/SectionTitle";
 
@@ -15,10 +14,9 @@ interface TagPageProps {
 }
 
 async function fetchPostsByTag(tagSlug: string): Promise<BlogPost[]> {
-  noStore();
   try {
     const res = await fetch(`${SITE_URL}/api/posts?tagSlug=${tagSlug}`, {
-      cache: "no-store",
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
     });
     if (!res.ok) {
       console.error(

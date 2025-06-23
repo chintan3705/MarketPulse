@@ -13,7 +13,6 @@ import { adSlots, trendingHeadlines } from "@/lib/data";
 import type { BlogPost } from "@/types";
 import { ArrowRight, Newspaper, Zap } from "lucide-react";
 import type { Metadata, ResolvingMetadata } from "next";
-import { unstable_noStore as noStore } from "next/cache";
 import Link from "next/link";
 import type React from "react";
 
@@ -82,10 +81,9 @@ const HomepageSectionTitle: React.FC<HomepageSectionTitleProps> = ({
 );
 
 async function fetchHomePagePosts(): Promise<BlogPost[]> {
-  noStore();
   try {
     const res = await fetch(`${SITE_URL}/api/posts?limit=6`, {
-      cache: "no-store",
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
     });
     if (!res.ok) {
       console.error(

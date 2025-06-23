@@ -4,7 +4,6 @@ import { categories } from "@/lib/data";
 import { LayoutGrid } from "lucide-react";
 import { notFound } from "next/navigation";
 import type { BlogPost } from "@/types";
-import { unstable_noStore as noStore } from "next/cache";
 import type React from "react";
 import { SectionTitle } from "@/components/common/SectionTitle";
 
@@ -17,12 +16,11 @@ interface CategoryPageProps {
 }
 
 async function fetchPostsByCategory(categorySlug: string): Promise<BlogPost[]> {
-  noStore();
   try {
     const res = await fetch(
       `${SITE_URL}/api/posts?categorySlug=${categorySlug}`,
       {
-        cache: "no-store",
+        next: { revalidate: 60 }, // Revalidate every 60 seconds
       },
     );
     if (!res.ok) {

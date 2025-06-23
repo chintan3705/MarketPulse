@@ -9,7 +9,6 @@ import {
   UserCircle,
 } from "lucide-react";
 import type { Metadata, ResolvingMetadata } from "next";
-import { unstable_noStore as noStore } from "next/cache";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -27,10 +26,9 @@ interface BlogPostPageProps {
 }
 
 async function getPostData(slug: string): Promise<BlogPost | null> {
-  noStore();
   try {
     const res = await fetch(`${SITE_URL}/api/posts/${slug}`, {
-      cache: "no-store",
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
     });
 
     if (!res.ok) {

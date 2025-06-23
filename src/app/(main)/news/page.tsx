@@ -2,7 +2,6 @@ import type { Metadata, ResolvingMetadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { Newspaper } from "lucide-react";
 import type { BlogPost } from "@/types";
-import { unstable_noStore as noStore } from "next/cache";
 import type React from "react";
 import { SectionTitle } from "@/components/common/SectionTitle";
 
@@ -47,10 +46,9 @@ export async function generateMetadata(
 }
 
 async function fetchPosts(): Promise<BlogPost[]> {
-  noStore();
   try {
     const res = await fetch(`${SITE_URL}/api/posts?limit=12`, {
-      cache: "no-store",
+      next: { revalidate: 60 }, // Revalidate every 60 seconds
     });
     if (!res.ok) {
       console.error(`Failed to fetch posts: ${res.status} ${await res.text()}`);
