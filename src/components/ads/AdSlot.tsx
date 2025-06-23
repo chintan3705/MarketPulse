@@ -1,8 +1,8 @@
 import Image from "next/image";
 import type { AdConfig } from "@/types";
 import { cn } from "@/lib/utils";
-import { AreaChart } from "lucide-react";
 import React from "react";
+import TradingViewWidget from "@/components/tradingview/TradingViewWidget";
 
 interface AdSlotProps {
   config: AdConfig;
@@ -84,7 +84,7 @@ export function AdSlot({ config }: AdSlotProps) {
     return (
       <div
         className={cn(
-          "bg-card border border-border flex flex-col items-center justify-center text-xs sm:text-sm text-muted-foreground p-4 rounded-lg shadow-md mx-auto",
+          "bg-card rounded-lg shadow-md mx-auto overflow-hidden",
           className,
         )}
         style={{
@@ -93,14 +93,7 @@ export function AdSlot({ config }: AdSlotProps) {
           maxWidth: "100%",
         }}
       >
-        <AreaChart className="w-12 h-12 sm:w-16 sm:w-16 text-primary mb-2" />
-        <p className="font-semibold text-foreground text-sm sm:text-base">
-          TradingView Chart
-        </p>
-        <p className="text-xs mt-1">
-          Symbol: {tradingViewWidgetConfig.symbol || "N/A"}
-        </p>
-        <p className="text-xs mt-2">(Live chart will be embedded here)</p>
+        <TradingViewWidget widgetConfig={tradingViewWidgetConfig} />
       </div>
     );
   }
