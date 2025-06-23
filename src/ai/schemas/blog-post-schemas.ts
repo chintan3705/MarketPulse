@@ -37,7 +37,9 @@ export const GenerateBlogPostOutputSchema = z.object({
     ),
   tags: z
     .array(z.string())
-    .describe("An array of 2-4 relevant tags (keywords) for the blog post, derived from the content."),
+    .describe(
+      "An array of 2-4 relevant tags (keywords) for the blog post, derived from the content.",
+    ),
   imageUrl: z
     .string()
     .optional()

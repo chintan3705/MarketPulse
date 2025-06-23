@@ -1,4 +1,3 @@
-
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 
@@ -6,13 +5,7 @@ const MARKETAUX_API_TOKEN = process.env.MARKETAUX_API_TOKEN;
 const MARKETAUX_BASE_URL = "https://api.marketaux.com/v1/news/all";
 
 const MarketAuxParamsSchema = z.object({
-  queryType: z.enum([
-    "general",
-    "symbols",
-    "positive",
-    "neutral",
-    "negative",
-  ]),
+  queryType: z.enum(["general", "symbols", "positive", "neutral", "negative"]),
   limit: z.coerce.number().min(1).max(10).default(3),
   symbols: z.string().optional(), // Comma-separated string
 });
@@ -71,7 +64,10 @@ export async function GET(request: NextRequest) {
 
   if (!validationResult.success) {
     return NextResponse.json(
-      { message: "Invalid query parameters.", errors: validationResult.error.format() },
+      {
+        message: "Invalid query parameters.",
+        errors: validationResult.error.format(),
+      },
       { status: 400 },
     );
   }
@@ -122,8 +118,9 @@ export async function GET(request: NextRequest) {
     .join("&");
 
   const marketAuxUrl = `${MARKETAUX_BASE_URL}?${queryString}`;
-  console.log(`[MarketAux API Proxy] Fetching: ${marketAuxUrl.replace(MARKETAUX_API_TOKEN, "REDACTED_TOKEN")}`);
-
+  console.log(
+    `[MarketAux API Proxy] Fetching: ${marketAuxUrl.replace(MARKETAUX_API_TOKEN, "REDACTED_TOKEN")}`,
+  );
 
   try {
     const response = await fetch(marketAuxUrl, {
@@ -140,10 +137,7 @@ export async function GET(request: NextRequest) {
       } catch (e) {
         errorBody = { message: await response.text() };
       }
-      console.error(
-        `MarketAux API Error (${response.status}):`,
-        errorBody,
-      );
+      console.error(`MarketAux API Error (${response.status}):`, errorBody);
       return NextResponse.json(
         {
           message: `Error from MarketAux API: ${errorBody?.message || response.statusText}`,
@@ -155,12 +149,14 @@ export async function GET(request: NextRequest) {
 
     const data: MarketAuxApiResponse = await response.json();
     return NextResponse.json(data, { status: 200 });
-
   } catch (error) {
     const catchedError = error as Error;
     console.error("Error calling MarketAux API:", catchedError);
     return NextResponse.json(
-      { message: "Failed to fetch news from MarketAux.", error: catchedError.message },
+      {
+        message: "Failed to fetch news from MarketAux.",
+        error: catchedError.message,
+      },
       { status: 500 },
     );
   }

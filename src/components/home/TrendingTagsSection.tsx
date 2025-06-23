@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Flame } from "lucide-react";

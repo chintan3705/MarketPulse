@@ -107,9 +107,7 @@ export default async function CategoryPage({
   const postsInCategory = await fetchPostsByCategory(slug);
 
   return (
-    <div
-      className="container py-6 md:py-10 px-4 sm:px-6 lg:px-8"
-    >
+    <div className="container py-6 md:py-10 px-4 sm:px-6 lg:px-8">
       <SectionTitle
         title={category.name.replace(/-/g, " ")}
         icon={LayoutGrid}

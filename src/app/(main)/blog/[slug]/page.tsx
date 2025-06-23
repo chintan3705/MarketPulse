@@ -1,20 +1,22 @@
-
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import type { BlogPost } from "@/types";
+import {
+  ArrowLeft,
+  Bot,
+  CalendarDays,
+  Headphones,
+  UserCircle,
+} from "lucide-react";
+import type { Metadata, ResolvingMetadata } from "next";
+import { unstable_noStore as noStore } from "next/cache";
 import Image from "next/image";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import {
-  CalendarDays,
-  UserCircle,
-  ArrowLeft,
-  Headphones,
-  Bot,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
-import type { Metadata, ResolvingMetadata } from "next";
-import type { BlogPost } from "@/types";
-import { unstable_noStore as noStore } from "next/cache";
-import { ChartPlaceholderCard, type ChartPlaceholderCardProps } from "./_components/ChartPlaceholderCard";
+import {
+  ChartPlaceholderCard,
+  type ChartPlaceholderCardProps,
+} from "./_components/ChartPlaceholderCard";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
@@ -30,6 +32,7 @@ async function getPostData(slug: string): Promise<BlogPost | null> {
     const res = await fetch(`${SITE_URL}/api/posts/${slug}`, {
       cache: "no-store",
     });
+
     if (!res.ok) {
       if (res.status === 404) {
         return null;
@@ -61,7 +64,7 @@ export async function generateMetadata(
       description: "The blog post you are looking for could not be found.",
     };
   }
-  
+
   const previousImages = (await parent).openGraph?.images || [];
   const postOgImage = post.imageUrl
     ? [
@@ -202,9 +205,7 @@ export default async function BlogPostPage({
   const contentElements = renderContentWithChartPlaceholders(post);
 
   return (
-    <div
-      className="container py-6 md:py-10 px-4 sm:px-6 lg:px-8"
-    >
+    <div className="container py-6 md:py-10 px-4 sm:px-6 lg:px-8">
       <article className="max-w-3xl mx-auto">
         <header className="mb-6 md:mb-8">
           <div className="flex justify-between items-center mb-3 sm:mb-4">

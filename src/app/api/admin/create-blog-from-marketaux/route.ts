@@ -1,4 +1,3 @@
-
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import connectDB from "@/lib/mongodb";
@@ -12,7 +11,12 @@ const CreateBlogFromMarketAuxSchema = z.object({
   categorySlug: z.string().min(1, "Category is required."),
   tags: z.array(z.string().min(1)).min(1, "At least one tag is required."),
   author: z.string().min(2, "Author name is required."),
-  imageUrl: z.string().url("Must be a valid URL if provided.").optional().or(z.literal("")).nullable(),
+  imageUrl: z
+    .string()
+    .url("Must be a valid URL if provided.")
+    .optional()
+    .or(z.literal(""))
+    .nullable(),
 });
 
 interface SuccessResponse {
@@ -31,7 +35,10 @@ export async function POST(
   console.log("[API /admin/create-blog-from-marketaux] Received POST request.");
   try {
     const body: unknown = await request.json();
-    console.log("[API /admin/create-blog-from-marketaux] Request body parsed:", body);
+    console.log(
+      "[API /admin/create-blog-from-marketaux] Request body parsed:",
+      body,
+    );
 
     const validationResult = CreateBlogFromMarketAuxSchema.safeParse(body);
 
@@ -46,19 +53,16 @@ export async function POST(
       );
     }
 
-    const {
-      title,
-      summary,
-      content,
-      categorySlug,
-      tags,
-      author,
-      imageUrl,
-    } = validationResult.data;
+    const { title, summary, content, categorySlug, tags, author, imageUrl } =
+      validationResult.data;
 
-    console.log("[API /admin/create-blog-from-marketaux] Connecting to MongoDB...");
+    console.log(
+      "[API /admin/create-blog-from-marketaux] Connecting to MongoDB...",
+    );
     await connectDB();
-    console.log("[API /admin/create-blog-from-marketaux] Connected to MongoDB.");
+    console.log(
+      "[API /admin/create-blog-from-marketaux] Connected to MongoDB.",
+    );
 
     let slug = title
       .toLowerCase()
@@ -76,31 +80,39 @@ export async function POST(
       uniqueSlug = `${slug}-${counter}`;
     }
     slug = uniqueSlug;
-    console.log(`[API /admin/create-blog-from-marketaux] Generated unique slug: ${slug}`);
-    
+    console.log(
+      `[API /admin/create-blog-from-marketaux] Generated unique slug: ${slug}`,
+    );
+
     const categoryDetails = staticCategories.find(
       (c) => c.slug === categorySlug,
     );
-    const categoryName = categoryDetails?.name || staticCategories.find(c => c.slug === "general")?.name || "General";
+    const categoryName =
+      categoryDetails?.name ||
+      staticCategories.find((c) => c.slug === "general")?.name ||
+      "General";
 
-    const newPostData: Omit<IMongoBlogPost, "_id" | "createdAt" | "updatedAt"> = {
-      slug,
-      title,
-      summary,
-      content,
-      categorySlug,
-      categoryName,
-      tags,
-      author,
-      imageUrl: imageUrl || undefined,
-      imageAiHint: `news article ${tags.join(" ")}`.substring(0, 50), // Basic hint
-      publishedAt: new Date(),
-      isAiGenerated: false, // This is curated
-      // chartType, chartDataJson, detailedInformation can be undefined
-    };
+    const newPostData: Omit<IMongoBlogPost, "_id" | "createdAt" | "updatedAt"> =
+      {
+        slug,
+        title,
+        summary,
+        content,
+        categorySlug,
+        categoryName,
+        tags,
+        author,
+        imageUrl: imageUrl || undefined,
+        imageAiHint: `news article ${tags.join(" ")}`.substring(0, 50), // Basic hint
+        publishedAt: new Date(),
+        isAiGenerated: false, // This is curated
+        // chartType, chartDataJson, detailedInformation can be undefined
+      };
 
     const newPost = new BlogPostModel(newPostData);
-    console.log("[API /admin/create-blog-from-marketaux] Saving post to MongoDB...");
+    console.log(
+      "[API /admin/create-blog-from-marketaux] Saving post to MongoDB...",
+    );
     const savedPost = (await newPost.save()) as IMongoBlogPost;
     console.log(
       "[API /admin/create-blog-from-marketaux] Post saved successfully. ID:",

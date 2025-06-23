@@ -4,12 +4,12 @@ import { Loader2 } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Admin Login",
-    description: "Access the admin dashboard for MarketPulse.",
-    robots: {
-        index: false,
-        follow: false,
-    }
+  title: "Admin Login",
+  description: "Access the admin dashboard for MarketPulse.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 function LoginPageLoadingFallback() {

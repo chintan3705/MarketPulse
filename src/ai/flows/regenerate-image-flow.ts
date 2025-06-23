@@ -1,4 +1,3 @@
-
 "use server";
 /**
  * @fileOverview A Genkit flow to regenerate an image for a blog post.
@@ -42,7 +41,7 @@ async function uploadImageToCloudinary(
   imageDataUri: string,
   fileNamePrefix: string = "marketpulse-regen-image",
 ): Promise<string | undefined> {
-   if (
+  if (
     !process.env.CLOUDINARY_CLOUD_NAME ||
     !process.env.CLOUDINARY_API_KEY ||
     !process.env.CLOUDINARY_API_SECRET
@@ -86,16 +85,21 @@ const regenerateImageFlow = ai.defineFlow(
   },
   async (input) => {
     const imageAiHintBase =
-      input.title.substring(0,30) || (input.currentTags && input.currentTags.length > 0 ? input.currentTags.slice(0, 2).join(" ") : "financial markets");
+      input.title.substring(0, 30) ||
+      (input.currentTags && input.currentTags.length > 0
+        ? input.currentTags.slice(0, 2).join(" ")
+        : "financial markets");
     const newImageAiHint = `regenerated ${imageAiHintBase}`;
 
     const imagePromptText = `Generate a new, visually appealing, modern, professional, financial-style image.
-The image is for a blog post titled "${input.title}" with summary: "${input.summary.substring(0,100)}...".
-Category focus (if provided): ${input.categoryName || 'General Finance'}.
+The image is for a blog post titled "${input.title}" with summary: "${input.summary.substring(0, 100)}...".
+Category focus (if provided): ${input.categoryName || "General Finance"}.
 Keywords to inspire: ${input.currentTags ? input.currentTags.join(", ") : newImageAiHint}.
 Avoid text in the image. Focus on conceptual or abstract representations. Overall tone should be informative and professional for a share market news website MarketPulse.`;
 
-    console.log(`🖼️ [regenerateImageFlow] Generating image with prompt (first 150 chars): ${imagePromptText.substring(0,150)}...`);
+    console.log(
+      `🖼️ [regenerateImageFlow] Generating image with prompt (first 150 chars): ${imagePromptText.substring(0, 150)}...`,
+    );
 
     const { media } = await ai.generate({
       model: "googleai/gemini-2.0-flash-exp",
@@ -108,14 +112,18 @@ Avoid text in the image. Focus on conceptual or abstract representations. Overal
     if (!media || !media.url) {
       throw new Error("Image generation by Genkit did not return a media URL.");
     }
-    
-    console.log(`🖼️ [regenerateImageFlow] Image data URI generated. Uploading to Cloudinary...`);
+
+    console.log(
+      `🖼️ [regenerateImageFlow] Image data URI generated. Uploading to Cloudinary...`,
+    );
     const newImageUrl = await uploadImageToCloudinary(media.url, input.title);
 
     if (!newImageUrl) {
       throw new Error("Failed to upload regenerated image to Cloudinary.");
     }
-    console.log(`✅ [regenerateImageFlow] Image regenerated and uploaded: ${newImageUrl}`);
+    console.log(
+      `✅ [regenerateImageFlow] Image regenerated and uploaded: ${newImageUrl}`,
+    );
 
     return {
       newImageUrl,

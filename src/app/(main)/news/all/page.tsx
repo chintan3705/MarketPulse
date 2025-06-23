@@ -68,9 +68,7 @@ export default async function AllNewsPage() {
   const allPosts = await fetchAllPosts();
 
   return (
-    <div
-      className="container py-8 md:py-12"
-    >
+    <div className="container py-8 md:py-12">
       <SectionTitle
         title="All News & Analysis"
         icon={Newspaper}

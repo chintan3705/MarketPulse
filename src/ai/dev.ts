@@ -1,15 +1,13 @@
-
 import { config } from "dotenv";
 config();
 
 // Schemas
 // import '@/ai/schemas/blog-post-schemas.ts'; // Indirectly used by flows
 // import '@/ai/schemas/multiple-blog-posts-schemas.ts'; // Indirectly used by flows
-import '@/ai/schemas/regenerate-summary-schemas.ts';
-import '@/ai/schemas/regenerate-tags-schemas.ts';
-import '@/ai/schemas/regenerate-image-schemas.ts';
-import '@/ai/schemas/regenerate-content-schemas.ts';
-
+import "@/ai/schemas/regenerate-summary-schemas.ts";
+import "@/ai/schemas/regenerate-tags-schemas.ts";
+import "@/ai/schemas/regenerate-image-schemas.ts";
+import "@/ai/schemas/regenerate-content-schemas.ts";
 
 // Flows
 import "@/ai/flows/summarize-article.ts";
