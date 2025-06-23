@@ -1,3 +1,4 @@
+
 import type { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
 import { Mail } from "lucide-react";

@@ -1,3 +1,4 @@
+
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { Star } from "lucide-react";
 import type { BlogPost } from "@/types";

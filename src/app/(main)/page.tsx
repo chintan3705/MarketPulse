@@ -1,3 +1,4 @@
+
 import type { Metadata, ResolvingMetadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { AdSlot } from "@/components/ads/AdSlot";
@@ -117,11 +118,8 @@ export default async function HomePage() {
   return (
     <div>
       <HeroSection />
-
       <MarketLensSection />
-
       <HomeCategoryTabs />
-
       {topBannerAd && (
         <section className="py-4 md:py-6 bg-muted/30 dark:bg-muted/40">
           <div className="container">
@@ -129,7 +127,6 @@ export default async function HomePage() {
           </div>
         </section>
       )}
-
       <div className="container py-6 md:py-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           <div className="lg:col-span-2 space-y-6 md:space-y-8">

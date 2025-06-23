@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -202,8 +203,7 @@ export default async function BlogPostPage({
 
   return (
     <div
-      className="container py-6 md:py-10 animate-slide-in px-4 sm:px-6 lg:px-8"
-      style={{ animationDelay: "0.1s", animationFillMode: "backwards" }}
+      className="container py-6 md:py-10 px-4 sm:px-6 lg:px-8"
     >
       <article className="max-w-3xl mx-auto">
         <header className="mb-6 md:mb-8">
