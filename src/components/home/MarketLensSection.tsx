@@ -1,25 +1,25 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import type { TrendingHeadline } from "@/types";
 import {
   getMarketLensDigest,
-  type MarketLensDigestOutput,
   type MarketLensDigestInput,
+  type MarketLensDigestOutput,
 } from "@/ai/flows/market-lens-digest-flow";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { trendingHeadlines as mockHeadlinesData } from "@/lib/data";
+import type { TrendingHeadline } from "@/types";
 import {
-  TrendingUp,
-  TrendingDown,
-  MinusCircle,
-  ExternalLink,
   AlertTriangle,
+  ExternalLink,
   Eye,
+  MinusCircle,
+  TrendingDown,
+  TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const TrendIcon = ({
   sentiment,
@@ -45,7 +45,7 @@ const TrendIcon = ({
   }
   return (
     <MinusCircle
-      className={`${iconSize} text-muted-foreground mr-1.5 sm:mr-2 flex-shrink-0`}
+      className={`${iconSize} text-primary mr-1.5 sm:mr-2 flex-shrink-0`}
     />
   );
 };
@@ -204,7 +204,7 @@ export function MarketLensSection() {
                         rel="noopener noreferrer"
                         aria-label="Read full article"
                       >
-                        <ExternalLink className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground hover:text-primary transition-colors ml-2 flex-shrink-0" />
+                        <ExternalLink className="h-4 w-4 mt-1 text-muted-foreground hover:text-primary transition-colors ml-2 flex-shrink-0" />
                       </Link>
                     </div>
                     <p className="text-xs text-muted-foreground">

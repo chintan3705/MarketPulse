@@ -1,22 +1,21 @@
-
-import type { Metadata, ResolvingMetadata } from "next";
-import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { AdSlot } from "@/components/ads/AdSlot";
-import { trendingHeadlines, adSlots, categories } from "@/lib/data";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Newspaper, Zap } from "lucide-react";
+import { BlogPostCard } from "@/components/blog/BlogPostCard";
+import { TrendingHeadlineCard } from "@/components/blog/TrendingHeadlineCard";
+import { SectionTitle } from "@/components/common/SectionTitle";
 import { HeroSection } from "@/components/home/HeroSection";
 import { HomeCategoryTabs } from "@/components/home/HomeCategoryTabs";
-import { TrendingTagsSection } from "@/components/home/TrendingTagsSection";
-import { PopularReadsSection } from "@/components/home/PopularReadsSection";
 import { MarketLensSection } from "@/components/home/MarketLensSection";
-import { TrendingHeadlineCard } from "@/components/blog/TrendingHeadlineCard";
+import { PopularReadsSection } from "@/components/home/PopularReadsSection";
+import { TrendingTagsSection } from "@/components/home/TrendingTagsSection";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { adSlots, trendingHeadlines } from "@/lib/data";
 import type { BlogPost } from "@/types";
+import { ArrowRight, Newspaper, Zap } from "lucide-react";
+import type { Metadata, ResolvingMetadata } from "next";
 import { unstable_noStore as noStore } from "next/cache";
+import Link from "next/link";
 import type React from "react";
-import { SectionTitle } from "@/components/common/SectionTitle";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
@@ -220,9 +219,7 @@ export default async function HomePage() {
         </section>
 
         <section className="mt-8 md:mt-12">
-          <PopularReadsSection
-            posts={latestBlogPosts.slice(0, 3)}
-          />
+          <PopularReadsSection posts={latestBlogPosts.slice(0, 3)} />
         </section>
 
         {inlineAd1 && (
@@ -232,10 +229,7 @@ export default async function HomePage() {
         )}
 
         {moreNewsPosts.length > 0 && (
-          <section
-            className="mt-8 md:mt-12"
-            aria-labelledby="more-posts-title"
-          >
+          <section className="mt-8 md:mt-12" aria-labelledby="more-posts-title">
             <HomepageSectionTitle
               title="More News & Analysis"
               viewAllLink="/news/all"

@@ -233,7 +233,7 @@ export default async function BlogPostPage({
           <Link href={`/category/${post.category.slug}`}>
             <Badge
               variant="secondary"
-              className="mb-2 inline-block hover:bg-accent hover:text-accent-foreground transition-colors duration-200 ease-in-out text-xs px-2 py-0.5"
+              className="mb-2 inline-block hover:bg-primary/20 hover:text-primary transition-colors duration-200 ease-in-out text-xs px-2 py-0.5"
             >
               {post.category.name}
             </Badge>

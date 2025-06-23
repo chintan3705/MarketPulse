@@ -1,9 +1,8 @@
-
-import Link from "next/link";
-import { categories } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { categories } from "@/lib/data";
 import { Tag } from "lucide-react";
+import Link from "next/link";
 
 export function HomeCategoryTabs() {
   if (!categories || categories.length === 0) {
@@ -27,7 +26,7 @@ export function HomeCategoryTabs() {
                 variant="outline"
                 size="sm"
                 asChild
-                className="shadow-sm hover:shadow-md transition-shadow text-xs sm:text-sm"
+                className="shadow-sm hover:shadow-md hover:shadow-transparent hover:border-transparent transition-all text-xs sm:text-sm"
               >
                 <Link href={`/category/${category.slug}`}>{category.name}</Link>
               </Button>

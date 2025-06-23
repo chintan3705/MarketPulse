@@ -124,7 +124,7 @@ export const adSlots: AdConfig[] = [
     id: "tradingview-chart-example",
     type: "tradingview-widget",
     width: "100%",
-    height: 400,
+    height: "70vh",
     className: "mx-auto my-4",
     tradingViewWidgetConfig: {
       symbol: "NASDAQ:AAPL",

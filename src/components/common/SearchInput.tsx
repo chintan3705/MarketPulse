@@ -45,7 +45,7 @@ export function SearchInput({ className }: SearchInputProps) {
         type="submit"
         variant="ghost"
         size="icon"
-        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-muted-foreground hover:text-primary"
+        className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-muted-foreground"
       >
         <Search className="h-5 w-5" />
         <span className="sr-only">Search</span>
