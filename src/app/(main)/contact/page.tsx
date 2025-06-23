@@ -1,4 +1,3 @@
-
 import type { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
 import { Mail } from "lucide-react";
@@ -49,9 +48,7 @@ const ContactPage: React.FC = () => {
   const linkClasses =
     "text-primary hover:text-primary/80 hover:underline transition-colors duration-200 ease-in-out";
   return (
-    <div
-      className="container py-8 md:py-12"
-    >
+    <div className="container py-8 md:py-12">
       <SectionTitle
         title="Contact Us"
         icon={Mail}

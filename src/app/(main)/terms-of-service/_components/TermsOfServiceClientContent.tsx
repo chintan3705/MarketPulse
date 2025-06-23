@@ -21,9 +21,7 @@ const TermsOfServiceClientContent: React.FC = () => {
     "text-primary hover:text-primary/80 hover:underline transition-colors duration-200 ease-in-out";
 
   return (
-    <div
-      className="container py-8 md:py-12"
-    >
+    <div className="container py-8 md:py-12">
       <SectionTitle
         title="Terms of Service"
         icon={FileText}
@@ -264,7 +262,6 @@ const TermsOfServiceClientContent: React.FC = () => {
           PRODUCT OR SERVICE ADVERTISED OR OFFERED BY A THIRD PARTY THROUGH THE
           SITE, ANY HYPERLINKED WEBSITE, OR ANY WEBSITE OR MOBILE APPLICATION
           FEATURED IN ANY BANNER OR OTHER ADVERTISING, AND WE WILL NOT BE A
-
           PARTY TO OR IN ANY WAY BE RESPONSIBLE FOR MONITORING ANY TRANSACTION
           BETWEEN YOU AND ANY THIRD-PARTY PROVIDERS OF PRODUCTS OR SERVICES.
         </p>

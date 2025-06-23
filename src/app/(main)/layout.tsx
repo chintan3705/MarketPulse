@@ -1,4 +1,3 @@
-
 import type React from "react";
 import { categories } from "@/lib/data";
 import { Footer } from "@/components/layout/Footer";

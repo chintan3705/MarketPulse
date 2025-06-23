@@ -45,9 +45,7 @@ export async function generateMetadata(
 
 const MarketsPage: React.FC = () => {
   return (
-    <div
-      className="container py-8 md:py-12"
-    >
+    <div className="container py-8 md:py-12">
       <SectionTitle
         title="Market Overview"
         icon={Activity}

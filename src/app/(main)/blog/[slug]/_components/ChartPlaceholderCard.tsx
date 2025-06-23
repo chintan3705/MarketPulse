@@ -62,7 +62,9 @@ const CustomTable = ({ data }: { data: any[] }) => {
           {data.map((row, rowIndex) => (
             <TableRow key={rowIndex}>
               {headers.map((header) => (
-                <TableCell key={`${rowIndex}-${header}`}>{row[header]}</TableCell>
+                <TableCell key={`${rowIndex}-${header}`}>
+                  {row[header]}
+                </TableCell>
               ))}
             </TableRow>
           ))}
@@ -112,11 +114,27 @@ export const ChartPlaceholderCard: React.FC<ChartPlaceholderCardProps> = ({
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}`} />
+              <XAxis
+                dataKey="name"
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => `${value}`}
+              />
               <RechartsTooltip wrapperClassName="!bg-background !border-border !rounded-md" />
               <Legend />
-              <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+              <Bar
+                dataKey="value"
+                fill="hsl(var(--primary))"
+                radius={[4, 4, 0, 0]}
+              />
             </BarChart>
           </ResponsiveContainer>
         );
@@ -125,11 +143,29 @@ export const ChartPlaceholderCard: React.FC<ChartPlaceholderCardProps> = ({
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+              <XAxis
+                dataKey="name"
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+              />
               <RechartsTooltip wrapperClassName="!bg-background !border-border !rounded-md" />
               <Legend />
-              <Line type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 8 }}/>
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="hsl(var(--primary))"
+                strokeWidth={2}
+                dot={{ r: 4 }}
+                activeDot={{ r: 8 }}
+              />
             </LineChart>
           </ResponsiveContainer>
         );
@@ -137,9 +173,21 @@ export const ChartPlaceholderCard: React.FC<ChartPlaceholderCardProps> = ({
         return (
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
-              <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} fill="hsl(var(--primary))" label>
+              <Pie
+                data={data}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                fill="hsl(var(--primary))"
+                label
+              >
                 {data.map((_entry: any, index: number) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <RechartsTooltip wrapperClassName="!bg-background !border-border !rounded-md" />
@@ -151,7 +199,9 @@ export const ChartPlaceholderCard: React.FC<ChartPlaceholderCardProps> = ({
         return <CustomTable data={data} />;
       default:
         return (
-            <p className="text-sm text-muted-foreground">Chart type '{chartType}' is not supported. Displaying as table.</p>
+          <p className="text-sm text-muted-foreground">
+            Chart type '{chartType}' is not supported. Displaying as table.
+          </p>
         );
     }
   };
@@ -160,16 +210,16 @@ export const ChartPlaceholderCard: React.FC<ChartPlaceholderCardProps> = ({
     <Card className="my-4 md:my-6 overflow-hidden">
       <CardHeader>
         <CardTitle className="flex items-center text-lg md:text-xl font-headline">
-            <BarChartIcon className="mr-2 h-5 w-5 text-primary" />
-            {chartDescription || "Data Visualization"}
+          <BarChartIcon className="mr-2 h-5 w-5 text-primary" />
+          {chartDescription || "Data Visualization"}
         </CardTitle>
         {detailedInformation && (
-            <CardDescription className="text-xs md:text-sm">{detailedInformation}</CardDescription>
+          <CardDescription className="text-xs md:text-sm">
+            {detailedInformation}
+          </CardDescription>
         )}
       </CardHeader>
-      <CardContent>
-        {renderChart()}
-      </CardContent>
+      <CardContent>{renderChart()}</CardContent>
     </Card>
   );
 };

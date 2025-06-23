@@ -72,9 +72,7 @@ export default async function IPOsPage() {
   const ipoPosts = await fetchIpoPosts();
 
   return (
-    <div
-      className="container py-8 md:py-12"
-    >
+    <div className="container py-8 md:py-12">
       <SectionTitle
         title={ipoCategory?.name || "IPO Central"}
         icon={Rocket}

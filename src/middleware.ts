@@ -1,4 +1,3 @@
-
 import { NextResponse, type NextRequest } from "next/server";
 import { jwtVerify } from "jose"; // Using jose for JWT verification in Edge runtime
 

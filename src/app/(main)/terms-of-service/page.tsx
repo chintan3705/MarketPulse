@@ -18,7 +18,8 @@ export async function generateMetadata(
     },
     openGraph: {
       title: "Terms of Service | MarketPulse",
-      description: "Your use of our website is subject to these terms and conditions.",
+      description:
+        "Your use of our website is subject to these terms and conditions.",
       url: canonicalUrl,
       type: "website",
       images: [
@@ -33,7 +34,8 @@ export async function generateMetadata(
     twitter: {
       card: "summary_large_image",
       title: "Terms of Service | MarketPulse",
-      description: "Your use of our website is subject to these terms and conditions.",
+      description:
+        "Your use of our website is subject to these terms and conditions.",
       images: [`${SITE_URL}/twitter-image.png`],
     },
   };

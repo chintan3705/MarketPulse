@@ -4,12 +4,12 @@ import { Loader2 } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Create Admin Account",
-    description: "Create an initial admin account for MarketPulse.",
-    robots: {
-        index: false,
-        follow: false,
-    }
+  title: "Create Admin Account",
+  description: "Create an initial admin account for MarketPulse.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 function SignupPageLoadingFallback() {

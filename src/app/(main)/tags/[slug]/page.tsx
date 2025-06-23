@@ -6,7 +6,6 @@ import { unstable_noStore as noStore } from "next/cache";
 import type React from "react";
 import { SectionTitle } from "@/components/common/SectionTitle";
 
-
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
 interface TagPageProps {
@@ -80,16 +79,12 @@ export async function generateStaticParams(): Promise<{ slug: string }[]> {
   return [];
 }
 
-export default async function TagPage({
-  params: { slug },
-}: TagPageProps) {
+export default async function TagPage({ params: { slug } }: TagPageProps) {
   const tagName = slug.replace(/-/g, " ");
   const postsWithTag = await fetchPostsByTag(slug);
 
   return (
-    <div
-      className="container py-8 md:py-12"
-    >
+    <div className="container py-8 md:py-12">
       <SectionTitle
         title={`Posts tagged: #${tagName}`}
         icon={Tag}

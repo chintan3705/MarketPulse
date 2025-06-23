@@ -108,7 +108,7 @@ export default {
           },
           to: { transform: "translateY(0)", opacity: "1" },
         },
-        "float": {
+        float: {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-15px)" },
         },

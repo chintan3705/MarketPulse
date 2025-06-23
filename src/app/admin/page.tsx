@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
@@ -133,9 +132,7 @@ export default function AdminDashboardPage() {
       const queryString = new URLSearchParams(
         params as Record<string, string>,
       ).toString();
-      const response = await fetch(
-        `/api/admin/marketaux-news?${queryString}`,
-      );
+      const response = await fetch(`/api/admin/marketaux-news?${queryString}`);
 
       const result = await response.json();
 
@@ -372,30 +369,30 @@ export default function AdminDashboardPage() {
                     className="p-3 border rounded-md hover:bg-muted/50 transition-colors"
                   >
                     <div className="flex justify-between items-start">
-                        <div>
-                            <a
-                            href={news.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="font-medium text-sm text-primary hover:underline flex items-center"
-                            >
-                            {news.title}
-                            <ExternalLink size={12} className="ml-1.5 shrink-0" />
-                            </a>
-                            <p className="text-xs text-muted-foreground mt-1">
-                            {news.source} -{" "}
-                            {new Date(news.published_at).toLocaleDateString()}
-                            </p>
-                        </div>
-                        <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => handleSaveAsBlog(news)}
-                            className="ml-2 text-xs shrink-0"
-                            title="Save this news as a blog post draft"
+                      <div>
+                        <a
+                          href={news.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-sm text-primary hover:underline flex items-center"
                         >
-                            <Save size={14} className="mr-1.5" /> Blog it
-                        </Button>
+                          {news.title}
+                          <ExternalLink size={12} className="ml-1.5 shrink-0" />
+                        </a>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {news.source} -{" "}
+                          {new Date(news.published_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleSaveAsBlog(news)}
+                        className="ml-2 text-xs shrink-0"
+                        title="Save this news as a blog post draft"
+                      >
+                        <Save size={14} className="mr-1.5" /> Blog it
+                      </Button>
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
                       {news.description}
@@ -404,11 +401,13 @@ export default function AdminDashboardPage() {
                 ))}
               </div>
             )}
-            {marketAuxNews.length === 0 && !isLoadingMarketAux && !marketAuxError && (
-               <p className="text-sm text-muted-foreground mt-2">
-                Click "Fetch Market News" to get suggestions.
-              </p>
-            )}
+            {marketAuxNews.length === 0 &&
+              !isLoadingMarketAux &&
+              !marketAuxError && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  Click "Fetch Market News" to get suggestions.
+                </p>
+              )}
           </CardContent>
         </Card>
       </div>
@@ -424,12 +423,14 @@ export default function AdminDashboardPage() {
             </div>
             <CardDescription className="text-xs sm:text-sm">
               Use the fetched headlines above to generate blog posts using the
-              AI or manual creation tools in the "Manage Blogs" section, or use the "Blog it" button above.
+              AI or manual creation tools in the "Manage Blogs" section, or use
+              the "Blog it" button above.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground text-sm sm:text-base">
-              Example: Pick a headline, click "Blog it", then refine the details in the dialog and save.
+              Example: Pick a headline, click "Blog it", then refine the details
+              in the dialog and save.
             </p>
           </CardContent>
         </Card>
@@ -441,7 +442,10 @@ export default function AdminDashboardPage() {
           newsItem={selectedNewsItem}
           onPostSaved={() => {
             fetchDashboardStats(); // Refresh stats after a post is saved
-            toast({ title: "Blog Post Saved!", description: "The new post from MarketAux data has been added." });
+            toast({
+              title: "Blog Post Saved!",
+              description: "The new post from MarketAux data has been added.",
+            });
           }}
         />
       )}
