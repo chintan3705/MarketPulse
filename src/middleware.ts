@@ -1,5 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { jwtVerify } from "jose"; // Using jose for JWT verification in Edge runtime
+import { locales, defaultLocale } from "./i18n-config";
+import { match as matchLocale } from "@formatjs/intl-localematcher";
+import Negotiator from "negotiator";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -7,9 +10,24 @@ if (!JWT_SECRET) {
   console.error(
     "JWT_SECRET is not defined in environment variables for middleware.",
   );
-  // Potentially throw an error or handle differently if needed in strict environments
 }
 
+// Helper to get locale from request headers
+function getLocale(request: NextRequest): string {
+  const negotiatorHeaders: { [key: string]: string | string[] | undefined } = {};
+  request.headers.forEach((value, key) => (negotiatorHeaders[key] = value));
+
+  const languages = new Negotiator({ headers: negotiatorHeaders }).languages();
+
+  try {
+    return matchLocale(languages, locales, defaultLocale);
+  } catch (e) {
+    // Fallback to default locale if matching fails
+    return defaultLocale;
+  }
+}
+
+// Helper to verify JWT
 async function verifyToken(token: string) {
   if (!JWT_SECRET) return null;
   try {
@@ -29,34 +47,46 @@ async function verifyToken(token: string) {
 }
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const pathname = request.nextUrl.pathname;
 
-  // Define public paths that don't require authentication
-  const publicPaths = ["/login", "/api/auth/login", "/api/auth/signup"]; // Add other public paths if any
+  // --- 1. Locale Detection and Redirection ---
+  const pathnameIsMissingLocale = locales.every(
+    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`,
+  );
 
-  // Allow access to static files and Next.js internals without auth check
+  // Skip i18n logic for API routes and static files
   if (
-    pathname.startsWith("/_next/") ||
-    pathname.startsWith("/static/") ||
-    pathname.startsWith("/favicon.ico") || // Common static assets
-    publicPaths.some((p) => pathname.startsWith(p))
+    !pathname.startsWith("/api") &&
+    !pathname.startsWith("/_next") &&
+    !pathname.includes(".") &&
+    pathnameIsMissingLocale
   ) {
-    return NextResponse.next();
+    const locale = getLocale(request);
+    // Redirect to the same path but with the detected locale prefix
+    return NextResponse.redirect(new URL(`/${locale}${pathname}`, request.url));
   }
 
-  const authTokenCookie = request.cookies.get("marketpulse_auth_token");
+  // --- 2. Authentication and Authorization ---
+  const currentLocale = pathname.split("/")[1];
 
-  if (pathname.startsWith("/admin")) {
+  // Only apply auth check to admin routes
+  if (
+    locales.includes(currentLocale) &&
+    pathname.startsWith(`/${currentLocale}/admin`)
+  ) {
+    const authTokenCookie = request.cookies.get("marketpulse_auth_token");
+
     if (!authTokenCookie?.value) {
-      const loginUrl = new URL("/login", request.url);
-      loginUrl.searchParams.set("redirect", pathname); // Optional: redirect back after login
+      const loginUrl = new URL(`/${currentLocale}/login`, request.url);
+      loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
     }
 
     const decodedToken = await verifyToken(authTokenCookie.value);
     if (!decodedToken || decodedToken.role !== "admin") {
-      // Clear potentially invalid/tampered cookie
-      const response = NextResponse.redirect(new URL("/login", request.url));
+      const loginUrl = new URL(`/${currentLocale}/login`, request.url);
+      const response = NextResponse.redirect(loginUrl);
+      // Clear the invalid cookie
       response.cookies.set("marketpulse_auth_token", "", {
         maxAge: -1,
         path: "/",
@@ -73,13 +103,12 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api (API routes, _except_ /api/auth which we might want to protect selectively or handle in API logic)
+     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * This ensures admin routes are checked, and other API routes can manage their own auth.
+     * This avoids running the middleware on most static assets and all API routes.
      */
-    "/((?!api/posts|api/admin|favicon.ico|_next/image|_next/static).*)",
-    "/admin/:path*", // Explicitly include admin paths for checking
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
   ],
 };
