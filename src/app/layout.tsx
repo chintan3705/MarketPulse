@@ -3,7 +3,7 @@ import { Inter, Space_Grotesk as SpaceGroteskFont } from "next/font/google"; // 
 import { Toaster } from "@/components/ui/toaster";
 import { SmoothScroller } from "@/components/common/SmoothScroller";
 import "./globals.css";
-import { Analytics } from '@vercel/analytics/next';
+import { Analytics } from '@vercel/analytics/react';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002"; // Fallback for local dev
 
