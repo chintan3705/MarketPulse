@@ -2,19 +2,54 @@
 import { Button } from "@/components/ui/button";
 import { Newspaper } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export function HeroSection() {
   return (
-    <section className="py-10 md:py-16 lg:py-20 bg-gradient-to-br from-background to-muted/20 dark:to-muted/40">
-      <div className="container text-center px-4 sm:px-6 lg:px-8">
-        <h1
-          className="font-headline text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-4"
-        >
+    <section className="relative overflow-hidden py-16 md:py-24 lg:py-32 bg-gradient-to-br from-background to-muted/20 dark:to-muted/40">
+      {/* Animated background charts */}
+      <div className="absolute inset-0 z-0 opacity-10 dark:opacity-5 pointer-events-none">
+        <Image
+          src="https://placehold.co/300x200.png"
+          alt="Animated chart 1"
+          width={300}
+          height={200}
+          className="absolute top-[10%] left-[5%] animate-float-slow rounded-lg shadow-lg"
+          data-ai-hint="stock chart"
+        />
+        <Image
+          src="https://placehold.co/250x150.png"
+          alt="Animated chart 2"
+          width={250}
+          height={150}
+          className="absolute top-[60%] left-[20%] animate-float-medium rounded-lg shadow-lg"
+          data-ai-hint="stock chart"
+          style={{ animationDelay: "2s" }}
+        />
+        <Image
+          src="https://placehold.co/350x250.png"
+          alt="Animated chart 3"
+          width={350}
+          height={250}
+          className="absolute top-[25%] right-[10%] animate-float-fast rounded-lg shadow-lg"
+          data-ai-hint="stock chart"
+        />
+        <Image
+          src="https://placehold.co/200x300.png"
+          alt="Animated chart 4"
+          width={200}
+          height={300}
+          className="absolute bottom-[5%] right-[25%] animate-float-medium rounded-lg shadow-lg"
+          data-ai-hint="stock chart"
+          style={{ animationDelay: "3s" }}
+        />
+      </div>
+
+      <div className="container relative z-10 text-center px-4 sm:px-6 lg:px-8">
+        <h1 className="font-headline text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-4">
           MarketPulse
         </h1>
-        <p
-          className="text-md sm:text-lg md:text-xl text-muted-foreground max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto mb-6 md:mb-8"
-        >
+        <p className="text-md sm:text-lg md:text-xl text-muted-foreground max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto mb-6 md:mb-8">
           Your Daily Lens on the Share Market. Timely updates, financial
           insights, and stock analysis to empower your investment decisions.
         </p>

@@ -108,11 +108,18 @@ export default {
           },
           to: { transform: "translateY(0)", opacity: "1" },
         },
+        "float": {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-15px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "slide-in": "slide-in 0.6s ease-out forwards",
+        "float-slow": "float 8s ease-in-out infinite",
+        "float-medium": "float 6s ease-in-out infinite",
+        "float-fast": "float 4s ease-in-out infinite",
       },
     },
   },
