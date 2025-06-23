@@ -10,26 +10,30 @@ import {
   SheetTrigger,
   SheetHeader,
   SheetTitle,
-  SheetClose,
 } from "@/components/ui/sheet";
-import { Menu, X, UserCog } from "lucide-react";
+import { Menu, UserCog } from "lucide-react";
 import type { NavItem } from "@/types";
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 
-const mainNavItems: NavItem[] = [
-  { label: "Home", href: "/" },
-  { label: "News", href: "/news" },
-  { label: "Analysis", href: "/analysis" },
-  { label: "IPOs", href: "/ipos" },
-  { label: "Markets", href: "/markets" },
+const baseNavItems: Omit<NavItem, "href">[] = [
+  { label: "Home", path: "/" },
+  { label: "News", path: "/news" },
+  { label: "Analysis", path: "/analysis" },
+  { label: "IPOs", path: "/ipos" },
+  { label: "Markets", path: "/markets" },
 ];
 
-export function Header() {
+export function Header({ locale }: { locale: string }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const pathname = usePathname();
+
+  const mainNavItems = baseNavItems.map((item) => ({
+    ...item,
+    href: item.path === "/" ? `/${locale}` : `/${locale}${item.path}`,
+  }));
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/90 backdrop-blur-md supports-[backdrop-filter]:bg-background/70 shadow-sm">
@@ -65,7 +69,7 @@ export function Header() {
             className="hidden md:inline-flex text-sm"
             aria-label="Admin Panel"
           >
-            <Link href="/admin">
+            <Link href={`/${locale}/admin`}>
               <UserCog className="mr-1.5 h-4 w-4" />
               Admin
             </Link>
@@ -74,7 +78,7 @@ export function Header() {
 
         <div className="md:hidden flex items-center ml-auto space-x-1">
           {/* Search input for mobile can be triggered by an icon if needed */}
-          <Link href="/admin" passHref>
+          <Link href={`/${locale}/admin`} passHref>
             <Button
               variant="ghost"
               size="icon"
@@ -104,15 +108,6 @@ export function Header() {
                   <div className="flex items-center justify-between">
                     <Logo textSize="text-lg" iconSize="h-6 w-6" />
                     <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                    <SheetClose asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label="Close menu"
-                      >
-                        <X className="h-5 w-5" />
-                      </Button>
-                    </SheetClose>
                   </div>
                 </SheetHeader>
                 <div className="p-4">
@@ -135,10 +130,10 @@ export function Header() {
                     </Link>
                   ))}
                   <Link
-                    href="/admin"
+                    href={`/${locale}/admin`}
                     className={cn(
                       "block px-3 py-2.5 rounded-md text-base font-medium transition-colors duration-200 ease-in-out hover:bg-accent hover:text-accent-foreground",
-                      pathname.startsWith("/admin")
+                      pathname.startsWith(`/${locale}/admin`)
                         ? "bg-accent text-accent-foreground"
                         : "text-foreground",
                     )}

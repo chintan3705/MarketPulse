@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Logo } from "@/components/common/Logo";
 import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 
-export function Footer() {
+export function Footer({ locale }: { locale: string }) {
   const currentYear = new Date().getFullYear();
 
   const linkClasses =
@@ -40,22 +40,22 @@ export function Footer() {
             </h4>
             <ul className="space-y-1.5 text-sm">
               <li>
-                <Link href="/about" className={linkClasses}>
+                <Link href={`/${locale}/about`} className={linkClasses}>
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className={linkClasses}>
+                <Link href={`/${locale}/contact`} className={linkClasses}>
                   Contact
                 </Link>
               </li>
               <li>
-                <Link href="/advertise" className={linkClasses}>
+                <Link href={`/${locale}/advertise`} className={linkClasses}>
                   Advertise
                 </Link>
               </li>
               <li>
-                <Link href="/careers" className={linkClasses}>
+                <Link href={`/${locale}/careers`} className={linkClasses}>
                   Careers
                 </Link>
               </li>
@@ -68,22 +68,31 @@ export function Footer() {
             </h4>
             <ul className="space-y-1.5 text-sm">
               <li>
-                <Link href="/category/stocks" className={linkClasses}>
+                <Link
+                  href={`/${locale}/category/stocks`}
+                  className={linkClasses}
+                >
                   Stocks
                 </Link>
               </li>
               <li>
-                <Link href="/category/ipos" className={linkClasses}>
+                <Link href={`/${locale}/category/ipos`} className={linkClasses}>
                   IPOs
                 </Link>
               </li>
               <li>
-                <Link href="/category/mutual-funds" className={linkClasses}>
+                <Link
+                  href={`/${locale}/category/mutual-funds`}
+                  className={linkClasses}
+                >
                   Mutual Funds
                 </Link>
               </li>
               <li>
-                <Link href="/category/economy" className={linkClasses}>
+                <Link
+                  href={`/${locale}/category/economy`}
+                  className={linkClasses}
+                >
                   Economy
                 </Link>
               </li>
@@ -94,17 +103,23 @@ export function Footer() {
             <h4 className="font-headline text-md font-semibold mb-3">Legal</h4>
             <ul className="space-y-1.5 text-sm">
               <li>
-                <Link href="/privacy-policy" className={linkClasses}>
+                <Link
+                  href={`/${locale}/privacy-policy`}
+                  className={linkClasses}
+                >
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms-of-service" className={linkClasses}>
+                <Link
+                  href={`/${locale}/terms-of-service`}
+                  className={linkClasses}
+                >
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/disclaimer" className={linkClasses}>
+                <Link href={`/${locale}/disclaimer`} className={linkClasses}>
                   Disclaimer
                 </Link>
               </li>
