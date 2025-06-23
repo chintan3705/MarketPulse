@@ -1,4 +1,4 @@
-import type { BlogPost, TrendingHeadline, Category, AdConfig } from "@/types";
+import type { AdConfig, BlogPost, Category, TrendingHeadline } from "@/types";
 
 export const categories: Category[] = [
   { id: "1", name: "Stocks", slug: "stocks" },
@@ -63,6 +63,7 @@ export const trendingHeadlines: TrendingHeadline[] = [
     source: "FinNews Daily",
     url: "#",
     publishedAt: new Date(Date.now() - 3600000).toISOString(),
+    isGain: true,
   },
   {
     id: "3",
@@ -86,6 +87,7 @@ export const trendingHeadlines: TrendingHeadline[] = [
     source: "Global Investor",
     url: "#",
     publishedAt: new Date(Date.now() - 4 * 3600000).toISOString(),
+    isGain: false,
   },
 ];
 

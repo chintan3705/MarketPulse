@@ -1,3 +1,4 @@
+
 import type { Metadata, ResolvingMetadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { Tag } from "lucide-react";
@@ -6,12 +7,6 @@ import type React from "react";
 import { SectionTitle } from "@/components/common/SectionTitle";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
-
-interface TagPageProps {
-  params: {
-    slug: string;
-  };
-}
 
 async function fetchPostsByTag(tagSlug: string): Promise<BlogPost[]> {
   try {
@@ -33,10 +28,10 @@ async function fetchPostsByTag(tagSlug: string): Promise<BlogPost[]> {
 }
 
 export async function generateMetadata(
-  { params }: TagPageProps,
+  { params }: { params: Promise<{ slug: string }> },
   _parent: ResolvingMetadata,
 ): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
   const tagName = slug.replace(/-/g, " "); // Convert slug back to tag name for display
   const canonicalUrl = `${SITE_URL}/tags/${slug}`;
 
@@ -77,7 +72,12 @@ export async function generateStaticParams(): Promise<{ slug: string }[]> {
   return [];
 }
 
-export default async function TagPage({ params: { slug } }: TagPageProps) {
+export default async function TagPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
   const tagName = slug.replace(/-/g, " ");
   const postsWithTag = await fetchPostsByTag(slug);
 

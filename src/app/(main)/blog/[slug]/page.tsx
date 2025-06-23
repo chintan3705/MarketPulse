@@ -1,3 +1,4 @@
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { BlogPost } from "@/types";
@@ -19,12 +20,6 @@ import {
 import { AudioPlayer } from "./_components/AudioPlayer";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
-
-interface BlogPostPageProps {
-  params: {
-    slug: string;
-  };
-}
 
 async function getPostData(slug: string): Promise<BlogPost | null> {
   try {
@@ -50,10 +45,10 @@ async function getPostData(slug: string): Promise<BlogPost | null> {
 }
 
 export async function generateMetadata(
-  { params }: BlogPostPageProps,
+  { params }: { params: Promise<{ slug: string }> },
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
   const post = await getPostData(slug);
   const canonicalUrl = `${SITE_URL}/blog/${slug}`;
 
@@ -187,8 +182,11 @@ const renderContentWithChartPlaceholders = (post: BlogPost) => {
 };
 
 export default async function BlogPostPage({
-  params: { slug },
-}: BlogPostPageProps) {
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
   const post = await getPostData(slug);
 
   if (!post) {

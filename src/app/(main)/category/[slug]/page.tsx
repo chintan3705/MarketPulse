@@ -1,3 +1,4 @@
+
 import type { Metadata, ResolvingMetadata } from "next";
 import { BlogPostCard } from "@/components/blog/BlogPostCard";
 import { categories } from "@/lib/data";
@@ -8,12 +9,6 @@ import type React from "react";
 import { SectionTitle } from "@/components/common/SectionTitle";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
-
-interface CategoryPageProps {
-  params: {
-    slug: string;
-  };
-}
 
 async function fetchPostsByCategory(categorySlug: string): Promise<BlogPost[]> {
   try {
@@ -41,10 +36,10 @@ async function fetchPostsByCategory(categorySlug: string): Promise<BlogPost[]> {
 }
 
 export async function generateMetadata(
-  { params }: CategoryPageProps,
+  { params }: { params: Promise<{ slug: string }> },
   _parent: ResolvingMetadata,
 ): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
   const category = categories.find((cat) => cat.slug === slug);
   const canonicalUrl = `${SITE_URL}/category/${slug}`;
 
@@ -94,8 +89,11 @@ export async function generateStaticParams() {
 }
 
 export default async function CategoryPage({
-  params: { slug },
-}: CategoryPageProps) {
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
   const category = categories.find((cat) => cat.slug === slug);
 
   if (!category) {
