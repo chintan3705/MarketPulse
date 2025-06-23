@@ -8,10 +8,9 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface StickyNavProps {
   categories: Category[];
-  locale: string;
 }
 
-export function StickyNav({ categories, locale }: StickyNavProps) {
+export function StickyNav({ categories }: StickyNavProps) {
   const pathname = usePathname();
 
   const currentCategorySlug = pathname.split("/category/")[1]?.split("/")[0];
@@ -28,7 +27,7 @@ export function StickyNav({ categories, locale }: StickyNavProps) {
             {categories.map((category) => (
               <Link
                 key={category.id}
-                href={`/${locale}/category/${category.slug}`}
+                href={`/category/${category.slug}`}
                 className={cn(
                   "px-2.5 sm:px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-colors duration-200 ease-in-out hover:bg-accent hover:text-accent-foreground whitespace-nowrap",
                   currentCategorySlug === category.slug

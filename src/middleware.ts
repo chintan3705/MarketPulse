@@ -1,9 +1,5 @@
-
 import { NextResponse, type NextRequest } from "next/server";
 import { jwtVerify } from "jose"; // Using jose for JWT verification in Edge runtime
-import { locales, defaultLocale } from "./i18n-config";
-import { match as matchLocale } from "@formatjs/intl-localematcher";
-import Negotiator from "negotiator";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -11,21 +7,6 @@ if (!JWT_SECRET) {
   console.error(
     "JWT_SECRET is not defined in environment variables for middleware.",
   );
-}
-
-// Helper to get locale from request headers
-function getLocale(request: NextRequest): string {
-  const negotiatorHeaders: { [key: string]: string | string[] | undefined } = {};
-  request.headers.forEach((value, key) => (negotiatorHeaders[key] = value));
-
-  const languages = new Negotiator({ headers: negotiatorHeaders }).languages();
-
-  try {
-    return matchLocale(languages, locales, defaultLocale);
-  } catch (e) {
-    // Fallback to default locale if matching fails
-    return defaultLocale;
-  }
 }
 
 // Helper to verify JWT
@@ -48,44 +29,25 @@ async function verifyToken(token: string) {
 }
 
 export async function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
+  const { pathname } = request.nextUrl;
 
-  // --- 1. Locale Detection and Redirection ---
-  const pathnameIsMissingLocale = locales.every(
-    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`,
-  );
-
-  // Skip i18n logic for API routes and static files
-  if (
-    !pathname.startsWith("/api") &&
-    !pathname.startsWith("/_next") &&
-    !pathname.includes(".") &&
-    pathnameIsMissingLocale
-  ) {
-    const locale = getLocale(request);
-    // Redirect to the same path but with the detected locale prefix
-    return NextResponse.redirect(new URL(`/${locale}${pathname}`, request.url));
-  }
-
-  // --- 2. Authentication and Authorization ---
-  const currentLocale = pathname.split("/")[1];
-
-  // Only apply auth check to admin routes
-  if (
-    locales.includes(currentLocale) &&
-    pathname.startsWith(`/${currentLocale}/admin`)
-  ) {
+  // Protect admin routes
+  if (pathname.startsWith("/admin")) {
     const authTokenCookie = request.cookies.get("marketpulse_auth_token");
 
+    // If no token, redirect to login, preserving the intended destination
     if (!authTokenCookie?.value) {
-      const loginUrl = new URL(`/${currentLocale}/login`, request.url);
+      const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
     }
 
+    // If token exists, verify it
     const decodedToken = await verifyToken(authTokenCookie.value);
+
+    // If token is invalid or user is not an admin, redirect to login
     if (!decodedToken || decodedToken.role !== "admin") {
-      const loginUrl = new URL(`/${currentLocale}/login`, request.url);
+      const loginUrl = new URL("/login", request.url);
       const response = NextResponse.redirect(loginUrl);
       // Clear the invalid cookie
       response.cookies.set("marketpulse_auth_token", "", {
@@ -96,20 +58,12 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // If all checks pass, continue to the requested page
   return NextResponse.next();
 }
 
-// Specify paths for the middleware to run on
+// Specify paths for the middleware to run on.
+// We only need to protect the /admin routes.
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * This avoids running the middleware on most static assets and all API routes.
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
-  ],
+  matcher: "/admin/:path*",
 };

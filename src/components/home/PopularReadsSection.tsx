@@ -6,12 +6,10 @@ import { SectionTitle } from "../common/SectionTitle";
 
 interface PopularReadsSectionProps {
   posts: BlogPost[];
-  locale: string;
 }
 
 export const PopularReadsSection: React.FC<PopularReadsSectionProps> = ({
   posts,
-  locale,
 }) => {
   const sectionPadding = "py-6 md:py-10";
   const containerPadding = "container px-4 sm:px-6 lg:px-8";
@@ -50,7 +48,6 @@ export const PopularReadsSection: React.FC<PopularReadsSectionProps> = ({
               post={post}
               orientation="vertical"
               className="shadow-md hover:shadow-lg"
-              locale={locale}
             />
           ))}
         </div>

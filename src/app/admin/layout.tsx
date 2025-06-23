@@ -20,7 +20,6 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetClose,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
@@ -166,11 +165,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 <SheetTitle className="sr-only">
                   Admin Navigation Menu
                 </SheetTitle>
-                <SheetClose asChild>
-                  <Button variant="ghost" size="icon" aria-label="Close menu">
-                    <X className="h-5 w-5" />
-                  </Button>
-                </SheetClose>
               </SheetHeader>
               <div className="flex-1 py-2 overflow-y-auto">{navItems}</div>
               <div className="mt-auto p-4 border-t sticky bottom-0 bg-background z-10 space-y-2">

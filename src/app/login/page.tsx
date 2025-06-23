@@ -1,7 +1,16 @@
-
 import React, { Suspense } from "react";
-import LoginForm from "./LoginForm"; // Renamed the original page component
+import LoginForm from "./LoginForm";
 import { Loader2 } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Admin Login",
+    description: "Access the admin dashboard for MarketPulse.",
+    robots: {
+        index: false,
+        follow: false,
+    }
+};
 
 function LoginPageLoadingFallback() {
   return (

@@ -18,22 +18,17 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 
-const baseNavItems: Omit<NavItem, "href">[] = [
-  { label: "Home", path: "/" },
-  { label: "News", path: "/news" },
-  { label: "Analysis", path: "/analysis" },
-  { label: "IPOs", path: "/ipos" },
-  { label: "Markets", path: "/markets" },
+const mainNavItems: NavItem[] = [
+  { label: "Home", href: "/" },
+  { label: "News", href: "/news" },
+  { label: "Analysis", href: "/analysis" },
+  { label: "IPOs", href: "/ipos" },
+  { label: "Markets", href: "/markets" },
 ];
 
-export function Header({ locale }: { locale: string }) {
+export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const pathname = usePathname();
-
-  const mainNavItems = baseNavItems.map((item) => ({
-    ...item,
-    href: item.path === "/" ? `/${locale}` : `/${locale}${item.path}`,
-  }));
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/90 backdrop-blur-md supports-[backdrop-filter]:bg-background/70 shadow-sm">
@@ -69,7 +64,7 @@ export function Header({ locale }: { locale: string }) {
             className="hidden md:inline-flex text-sm"
             aria-label="Admin Panel"
           >
-            <Link href={`/${locale}/admin`}>
+            <Link href="/admin">
               <UserCog className="mr-1.5 h-4 w-4" />
               Admin
             </Link>
@@ -77,8 +72,7 @@ export function Header({ locale }: { locale: string }) {
         </div>
 
         <div className="md:hidden flex items-center ml-auto space-x-1">
-          {/* Search input for mobile can be triggered by an icon if needed */}
-          <Link href={`/${locale}/admin`} passHref>
+          <Link href="/admin" passHref>
             <Button
               variant="ghost"
               size="icon"
@@ -130,10 +124,10 @@ export function Header({ locale }: { locale: string }) {
                     </Link>
                   ))}
                   <Link
-                    href={`/${locale}/admin`}
+                    href="/admin"
                     className={cn(
                       "block px-3 py-2.5 rounded-md text-base font-medium transition-colors duration-200 ease-in-out hover:bg-accent hover:text-accent-foreground",
-                      pathname.startsWith(`/${locale}/admin`)
+                      pathname.startsWith("/admin")
                         ? "bg-accent text-accent-foreground"
                         : "text-foreground",
                     )}
