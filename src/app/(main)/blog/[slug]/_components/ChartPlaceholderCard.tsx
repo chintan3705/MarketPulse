@@ -107,6 +107,32 @@ export const ChartPlaceholderCard: React.FC<ChartPlaceholderCardProps> = ({
     return null;
   }
 
+  // --- Dynamic Key Inference ---
+  const keys = Object.keys(data[0]);
+  let nameKey = "name";
+  let valueKey = "value";
+
+  if (keys.length > 1) {
+    const hasDefaultKeys = keys.includes("name") && keys.includes("value");
+    if (!hasDefaultKeys) {
+      // Heuristic: Find first key with string value for name, first with number for value
+      const stringKey = keys.find((key) => typeof data[0][key] === "string");
+      const numberKey = keys.find((key) => typeof data[0][key] === "number");
+
+      if (stringKey && numberKey) {
+        nameKey = stringKey;
+        valueKey = numberKey;
+      } else {
+        // Fallback to first two keys
+        [nameKey, valueKey] = keys;
+      }
+    }
+  } else if (keys.length === 1) {
+    nameKey = keys[0];
+    valueKey = keys[0];
+  }
+  // --- End Dynamic Key Inference ---
+
   const renderChart = () => {
     switch (chartType) {
       case "bar":
@@ -115,7 +141,7 @@ export const ChartPlaceholderCard: React.FC<ChartPlaceholderCardProps> = ({
             <BarChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
-                dataKey="name"
+                dataKey={nameKey}
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={12}
                 tickLine={false}
@@ -128,10 +154,14 @@ export const ChartPlaceholderCard: React.FC<ChartPlaceholderCardProps> = ({
                 axisLine={false}
                 tickFormatter={(value) => `${value}`}
               />
-              <RechartsTooltip wrapperClassName="!bg-background !border-border !rounded-md" />
+              <RechartsTooltip
+                wrapperClassName="!bg-background !border-border !rounded-md"
+                cursor={{ fill: "hsl(var(--accent))", opacity: 0.5 }}
+              />
               <Legend />
               <Bar
-                dataKey="value"
+                dataKey={valueKey}
+                name={chartDescription || valueKey}
                 fill="hsl(var(--primary))"
                 radius={[4, 4, 0, 0]}
               />
@@ -144,7 +174,7 @@ export const ChartPlaceholderCard: React.FC<ChartPlaceholderCardProps> = ({
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
-                dataKey="name"
+                dataKey={nameKey}
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={12}
                 tickLine={false}
@@ -156,15 +186,19 @@ export const ChartPlaceholderCard: React.FC<ChartPlaceholderCardProps> = ({
                 tickLine={false}
                 axisLine={false}
               />
-              <RechartsTooltip wrapperClassName="!bg-background !border-border !rounded-md" />
+              <RechartsTooltip
+                wrapperClassName="!bg-background !border-border !rounded-md"
+                cursor={{ stroke: "hsl(var(--primary))", strokeWidth: 1 }}
+              />
               <Legend />
               <Line
                 type="monotone"
-                dataKey="value"
+                dataKey={valueKey}
+                name={chartDescription || valueKey}
                 stroke="hsl(var(--primary))"
                 strokeWidth={2}
-                dot={{ r: 4 }}
-                activeDot={{ r: 8 }}
+                dot={{ r: 4, fill: "hsl(var(--primary))" }}
+                activeDot={{ r: 8, stroke: "hsl(var(--primary))" }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -175,13 +209,38 @@ export const ChartPlaceholderCard: React.FC<ChartPlaceholderCardProps> = ({
             <PieChart>
               <Pie
                 data={data}
-                dataKey="value"
-                nameKey="name"
+                dataKey={valueKey}
+                nameKey={nameKey}
                 cx="50%"
                 cy="50%"
                 outerRadius={80}
                 fill="hsl(var(--primary))"
-                label
+                labelLine={false}
+                label={({
+                  cx,
+                  cy,
+                  midAngle,
+                  innerRadius,
+                  outerRadius,
+                  percent,
+                }) => {
+                  const radius =
+                    innerRadius + (outerRadius - innerRadius) * 0.5;
+                  const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180));
+                  const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180));
+                  return (
+                    <text
+                      x={x}
+                      y={y}
+                      fill="white"
+                      textAnchor="middle"
+                      dominantBaseline="central"
+                      className="text-xs font-bold fill-primary-foreground"
+                    >
+                      {`${(percent * 100).toFixed(0)}%`}
+                    </text>
+                  );
+                }}
               >
                 {data.map((_entry: any, index: number) => (
                   <Cell
@@ -191,17 +250,26 @@ export const ChartPlaceholderCard: React.FC<ChartPlaceholderCardProps> = ({
                 ))}
               </Pie>
               <RechartsTooltip wrapperClassName="!bg-background !border-border !rounded-md" />
-              <Legend />
+              <Legend
+                formatter={(value) => (
+                  <span className="text-muted-foreground">{value}</span>
+                )}
+              />
             </PieChart>
           </ResponsiveContainer>
         );
       case "table":
         return <CustomTable data={data} />;
       default:
+        // Fallback to table if chart type is unknown
         return (
-          <p className="text-sm text-muted-foreground">
-            Chart type '{chartType}' is not supported. Displaying as table.
-          </p>
+          <div>
+            <p className="text-sm text-muted-foreground mb-2">
+              Chart type &apos;{chartType}&apos; is not supported. Displaying
+              data as a table.
+            </p>
+            <CustomTable data={data} />
+          </div>
         );
     }
   };
