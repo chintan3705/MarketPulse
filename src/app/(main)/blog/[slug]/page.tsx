@@ -16,6 +16,7 @@ import {
   ChartPlaceholderCard,
   type ChartPlaceholderCardProps,
 } from "./_components/ChartPlaceholderCard";
+import { AudioPlayer } from "./_components/AudioPlayer";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002";
 
@@ -202,11 +203,18 @@ export default async function BlogPostPage({
 
   const contentElements = renderContentWithChartPlaceholders(post);
 
+  // Prepare text for speech - using a simple combination of title and summary.
+  // Stripping HTML tags to get clean text.
+  const textForSpeech = `${post.title}. ${post.summary}`.replace(
+    /<[^>]*>?/gm,
+    "",
+  );
+
   return (
     <div className="container py-6 md:py-10 px-4 sm:px-6 lg:px-8">
       <article className="max-w-3xl mx-auto">
         <header className="mb-6 md:mb-8">
-          <div className="flex justify-between items-center mb-3 sm:mb-4">
+          <div className="flex justify-between items-start mb-3 sm:mb-4 gap-4">
             <Button
               variant="outline"
               asChild
@@ -218,16 +226,7 @@ export default async function BlogPostPage({
                 Back to News
               </Link>
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled
-              title="Listen to article (Feature coming soon)"
-              className="text-xs sm:text-sm"
-            >
-              <Headphones size={14} className="mr-1.5" />
-              Listen
-            </Button>
+            <AudioPlayer textToNarrate={textForSpeech} />
           </div>
           <Link href={`/category/${post.category.slug}`}>
             <Badge

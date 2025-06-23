@@ -18,3 +18,4 @@ import "@/ai/flows/regenerate-summary-flow.ts";
 import "@/ai/flows/regenerate-tags-flow.ts";
 import "@/ai/flows/regenerate-image-flow.ts";
 import "@/ai/flows/regenerate-content-flow.ts";
+import "@/ai/flows/text-to-speech-flow.ts";
