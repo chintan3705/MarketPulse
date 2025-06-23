@@ -26,8 +26,8 @@ import {
   AlertTriangle,
   FileText,
 } from "lucide-react";
-import { GenerateBlogDialog } from "@/app/admin/blogs/_components/GenerateBlogDialog";
-import { GenerateMultipleBlogsDialog } from "@/app/admin/blogs/_components/GenerateMultipleBlogsDialog";
+import { GenerateBlogDialog } from "./_components/GenerateBlogDialog";
+import { GenerateMultipleBlogsDialog } from "./_components/GenerateMultipleBlogsDialog";
 import type { BlogPost } from "@/types";
 import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";

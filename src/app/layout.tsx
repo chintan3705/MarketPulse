@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     siteName: "MarketPulse",
     images: [
       {
-        url: "/og-image.png", // Relative path for /public. Assumes og-image.png is in /public
+        url: "/og-image.png", // Relative to metadataBase
         width: 1200,
         height: 630,
         alt: "MarketPulse Logo and Tagline",
@@ -67,10 +67,9 @@ export const metadata: Metadata = {
     title: "MarketPulse – Your Daily Lens on the Share Market",
     description:
       "Real-time Share Market News Blog Platform delivering timely updates, financial insights, and stock analysis.",
-    images: [`${SITE_URL}/twitter-image.png`], // Needs to be absolute for Twitter. Assumes twitter-image.png is in /public
+    images: [`/twitter-image.png`], // Relative to metadataBase
   },
   robots: {
-    // Ensure site is indexable
     index: true,
     follow: true,
     googleBot: {
@@ -81,14 +80,8 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  // icons: { // Example, ensure these files exist in /public if uncommented
-  //   icon: '/favicon.ico',
-  //   shortcut: '/favicon-16x16.png',
-  //   apple: '/apple-touch-icon.png',
-  // },
-  // manifest: '/site.webmanifest', // Ensure this file exists in /public if uncommented
   alternates: {
-    canonical: SITE_URL, // Default canonical for homepage
+    canonical: "/",
   },
 };
 
@@ -100,8 +93,8 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${spaceGrotesk.variable} light`} // Default to light theme
-      suppressHydrationWarning // Suppress warning for theme toggle script
+      className={`${inter.variable} ${spaceGrotesk.variable} light`}
+      suppressHydrationWarning
     >
       <head>
         {/* Viewport tag is automatically added by Next.js */}
@@ -116,12 +109,10 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
                     document.documentElement.classList.add('dark');
                     document.documentElement.classList.remove('light');
                   } else {
-                    // Default to light if no preference or preference is 'light'
                     document.documentElement.classList.add('light');
                     document.documentElement.classList.remove('dark');
                   }
                 } catch (e) {
-                  // If localStorage is not available, default to light
                   document.documentElement.classList.add('light');
                 }
               })();

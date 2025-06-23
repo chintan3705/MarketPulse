@@ -8,18 +8,18 @@ export function HeroSection() {
     <section className="relative overflow-hidden py-16 md:py-24 lg:py-32 bg-gradient-to-br from-background to-muted/20 dark:to-muted/40">
       <div className="absolute inset-0 z-0">
         <Image
-          src="https://static.tradingview.com/static/bundles/aurora.d2a6947c3dcfb777c25f.webp" // Replace with your image path or URL
-          alt="Background"
+          src="https://static.tradingview.com/static/bundles/aurora.d2a6947c3dcfb777c25f.webp"
+          alt="Abstract financial background"
           fill
-          className="object-cover object-center"
+          className="object-cover object-center opacity-50 dark:opacity-70"
           priority
         />
-        <div className="absolute inset-0 dark:bg-gradient-to-br from-background to-muted/20 dark:to-muted/40"></div>
+        <div className="absolute inset-0 bg-background/50 dark:bg-background/70"></div>
       </div>
       {/* Animated background charts */}
-      {/* <div className="absolute inset-0 z-0 opacity-10 dark:opacity-5 pointer-events-none">
+      <div className="absolute inset-0 z-0 opacity-10 dark:opacity-5 pointer-events-none">
         <Image
-          src="https://tenor.com/en-GB/view/kah-gif-25638404"
+          src="https://placehold.co/300x200.png"
           alt="Animated chart 1"
           width={300}
           height={200}
@@ -52,13 +52,13 @@ export function HeroSection() {
           data-ai-hint="stock chart"
           style={{ animationDelay: "3s" }}
         />
-      </div> */}
+      </div>
 
       <div className="container relative z-10 text-center px-4 sm:px-6 lg:px-8">
         <h1 className="font-headline text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-4">
           MarketPulse
         </h1>
-        <p className="text-md sm:text-lg md:text-xl text-white max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto mb-6 md:mb-8">
+        <p className="text-md sm:text-lg md:text-xl text-foreground max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto mb-6 md:mb-8">
           Your Daily Lens on the Share Market. Timely updates, financial
           insights, and stock analysis to empower your investment decisions.
         </p>
@@ -67,7 +67,7 @@ export function HeroSection() {
           <Button
             size="lg"
             asChild
-            className="bg-primary/20 hover:bg-primary/20 border border-transparent hover:border-primary text-primary transition-all duration-300 text-sm sm:text-base px-6 sm:px-8 py-2.5 sm:py-3"
+            className="bg-primary/90 hover:bg-primary text-primary-foreground transition-all duration-300 text-sm sm:text-base px-6 sm:px-8 py-2.5 sm:py-3 shadow-lg hover:shadow-xl"
           >
             <Link href="/news">
               <Newspaper className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />

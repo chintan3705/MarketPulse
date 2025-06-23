@@ -1,9 +1,9 @@
-# https://www.robotstxt.org/robotstxt.html
+# See https://www.robotstxt.org/robotstxt.html for syntax and directives
+
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /login
+Disallow: /signup-admin
 
-# Sitemap (optional)
-# Update this with the absolute URL to your sitemap if you have one
-# Example: Sitemap: https://www.yourdomain.com/sitemap.xml
-# Sitemap: [ABSOLUTE_URL_TO_YOUR_SITEMAP_HERE]
-Sitemap: https://www.marketpulse.example.com/sitemap.xml
+Sitemap: https://marketpulse.example.com/sitemap.xml
