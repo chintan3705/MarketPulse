@@ -3,6 +3,7 @@ import { Inter, Space_Grotesk as SpaceGroteskFont } from "next/font/google"; // 
 import { Toaster } from "@/components/ui/toaster";
 import { SmoothScroller } from "@/components/common/SmoothScroller";
 import "./globals.css";
+import { Analytics } from '@vercel/analytics/next';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9002"; // Fallback for local dev
 
@@ -134,6 +135,7 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
       <body className="font-body antialiased flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300">
         <SmoothScroller />
         {children}
+        <Analytics />
         <Toaster />
       </body>
     </html>
