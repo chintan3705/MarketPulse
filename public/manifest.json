@@ -1,0 +1,28 @@
+{
+  "name": "MarketPulse",
+  "short_name": "MarketPulse",
+  "description": "Your Daily Lens on the Share Market. Timely updates, financial insights, and stock analysis to empower your investment decisions.",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+        "src": "/icons/maskable-icon.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#29ABE2",
+  "background_color": "#0e1a2b",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait"
+}

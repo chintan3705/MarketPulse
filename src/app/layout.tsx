@@ -28,6 +28,16 @@ export const metadata: Metadata = {
   },
   description:
     "Real-time Share Market News Blog Platform delivering timely updates, financial insights, and stock analysis. Aiming for high-quality content for AdSense approval.",
+  manifest: "/manifest.json",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F0F2F5" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e1a2b" },
+  ],
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "MarketPulse",
+  },
   keywords: [
     "stock market",
     "share market",
@@ -41,6 +51,7 @@ export const metadata: Metadata = {
     "MarketPulse",
     "financial news",
     "investment insights",
+    "pwa",
   ],
   authors: [{ name: "MarketPulse Team", url: `${SITE_URL}/about` }],
   creator: "MarketPulse Team",
