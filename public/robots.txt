@@ -6,4 +6,4 @@ Disallow: /admin/
 Disallow: /login
 Disallow: /signup-admin
 
-Sitemap: https://marketpulse.example.com/sitemap.xml
+Sitemap: https://market-pulse-blush.vercel.app/sitemap.xml
